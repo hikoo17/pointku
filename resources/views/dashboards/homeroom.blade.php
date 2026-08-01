@@ -1,0 +1,16 @@
+@php($title = 'Dashboard Wali Kelas')
+@php($navigation = [['wali-kelas.dashboard', 'Ringkasan kelas'], ['wali-kelas.students', 'Daftar siswa'], ['wali-kelas.notifications', 'Notifikasi']])
+<x-layouts.app :title="$title" :navigation="$navigation">
+    <x-dashboard title="Kelas {{ $kelas->nama_kelas }}" eyebrow="RUANG WALI KELAS" copy="Pantau perkembangan seluruh siswa di kelas tanpa mengubah transaksi poin." />
+    <div class="stats-grid">
+        <article class="stat-card navy"><span>Total siswa</span><strong>{{ $students->count() }}</strong><small>Kelas tanggung jawab</small></article>
+        <article class="stat-card coral"><span>Perlu dipantau</span><strong>{{ $students->where('total_poin_pelanggaran', '>=', 25)->count() }}</strong><small>Melewati 25 poin</small></article>
+        <article class="stat-card yellow"><span>Poin pelanggaran</span><strong>{{ $students->sum('total_poin_pelanggaran') }}</strong><small>Akumulasi kelas</small></article>
+        <article class="stat-card mint"><span>Poin apresiasi</span><strong>{{ $students->sum('total_poin_apresiasi') }}</strong><small>Akumulasi positif</small></article>
+    </div>
+    <div class="split-panels">
+        <section class="panel"><div class="panel-heading"><div><p class="eyebrow">PRIORITAS PENDAMPINGAN</p><h3>Siswa perlu dipantau</h3></div><a class="text-link" href="{{ route('wali-kelas.students', ['status' => 'dipantau']) }}">Lihat semua</a></div>@forelse($students->where('total_poin_pelanggaran','>=',25)->take(5) as $student)<a class="student-activity" href="{{ route('wali-kelas.students.show',$student) }}"><span class="activity-mark pelanggaran">!</span><span><strong>{{ $student->user->nama_lengkap }}</strong><small>NISN {{ $student->nisn }}</small></span><b>{{ $student->total_poin_pelanggaran }} poin</b></a>@empty<p class="muted">Belum ada siswa melewati threshold.</p>@endforelse</section>
+        <section class="panel"><div class="panel-heading"><div><p class="eyebrow">NOTIFIKASI KELAS</p><h3>Peringatan terbaru</h3></div><a class="text-link" href="{{ route('wali-kelas.notifications') }}">Lihat semua</a></div>@forelse($alerts as $alert)<div class="student-notice {{ $alert->dibaca_pada ? 'read' : '' }}"><strong>{{ $alert->siswa->user->nama_lengkap }} · {{ $alert->judul }}</strong><p>{{ $alert->pesan }}</p><small>{{ $alert->created_at->diffForHumans() }}</small></div>@empty<p class="muted">Belum ada notifikasi threshold.</p>@endforelse</section>
+    </div>
+    <section class="panel"><div class="panel-heading"><div><p class="eyebrow">AKTIVITAS TERVALIDASI</p><h3>Catatan terbaru kelas</h3></div></div><div class="table-wrap"><table><thead><tr><th>Siswa</th><th>Jenis</th><th>Kategori</th><th>Tanggal</th><th>Poin</th></tr></thead><tbody>@forelse($recentRecords as $record)<tr><td>{{ $record->siswa->user->nama_lengkap }}</td><td>{{ ucfirst($record->kategoriPoin->jenis) }}</td><td>{{ $record->kategoriPoin->nama_kategori }}</td><td>{{ $record->tanggal->format('d/m/Y') }}</td><td>{{ $record->kategoriPoin->jenis === 'apresiasi' ? '+' : '-' }}{{ $record->kategoriPoin->bobot_poin }}</td></tr>@empty<tr><td colspan="5">Belum ada aktivitas.</td></tr>@endforelse</tbody></table></div></section>
+</x-layouts.app>

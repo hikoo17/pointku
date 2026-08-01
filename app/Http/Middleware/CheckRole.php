@@ -11,11 +11,13 @@ class CheckRole
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
         if (! $request->user()) {
-            return response()->json(['message' => 'Unauthenticated'], 401);
+            return $request->expectsJson()
+                ? response()->json(['message' => 'Unauthenticated'], 401)
+                : redirect()->route('login');
         }
 
         if (! in_array($request->user()->role->nama_role, $roles)) {
-            return response()->json(['message' => 'Forbidden - Insufficient role'], 403);
+            abort(403, 'Forbidden - Insufficient role');
         }
 
         return $next($request);

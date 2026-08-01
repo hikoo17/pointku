@@ -1,0 +1,6 @@
+@php($title = 'Detail Poin') @php($navigation = [['siswa.dashboard', 'Ringkasan'], ['siswa.history', 'Riwayat poin'], ['siswa.notifications', 'Notifikasi']])
+<x-layouts.app :title="$title" :navigation="$navigation">
+    <a class="text-link back-link" href="{{ route('siswa.history') }}">Kembali ke riwayat</a>
+    <x-dashboard title="{{ $record->kategoriPoin->nama_kategori }}" eyebrow="DETAIL KEJADIAN" copy="Informasi catatan yang telah diperiksa dan disetujui Guru BK." />
+    <div class="detail-grid"><section class="panel"><dl class="detail-list"><div><dt>Jenis</dt><dd>{{ ucfirst($record->kategoriPoin->jenis) }}</dd></div><div><dt>Bobot poin</dt><dd>{{ $record->kategoriPoin->jenis === 'apresiasi' ? '+' : '-' }}{{ $record->kategoriPoin->bobot_poin }}</dd></div><div><dt>Tanggal</dt><dd>{{ $record->tanggal->translatedFormat('d F Y') }}</dd></div><div><dt>Pencatat</dt><dd>{{ $record->pencatat->nama_lengkap }}</dd></div><div><dt>Status</dt><dd>Disetujui Guru BK</dd></div></dl></section><section class="panel"><p class="eyebrow">KRONOLOGI</p><h3>Detail catatan</h3><p class="record-copy">{{ $record->keterangan }}</p>@if($record->bukti_foto)<a class="button outline" href="{{ asset('storage/'.$record->bukti_foto) }}" target="_blank" rel="noopener">Lihat bukti</a>@endif</section></div>
+</x-layouts.app>
