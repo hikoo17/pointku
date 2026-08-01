@@ -13,9 +13,11 @@ return new class extends Migration
             $table->foreignId('siswa_id')->constrained('siswa')->cascadeOnDelete();
             $table->foreignId('kategori_poin_id')->constrained('kategori_poin')->cascadeOnDelete();
             $table->foreignId('pencatat_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('guru_id')->nullable()->constrained('users')->nullOnDelete();
             $table->date('tanggal');
             $table->text('keterangan');
             $table->string('bukti_foto')->nullable();
+            $table->enum('status_validasi', ['draft', 'menunggu_validasi', 'disetujui', 'ditolak'])->default('disetujui');
             $table->timestamps();
         });
     }
