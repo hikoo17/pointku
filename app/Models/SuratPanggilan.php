@@ -20,10 +20,14 @@ class SuratPanggilan extends Model
         'tindakan_direkomendasikan',
         'status',
         'catatan',
+        'dibuat_oleh', 'diajukan_oleh', 'disetujui_oleh', 'diajukan_pada',
+        'disetujui_pada', 'dicetak_pada', 'dikirim_pada', 'selesai_pada', 'catatan_revisi',
     ];
 
     protected $casts = [
         'tanggal_surat' => 'date',
+        'diajukan_pada' => 'datetime', 'disetujui_pada' => 'datetime', 'dicetak_pada' => 'datetime',
+        'dikirim_pada' => 'datetime', 'selesai_pada' => 'datetime',
     ];
 
     public function siswa()
@@ -39,5 +43,10 @@ class SuratPanggilan extends Model
     public function aturanThreshold()
     {
         return $this->belongsTo(AturanThreshold::class);
+    }
+
+    public function histories()
+    {
+        return $this->hasMany(SuratPanggilanHistory::class)->latest();
     }
 }

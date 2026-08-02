@@ -7,9 +7,12 @@
         .header { text-align: center; margin-bottom: 30px; }
         .content { margin-bottom: 20px; }
         .signature { margin-top: 50px; }
+        .print-button { position: fixed; top: 16px; right: 16px; border: 0; border-radius: 8px; padding: 10px 16px; background: #6d1a1a; color: white; font-weight: bold; cursor: pointer; }
+        @media print { .print-button { display: none; } body { margin: 0; } }
     </style>
 </head>
 <body>
+    <button class="print-button" type="button" onclick="window.print()">Cetak surat</button>
     <div class="header">
         <h2>SURAT PANGGILAN ORANG TUA/WALI</h2>
         <p>Nomor: {{ $surat->nomor_surat }}</p>

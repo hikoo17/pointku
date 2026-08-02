@@ -15,7 +15,7 @@ class NotifikasiController extends Controller
         if ($request->user()->role->nama_role === 'Siswa') {
             $siswa = $request->user()->siswa;
             $query->where('siswa_id', $siswa->id);
-        } elseif (in_array($request->user()->role->nama_role, ['Wali Kelas', 'Guru BK'], true)) {
+        } elseif ($request->user()->hasRole('Wali Kelas')) {
             $query->whereHas('siswa', function ($siswaQuery) use ($request) {
                 if ($request->user()->role->nama_role === 'Wali Kelas') {
                     $siswaQuery->where('kelas_id', $request->user()->kelas?->id);
@@ -77,6 +77,10 @@ class NotifikasiController extends Controller
 
         if ($user->role->nama_role === 'Wali Kelas') {
             return $query->whereHas('siswa', fn ($siswaQuery) => $siswaQuery->where('kelas_id', $user->kelas?->id));
+        }
+
+        if ($user->role->nama_role === 'Guru BK') {
+            return $query->whereHas('siswa');
         }
 
         return $query;

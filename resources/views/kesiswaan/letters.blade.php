@@ -1,5 +1,5 @@
 @php($title='Surat Panggilan')
-@php($navigation=[['kesiswaan.dashboard','Ringkasan','dashboard'],['kesiswaan.reports','Laporan masuk','file'],['kesiswaan.statistics','Statistik sekolah','chart'],['kesiswaan.letters','Surat panggilan','letter']])
+@php($navigation=[['kesiswaan.dashboard','Statistik sekolah','dashboard'],['kesiswaan.reports','Laporan masuk','file'],['kesiswaan.letters','Surat panggilan','letter']])
 
 <x-layouts.app :title="$title" :navigation="$navigation">
     <x-dashboard
@@ -23,7 +23,7 @@
                 <tbody>
                     @forelse($letters as $letter)
                         <tr>
-                            <td class="px-[1.5rem] py-[1rem] text-[.75rem] font-bold text-[#4a1c1c] border-t border-[#fff3e0]"><strong>{{ $letter->nomor_surat }}</strong></td>
+                            <td class="px-[1.5rem] py-[1rem] text-[.75rem] font-bold text-[#4a1c1c] border-t border-[#fff3e0]"><a class="hover:underline" href="{{ route('kesiswaan.letters.show',$letter) }}"><strong>{{ $letter->nomor_surat ?? 'Draf #'.$letter->id }}</strong></a></td>
                             <td class="px-[1.5rem] py-[1rem] border-t border-[#fff3e0]">
                                 <div class="flex items-center gap-[.7rem]">
                                     <span class="grid h-[31px] w-[31px] place-items-center rounded-[9px] bg-[#6d1a1a] font-[850] text-white">{{ substr($letter->siswa->user->nama_lengkap,0,1) }}</span>

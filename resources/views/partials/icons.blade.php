@@ -1,6 +1,6 @@
 <?php
 /**
- * Icon sprite for POINKU.
+ * Icon sprite for POINTKU.
  *
  * Use with: <svg><use href="#icon-{name}"></use></svg>
  */

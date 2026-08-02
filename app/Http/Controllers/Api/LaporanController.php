@@ -51,14 +51,18 @@ class LaporanController extends Controller
 
     public function show($id)
     {
-        $laporan = LaporanKesiswaan::with(['siswa.user', 'bk', 'kesiswaan', 'approvalLaporan.approver', 'suratPanggilan'])->findOrFail($id);
+        $laporan = $this->ownedQuery(request())->with(['siswa.user', 'bk', 'kesiswaan', 'approvalLaporan.approver', 'suratPanggilan'])->findOrFail($id);
 
         return response()->json($laporan, 200);
     }
 
     public function update(Request $request, $id)
     {
-        $laporan = LaporanKesiswaan::findOrFail($id);
+        $laporan = $this->ownedQuery($request)->findOrFail($id);
+
+        if ($request->user()->hasRole('Guru BK') && $laporan->status !== 'pending') {
+            return response()->json(['message' => 'Laporan yang sudah diproses tidak dapat diubah.'], 403);
+        }
 
         $request->validate([
             'siswa_id' => 'sometimes|exists:siswa,id',
@@ -81,7 +85,11 @@ class LaporanController extends Controller
 
     public function destroy($id)
     {
-        $laporan = LaporanKesiswaan::findOrFail($id);
+        $laporan = $this->ownedQuery($request)->findOrFail($id);
+
+        if ($laporan->status !== 'pending') {
+            return response()->json(['message' => 'Laporan ini sudah diproses.'], 422);
+        }
         $laporan->delete();
 
         return response()->json(['message' => 'Laporan deleted'], 200);
@@ -111,5 +119,16 @@ class LaporanController extends Controller
         $laporan->load(['siswa.user', 'bk', 'kesiswaan', 'approvalLaporan.approver']);
 
         return response()->json($laporan, 200);
+    }
+
+    private function ownedQuery(Request $request)
+    {
+        $query = LaporanKesiswaan::query();
+
+        if ($request->user()->hasRole('Guru BK')) {
+            $query->where('bk_id', $request->user()->id);
+        }
+
+        return $query;
     }
 }

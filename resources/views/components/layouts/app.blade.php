@@ -5,7 +5,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title }} | POINKU</title>
+    <title>{{ $title }} | POINTKU</title>
+    <link rel="icon" href="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" type="image/png">
+    <link rel="shortcut icon" href="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" type="image/png">
     @vite('resources/css/app.css')
 </head>
     <body class="m-0 bg-white font-sans text-[#4a1c1c] antialiased">
@@ -17,8 +19,8 @@
                 <a class="flex items-center gap-3 px-2 py-0.5" href="{{ route('dashboard') }}">
                     <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="block h-[36px] w-auto">
                     <span>
-                        <strong>POINKU</strong>
-                        <small>student care system</small>
+                        <strong class="text-[1.1rem] font-bold">POINTKU</strong>
+                        <small class="block text-[.65rem] text-[#e6b98a]">student care system</small>
                     </span>
                 </a>
             </div>
@@ -72,7 +74,7 @@
                         </svg>
                     </button>
                     <div>
-                        <span>POINKU / </span>
+                        <span>POINTKU / </span>
                         <strong>{{ $title }}</strong>
                     </div>
                 </div>

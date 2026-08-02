@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\ApprovalLaporan;
 use App\Models\CatatanPoin;
 use App\Models\KategoriPoin;
+use App\Models\Kelas;
 use App\Models\LaporanKesiswaan;
 use App\Models\Notifikasi;
 use App\Models\Siswa;
 use App\Models\SuratPanggilan;
+use App\Services\SuratPanggilanWorkflowService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -28,10 +30,12 @@ class DashboardController extends Controller
 
     public function kesiswaan()
     {
+        $classes = DB::table('kelas')->leftJoin('siswa', 'kelas.id', '=', 'siswa.kelas_id')->select('kelas.id', 'kelas.nama_kelas', DB::raw('COUNT(siswa.id) as total_siswa'), DB::raw('COALESCE(SUM(siswa.total_poin_pelanggaran), 0) as pelanggaran'), DB::raw('COALESCE(SUM(siswa.total_poin_apresiasi), 0) as apresiasi'))->groupBy('kelas.id', 'kelas.nama_kelas')->get();
         return view('dashboards.kesiswaan', [
             'stats' => $this->schoolStats(),
             'reports' => LaporanKesiswaan::with(['siswa.user', 'bk'])->latest('diajukan_pada')->limit(6)->get(),
             'students' => Siswa::with(['user', 'kelas'])->where('total_poin_pelanggaran', '>=', 25)->orderByDesc('total_poin_pelanggaran')->limit(6)->get(),
+            'classes' => $classes,
         ]);
     }
 
@@ -158,8 +162,12 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function teacherRecord(CatatanPoin $catatan)
+    public function teacherRecord(Request $request, CatatanPoin $catatan)
     {
+        if ($request->user()->hasRole('Guru Pelapor')) {
+            abort_unless($catatan->pencatat_id === $request->user()->id, 404);
+        }
+
         $catatan->load(['kategoriPoin', 'pencatat', 'siswa.user']);
         return view('guru.record', ['record' => $catatan]);
     }
@@ -230,10 +238,17 @@ class DashboardController extends Controller
         return back()->with('success', 'Keputusan laporan berhasil disimpan.');
     }
 
-    public function statistics()
+    public function classDetail(Kelas $kelas)
     {
-        $classes = DB::table('kelas')->leftJoin('siswa', 'kelas.id', '=', 'siswa.kelas_id')->select('kelas.nama_kelas', DB::raw('COUNT(siswa.id) as total_siswa'), DB::raw('COALESCE(SUM(siswa.total_poin_pelanggaran), 0) as pelanggaran'), DB::raw('COALESCE(SUM(siswa.total_poin_apresiasi), 0) as apresiasi'))->groupBy('kelas.id', 'kelas.nama_kelas')->get();
-        return view('kesiswaan.statistics', ['stats' => $this->schoolStats(), 'classes' => $classes]);
+        $students = $kelas->siswa()->with('user')->orderByDesc('total_poin_pelanggaran')->get();
+        return view('kesiswaan.class', compact('kelas', 'students') + [
+            'summary' => [
+                'students' => $students->count(),
+                'violations' => $students->sum('total_poin_pelanggaran'),
+                'appreciations' => $students->sum('total_poin_apresiasi'),
+                'attention' => $students->where('total_poin_pelanggaran', '>=', 25)->count(),
+            ],
+        ]);
     }
 
     public function letters()
@@ -248,6 +263,40 @@ class DashboardController extends Controller
             'letters' => SuratPanggilan::with(['siswa.user', 'aturanThreshold', 'laporanKesiswaan'])
                 ->latest()->paginate(15),
         ]);
+    }
+
+    public function letter(Request $request, SuratPanggilan $surat)
+    {
+        abort_unless($request->user()->hasAnyRole(['Guru BK', 'Kesiswaan']), 403);
+        $surat->load(['siswa.user', 'siswa.kelas', 'aturanThreshold', 'laporanKesiswaan', 'histories.user']);
+        return view('letters.show', compact('surat'));
+    }
+
+    public function updateLetter(Request $request, SuratPanggilan $surat)
+    {
+        abort_unless($request->user()->hasRole('Guru BK'), 403);
+        abort_unless(in_array($surat->status, ['draft', 'perlu_revisi'], true), 422, 'Surat tidak dapat diedit pada status ini.');
+        $data = $request->validate([
+            'tanggal_surat' => ['required', 'date'], 'alasan_pemanggilan' => ['required', 'string', 'max:3000'],
+            'daftar_kejadian' => ['nullable', 'string', 'max:10000'], 'tindakan_direkomendasikan' => ['required', 'string', 'max:2000'],
+            'catatan' => ['nullable', 'string', 'max:3000'],
+        ]);
+        $surat->update($data);
+        return back()->with('success', 'Draf surat berhasil diperbarui.');
+    }
+
+    public function transitionLetter(Request $request, SuratPanggilan $surat, SuratPanggilanWorkflowService $workflow)
+    {
+        $data = $request->validate(['status' => ['required', 'string'], 'catatan' => ['nullable', 'string', 'max:3000']]);
+        $workflow->transition($surat, $data['status'], $request->user(), $data['catatan'] ?? null);
+        return back()->with('success', 'Status surat berhasil diperbarui.');
+    }
+
+    public function printLetter(Request $request, SuratPanggilan $surat)
+    {
+        abort_unless($request->user()->hasAnyRole(['Guru BK', 'Kesiswaan']), 403);
+        abort_unless(in_array($surat->status, ['disetujui', 'dicetak', 'dikirim', 'selesai'], true), 422, 'Surat belum disetujui.');
+        return view('pdf.surat-panggilan', ['surat' => $surat->load(['siswa.user', 'siswa.kelas'])]);
     }
 
     private function schoolStats(): array

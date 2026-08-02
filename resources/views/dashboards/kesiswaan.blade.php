@@ -1,5 +1,5 @@
 @php($title='Dashboard Kesiswaan')
-@php($navigation=[['kesiswaan.dashboard','Ringkasan','dashboard'],['kesiswaan.reports','Laporan masuk','file'],['kesiswaan.statistics','Statistik sekolah','chart'],['kesiswaan.letters','Surat panggilan','letter']])
+@php($navigation=[['kesiswaan.dashboard','Statistik sekolah','dashboard'],['kesiswaan.reports','Laporan masuk','file'],['kesiswaan.letters','Surat panggilan','letter']])
 
 <x-layouts.app :title="$title" :navigation="$navigation">
     <x-dashboard
@@ -69,7 +69,7 @@
             </div>
 
             @forelse($students as $student)
-                <a class="mx-6 flex items-center gap-[.8rem] border-b border-[#fce4c4] py-4" href="{{ route('kesiswaan.statistics') }}">
+                <a class="mx-6 flex items-center gap-[.8rem] border-b border-[#fce4c4] py-4" href="{{ route('kesiswaan.dashboard') }}">
                     <span class="inline-block h-[10px] w-[10px] rounded-full bg-[#b71c1c]"></span>
                     <div>
                         <strong class="block text-[.74rem]">{{ $student->user->nama_lengkap }}</strong>
@@ -81,4 +81,43 @@
             @endforelse
         </section>
     </div>
+
+    <section class="mt-[1.2rem] overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white shadow-[0_5px_20px_rgba(74,28,28,.025)]">
+        <div class="flex items-center justify-between gap-4 border-b border-[#fce4c4] p-[1.1rem] min-[461px]:px-6 min-[461px]:py-[1.35rem]">
+            <div>
+                <p class="mb-[.65rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">KELAS</p>
+                <h3 class="mb-[.25rem] text-[1.08rem] font-bold tracking-[-.025em]">Ringkasan kelas</h3>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse border-separate min-w-[760px]">
+                <thead>
+                    <tr>
+                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Kelas</th>
+                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Siswa</th>
+                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Pelanggaran</th>
+                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Apresiasi</th>
+                        <th class="px-[1.5rem] py-[.75rem] text-center text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($classes as $class)
+                        <tr class="transition-colors hover:bg-[#fffdf5]">
+                            <td class="px-[1.5rem] py-[1rem] text-[.75rem] font-bold text-[#4a1c1c] border-t border-[#fff3e0]"><strong>{{ $class->nama_kelas }}</strong></td>
+                            <td class="px-[1.5rem] py-[1rem] text-[.72rem] text-[#5d4037] border-t border-[#fff3e0]">{{ $class->total_siswa }}</td>
+                            <td class="px-[1.5rem] py-[1rem] text-[.72rem] text-[#c62828] border-t border-[#fff3e0]">{{ $class->pelanggaran }}</td>
+                            <td class="px-[1.5rem] py-[1rem] text-[.72rem] text-[#5d4037] border-t border-[#fff3e0]">+{{ $class->apresiasi }}</td>
+                            <td class="px-[1.5rem] py-[1rem] text-center border-t border-[#fff3e0]">
+                                <a class="inline-flex justify-center items-center gap-[.55rem] min-h-[42px] rounded-[10px] border border-[#fce4c4] bg-white px-[1rem] py-[.72rem] text-[.8rem] font-[750] text-[#5d4037] shadow-[0_5px_18px_rgba(74,28,28,.03)] transition hover:bg-[#fff8e1]" href="{{ route('kesiswaan.classes.show', $class->id) }}">
+                                    Detail
+                                    <svg class="h-3.5 w-3.5"><use href="#icon-arrow-right"></use></svg>
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </section>
 </x-layouts.app>

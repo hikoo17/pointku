@@ -12,7 +12,7 @@ class CatatanPoinController extends Controller
 {
     public function index(Request $request)
     {
-        $query = CatatanPoin::with(['siswa.user', 'kategoriPoin', 'pencatat']);
+        $query = $this->ownedQuery($request)->with(['siswa.user', 'kategoriPoin', 'pencatat']);
 
         if ($request->filled('kelas_id')) {
             $query->whereHas('siswa', fn ($q) => $q->where('kelas_id', $request->kelas_id));
@@ -69,14 +69,18 @@ class CatatanPoinController extends Controller
 
     public function show($id)
     {
-        $catatan = CatatanPoin::with(['siswa.user', 'kategoriPoin', 'pencatat'])->findOrFail($id);
+        $catatan = $this->ownedQuery(request())->with(['siswa.user', 'kategoriPoin', 'pencatat'])->findOrFail($id);
 
         return response()->json($catatan, 200);
     }
 
     public function update(Request $request, $id)
     {
-        $catatan = CatatanPoin::findOrFail($id);
+        $catatan = $this->ownedQuery($request)->findOrFail($id);
+
+        if ($request->user()->hasRole('Guru Pelapor') && $catatan->status_validasi !== 'menunggu_validasi') {
+            return response()->json(['message' => 'Catatan yang sudah diproses tidak dapat diubah.'], 403);
+        }
 
         $request->validate([
             'kategori_poin_id' => 'sometimes|exists:kategori_poin,id',
@@ -92,6 +96,10 @@ class CatatanPoinController extends Controller
             'keterangan', 'status_validasi',
         ]);
 
+        if ($request->user()->hasRole('Guru Pelapor')) {
+            unset($data['status_validasi']);
+        }
+
         if ($request->hasFile('bukti_foto')) {
             $data['bukti_foto'] = $request->file('bukti_foto')->store('bukti-poin', 'public');
         }
@@ -104,7 +112,13 @@ class CatatanPoinController extends Controller
 
     public function destroy($id)
     {
-        $catatan = CatatanPoin::findOrFail($id);
+        $request = request();
+        $catatan = $this->ownedQuery($request)->findOrFail($id);
+
+        if ($catatan->status_validasi === 'disetujui') {
+            return response()->json(['message' => 'Catatan yang sudah disetujui tidak dapat dihapus.'], 403);
+        }
+
         $catatan->delete();
 
         return response()->json(['message' => 'Catatan poin deleted successfully'], 200);
@@ -130,5 +144,16 @@ class CatatanPoinController extends Controller
         $siswa = $query->paginate($limit);
 
         return response()->json($siswa, 200);
+    }
+
+    private function ownedQuery(Request $request)
+    {
+        $query = CatatanPoin::query();
+
+        if ($request->user()->hasRole('Guru Pelapor')) {
+            $query->where('pencatat_id', $request->user()->id);
+        }
+
+        return $query;
     }
 }

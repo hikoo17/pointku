@@ -28,13 +28,20 @@ class RekapController extends Controller
 
     public function riwayat(Request $request, $siswa_id = null)
     {
-        $query = CatatanPoin::with(['kategoriPoin']);
+        $query = CatatanPoin::with(['kategoriPoin'])->where('status_validasi', 'disetujui');
 
         if ($request->user()->role->nama_role === 'Siswa') {
             $siswa = $request->user()->siswa;
             $query->where('siswa_id', $siswa->id);
         } elseif ($siswa_id || $request->filled('siswa_id')) {
-            $query->where('siswa_id', $siswa_id ?: $request->siswa_id);
+            $requestedSiswaId = $siswa_id ?: $request->siswa_id;
+
+            if ($request->user()->hasRole('Wali Kelas')) {
+                $query->where('siswa_id', $requestedSiswaId)
+                    ->whereHas('siswa', fn ($q) => $q->where('kelas_id', $request->user()->kelas?->id));
+            } else {
+                $query->where('siswa_id', $requestedSiswaId);
+            }
         }
 
         if ($request->filled('jenis')) {

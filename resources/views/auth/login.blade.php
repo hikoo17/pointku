@@ -3,7 +3,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Masuk | POINKU</title>
+    <title>Masuk | POINTKU</title>
+    <link rel="icon" href="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" type="image/png">
+    <link rel="shortcut icon" href="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" type="image/png">
     @vite('resources/css/app.css')
 </head>
 <body>
@@ -13,8 +15,8 @@
                 <a class="flex items-center gap-[.8rem]" href="/">
                     <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="block h-[38px] w-auto">
                     <span>
-                        <strong class="block tracking-[.12em]">POINKU</strong>
-                        <small class="mt-[.15rem] block text-[.65rem] text-[#e6b98a]">student care system</small>
+                        <strong class="block text-[1.15rem] font-bold tracking-[.03em]">POINTKU</strong>
+                        <small class="mt-[.2rem] block text-[.65rem] text-[#e6b98a]">student care system</small>
                     </span>
                 </a>
                 <span class="rounded-[99px] border border-white/[.12] px-[.85rem] py-[.55rem] text-[.68rem] uppercase tracking-[.12em] text-[#ffccbc]">Sistem Kesiswaan</span>
@@ -48,7 +50,7 @@
             <div class="w-full max-w-[420px]">
                 <div class="mb-6 flex items-center gap-[.8rem] border-b border-[#fce4c4] pb-4 min-[761px]:hidden">
                     <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="block h-[38px] w-auto">
-                    <div><strong class="block text-[1.1rem] tracking-[.1em] text-[#6d1a1a]">POINKU</strong><small class="mt-1 block text-[.65rem] text-[#8c6d6d]">Student Care System</small>
+                    <div><strong class="block text-[1.1rem] font-bold tracking-[.03em] text-[#6d1a1a]">POINTKU</strong><small class="mt-1 block text-[.65rem] text-[#8c6d6d]">Student Care System</small>
                     </div>
                 </div>
 

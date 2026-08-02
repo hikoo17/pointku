@@ -37,7 +37,7 @@ class ThresholdAlertService
                 $this->createNotification($siswa, $catatan, $threshold, $totals['pelanggaran']);
 
                 if ($threshold->has_surat_panggilan) {
-                    $this->createDraftLetter($siswa, $threshold, $totals['pelanggaran']);
+                    $this->createDraftLetter($siswa, $catatan, $threshold, $totals['pelanggaran']);
                 }
             }
         });
@@ -81,7 +81,7 @@ class ThresholdAlertService
         );
     }
 
-    private function createDraftLetter(Siswa $siswa, AturanThreshold $threshold, int $totalPoin): void
+    private function createDraftLetter(Siswa $siswa, CatatanPoin $catatan, AturanThreshold $threshold, int $totalPoin): void
     {
         SuratPanggilan::firstOrCreate(
             [
@@ -89,7 +89,7 @@ class ThresholdAlertService
                 'aturan_threshold_id' => $threshold->id,
             ],
             [
-                'nomor_surat' => $this->generateLetterNumber($siswa, $threshold),
+                'nomor_surat' => null,
                 'tanggal_surat' => now()->toDateString(),
                 'alasan_pemanggilan' => $threshold->deskripsi,
                 'daftar_kejadian' => $this->getViolationSummary($siswa->id),
@@ -99,17 +99,8 @@ class ThresholdAlertService
                 'catatan' => $threshold->template_surat
                     ? 'Template: '.$threshold->template_surat
                     : 'Dibuat otomatis oleh sistem threshold.',
+                'dibuat_oleh' => $catatan->pencatat_id,
             ]
-        );
-    }
-
-    private function generateLetterNumber(Siswa $siswa, AturanThreshold $threshold): string
-    {
-        return sprintf(
-            'AUTO/%s/S%06d/T%03d',
-            now()->format('Ym'),
-            $siswa->id,
-            $threshold->id
         );
     }
 

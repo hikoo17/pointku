@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Siswa;
 use App\Models\SuratPanggilan;
+use App\Services\SuratPanggilanWorkflowService;
 use Illuminate\Http\Request;
 
 class SuratController extends Controller
@@ -40,20 +41,18 @@ class SuratController extends Controller
             'tanggal_surat' => 'required|date',
         ]);
 
-        $siswa = Siswa::findOrFail($request->siswa_id);
-        $nomorSurat = 'SP-'.now()->format('Y').'-'.str_pad($siswa->id, 4, '0', STR_PAD_LEFT).'-'.uniqid();
-
         $surat = SuratPanggilan::create([
             'siswa_id' => $request->siswa_id,
             'laporan_kesiswaan_id' => $request->laporan_kesiswaan_id,
             'aturan_threshold_id' => $request->aturan_threshold_id,
-            'nomor_surat' => $nomorSurat,
+            'nomor_surat' => null,
             'tanggal_surat' => $request->tanggal_surat,
             'alasan_pemanggilan' => $request->alasan_pemanggilan,
             'daftar_kejadian' => $request->daftar_kejadian,
             'total_poin' => $request->total_poin,
             'tindakan_direkomendasikan' => $request->tindakan_direkomendasikan,
             'status' => 'draft',
+            'dibuat_oleh' => $request->user()->id,
         ]);
 
         $surat->load(['siswa.user', 'aturanThreshold']);
@@ -63,28 +62,29 @@ class SuratController extends Controller
 
     public function show($id)
     {
-        $surat = SuratPanggilan::with(['siswa.user', 'aturanThreshold', 'laporanKesiswaan'])->findOrFail($id);
+        $surat = $this->ownedQuery(request())->with(['siswa.user', 'aturanThreshold', 'laporanKesiswaan', 'histories.user'])->findOrFail($id);
 
         return response()->json($surat, 200);
     }
 
-    public function updateStatus(Request $request, $id)
+    public function updateStatus(Request $request, $id, SuratPanggilanWorkflowService $workflow)
     {
         $request->validate([
-            'status' => 'required|in:draft,disetujui,dicetak,dikirim,selesai',
+            'status' => 'required|in:diajukan,perlu_revisi,disetujui,dicetak,dikirim,selesai,dibatalkan',
+            'catatan' => 'nullable|string|max:3000',
         ]);
 
-        $surat = SuratPanggilan::findOrFail($id);
-        $surat->update(['status' => $request->status]);
-
-        $surat->load(['siswa.user', 'aturanThreshold']);
+        $surat = $this->ownedQuery($request)->findOrFail($id);
+        $surat = $workflow->transition($surat, $request->status, $request->user(), $request->catatan);
 
         return response()->json($surat, 200);
     }
 
     public function destroy($id)
     {
+        abort_unless(request()->user()->hasRole('Kesiswaan'), 403);
         $surat = SuratPanggilan::findOrFail($id);
+        abort_unless(in_array($surat->status, ['draft', 'dibatalkan'], true), 422, 'Surat aktif tidak dapat dihapus.');
         $surat->delete();
 
         return response()->json(['message' => 'Surat panggilan deleted'], 200);
@@ -100,5 +100,20 @@ class SuratController extends Controller
             'surat' => $surat,
             'pdf_content' => base64_encode($pdfContent),
         ], 200);
+    }
+
+    private function ownedQuery(Request $request)
+    {
+        $query = SuratPanggilan::query();
+
+        if ($request->user()->hasRole('Guru BK')) {
+            $query->where(function ($q) use ($request) {
+                $q->whereHas('laporanKesiswaan', fn ($report) => $report->where('bk_id', $request->user()->id))
+                    ->orWhere('dibuat_oleh', $request->user()->id)
+                    ->orWhereIn('status', ['disetujui', 'dicetak', 'dikirim', 'selesai']);
+            });
+        }
+
+        return $query;
     }
 }

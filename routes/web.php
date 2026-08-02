@@ -17,8 +17,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'kesiswaan'])->name('dashboard');
         Route::get('/laporan', [DashboardController::class, 'reports'])->name('reports');
         Route::post('/laporan/{laporan}/approval', [DashboardController::class, 'approval'])->name('reports.approval');
-        Route::get('/statistik', [DashboardController::class, 'statistics'])->name('statistics');
+        Route::get('/kelas/{kelas}', [DashboardController::class, 'classDetail'])->name('classes.show');
         Route::get('/surat-panggilan', [DashboardController::class, 'letters'])->name('letters');
+        Route::get('/surat-panggilan/{surat}', [DashboardController::class, 'letter'])->name('letters.show');
+        Route::post('/surat-panggilan/{surat}/transisi', [DashboardController::class, 'transitionLetter'])->name('letters.transition');
+        Route::get('/surat-panggilan/{surat}/cetak', [DashboardController::class, 'printLetter'])->name('letters.print');
     });
 
     Route::middleware('role:Guru BK,Guru Pelapor')->prefix('guru')->name('guru.')->group(function () {
@@ -31,6 +34,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan', [DashboardController::class, 'teacherReports'])->name('reports');
         Route::post('/laporan', [DashboardController::class, 'storeReport'])->name('reports.store');
         Route::get('/surat-panggilan', [DashboardController::class, 'teacherLetters'])->name('letters');
+        Route::get('/surat-panggilan/{surat}', [DashboardController::class, 'letter'])->name('letters.show');
+        Route::put('/surat-panggilan/{surat}', [DashboardController::class, 'updateLetter'])->name('letters.update');
+        Route::post('/surat-panggilan/{surat}/transisi', [DashboardController::class, 'transitionLetter'])->name('letters.transition');
+        Route::get('/surat-panggilan/{surat}/cetak', [DashboardController::class, 'printLetter'])->name('letters.print');
     });
 
     Route::middleware('role:Wali Kelas')->prefix('wali-kelas')->name('wali-kelas.')->group(function () {

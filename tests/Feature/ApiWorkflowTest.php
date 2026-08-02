@@ -9,6 +9,8 @@ use App\Models\Kelas;
 use App\Models\Role;
 use App\Models\Siswa;
 use App\Models\User;
+use App\Models\SuratPanggilan;
+use App\Services\SuratPanggilanWorkflowService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -153,6 +155,102 @@ class ApiWorkflowTest extends TestCase
 
         $this->assertDatabaseCount('notifikasi', 2);
         $this->assertDatabaseCount('surat_panggilan', 1);
+    }
+
+    public function test_reporter_cannot_access_or_delete_another_reporters_record(): void
+    {
+        [$siswa, $owner] = $this->createStudentAndRecorder();
+        $reporterRole = Role::create(['nama_role' => 'Guru Pelapor']);
+        $otherReporter = User::create([
+            'username' => 'reporter.lain',
+            'nama_lengkap' => 'Reporter Lain',
+            'role_id' => $reporterRole->id,
+            'password' => 'rahasia123',
+        ]);
+        $kategori = KategoriPoin::create([
+            'jenis' => 'pelanggaran',
+            'nama_kategori' => 'Terlambat',
+            'bobot_poin' => 5,
+            'tingkat' => 'ringan',
+        ]);
+        $catatan = CatatanPoin::create([
+            'siswa_id' => $siswa->id,
+            'kategori_poin_id' => $kategori->id,
+            'pencatat_id' => $owner->id,
+            'tanggal' => now()->toDateString(),
+            'keterangan' => 'Catatan milik guru lain',
+            'status_validasi' => 'menunggu_validasi',
+        ]);
+
+        $this->actingAs($otherReporter, 'sanctum')
+            ->getJson('/api/catatan-poin/'.$catatan->id)
+            ->assertNotFound();
+
+        $this->actingAs($otherReporter, 'sanctum')
+            ->deleteJson('/api/catatan-poin/'.$catatan->id)
+            ->assertNotFound();
+    }
+
+    public function test_student_history_api_excludes_unapproved_records(): void
+    {
+        [$siswa, $pencatat] = $this->createStudentAndRecorder();
+        $kategori = KategoriPoin::create([
+            'jenis' => 'pelanggaran',
+            'nama_kategori' => 'Terlambat',
+            'bobot_poin' => 5,
+            'tingkat' => 'ringan',
+        ]);
+        $student = $siswa->user;
+        CatatanPoin::create([
+            'siswa_id' => $siswa->id,
+            'kategori_poin_id' => $kategori->id,
+            'pencatat_id' => $pencatat->id,
+            'tanggal' => now()->toDateString(),
+            'keterangan' => 'Belum disetujui',
+            'status_validasi' => 'menunggu_validasi',
+        ]);
+
+        $this->actingAs($student, 'sanctum')
+            ->getJson('/api/siswa/riwayat')
+            ->assertOk()
+            ->assertJsonPath('total', 0);
+    }
+
+    public function test_letter_workflow_requires_valid_transition_and_records_history(): void
+    {
+        [$siswa, $guru] = $this->createStudentAndRecorder();
+        $kesiswaanRole = Role::create(['nama_role' => 'Kesiswaan']);
+        $kesiswaan = User::create([
+            'username' => 'kesiswaan', 'nama_lengkap' => 'Kesiswaan', 'role_id' => $kesiswaanRole->id,
+            'password' => 'rahasia123',
+        ]);
+        $threshold = AturanThreshold::create([
+            'poin_batas' => 25, 'level' => 'sedang', 'judul_notifikasi' => 'Panggilan',
+            'deskripsi' => 'Perlu tindak lanjut', 'has_surat_panggilan' => true, 'is_active' => true,
+        ]);
+        $surat = SuratPanggilan::create([
+            'siswa_id' => $siswa->id, 'aturan_threshold_id' => $threshold->id,
+            'tanggal_surat' => now()->toDateString(), 'alasan_pemanggilan' => 'Pelanggaran',
+            'total_poin' => 25, 'tindakan_direkomendasikan' => 'Panggilan orang tua', 'status' => 'draft',
+            'dibuat_oleh' => $guru->id,
+        ]);
+
+        $service = app(SuratPanggilanWorkflowService::class);
+        $service->transition($surat, 'diajukan', $guru);
+        $surat = $service->transition($surat->fresh(), 'disetujui', $kesiswaan);
+
+        $this->assertSame('disetujui', $surat->status);
+        $this->assertNotNull($surat->nomor_surat);
+        $surat = $service->transition($surat, 'dicetak', $kesiswaan);
+        $surat = $service->transition($surat, 'dikirim', $kesiswaan);
+        $surat = $service->transition($surat, 'selesai', $kesiswaan);
+        $this->assertSame('selesai', $surat->status);
+        $this->assertNotNull($surat->dicetak_pada);
+        $this->assertNotNull($surat->dikirim_pada);
+        $this->assertNotNull($surat->selesai_pada);
+        $this->assertDatabaseCount('surat_panggilan_histories', 5);
+        $this->expectException(\Illuminate\Validation\ValidationException::class);
+        $service->transition($surat, 'dikirim', $kesiswaan);
     }
 
     private function createApprovedViolation(

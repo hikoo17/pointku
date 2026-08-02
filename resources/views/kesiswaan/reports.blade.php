@@ -1,5 +1,5 @@
 @php($title='Laporan Masuk')
-@php($navigation=[['kesiswaan.dashboard','Ringkasan','dashboard'],['kesiswaan.reports','Laporan masuk','file'],['kesiswaan.statistics','Statistik sekolah','chart'],['kesiswaan.letters','Surat panggilan','letter']])
+@php($navigation=[['kesiswaan.dashboard','Statistik sekolah','dashboard'],['kesiswaan.reports','Laporan masuk','file'],['kesiswaan.letters','Surat panggilan','letter']])
 
 <x-layouts.app :title="$title" :navigation="$navigation">
     <x-dashboard

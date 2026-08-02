@@ -36,7 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Siswa routes
     Route::middleware('role:Siswa')->group(function () {
         Route::get('/siswa/rekap', [RekapController::class, 'siswa']);
-        Route::get('/siswa/riwayat', [RekapController::class, 'riwayat']);
     });
 
     // Kesiswaan routes
@@ -61,8 +60,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Guru BK routes
     Route::middleware('role:Guru BK')->group(function () {
-        Route::get('/siswa/riwayat', [RekapController::class, 'riwayat']);
-
         Route::get('/laporan', [LaporanController::class, 'index']);
         Route::post('/laporan', [LaporanController::class, 'store']);
         Route::get('/laporan/{id}', [LaporanController::class, 'show']);
@@ -75,6 +72,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/surat-panggilan/{id}/status', [SuratController::class, 'updateStatus']);
         Route::get('/surat-panggilan/{id}/export', [SuratController::class, 'exportPdf']);
     });
+
+    Route::middleware('role:Siswa,Guru BK')->get('/siswa/riwayat', [RekapController::class, 'riwayat']);
 
     // Shared routes for all authenticated users
     Route::get('/notifikasi', [NotifikasiController::class, 'index']);
