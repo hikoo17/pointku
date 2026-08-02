@@ -46,6 +46,7 @@ class DashboardController extends Controller
             'pendingCount' => CatatanPoin::where('status_validasi', 'menunggu_validasi')->count(),
             'studentCount' => Siswa::count(),
             'reportCount' => LaporanKesiswaan::where('bk_id', $request->user()->id)->where('status', 'pending')->count(),
+            'letterCount' => SuratPanggilan::count(),
         ]);
     }
 
@@ -155,6 +156,12 @@ class DashboardController extends Controller
             'students' => Siswa::with(['user', 'kelas'])->orderBy('nisn')->get(),
             'categories' => KategoriPoin::orderBy('jenis')->orderBy('bobot_poin')->get(),
         ]);
+    }
+
+    public function teacherRecord(CatatanPoin $catatan)
+    {
+        $catatan->load(['kategoriPoin', 'pencatat', 'siswa.user']);
+        return view('guru.record', ['record' => $catatan]);
     }
 
     public function validateRecord(Request $request, CatatanPoin $catatan)

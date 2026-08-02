@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:Guru BK,Guru Pelapor')->prefix('guru')->name('guru.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'teacher'])->name('dashboard');
         Route::get('/catatan-poin', [DashboardController::class, 'records'])->name('records');
+        Route::get('/catatan-poin/{catatan}', [DashboardController::class, 'teacherRecord'])->name('records.show');
         Route::post('/catatan-poin', [DashboardController::class, 'storeRecord'])->name('records.store');
         Route::post('/catatan-poin/{catatan}/validasi', [DashboardController::class, 'validateRecord'])->name('records.validate');
         Route::get('/rekap-siswa', [DashboardController::class, 'studentRecap'])->name('students');
