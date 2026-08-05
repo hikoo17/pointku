@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\WebAuthController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WebAuthController::class, 'showLogin']);
 
@@ -22,13 +22,37 @@ Route::middleware('auth')->group(function () {
         Route::get('/surat-panggilan/{surat}', [DashboardController::class, 'letter'])->name('letters.show');
         Route::post('/surat-panggilan/{surat}/transisi', [DashboardController::class, 'transitionLetter'])->name('letters.transition');
         Route::get('/surat-panggilan/{surat}/cetak', [DashboardController::class, 'printLetter'])->name('letters.print');
+
+        Route::get('/master/pengguna', [DashboardController::class, 'masterUsers'])->name('master.users');
+        Route::post('/master/pengguna', [DashboardController::class, 'storeMasterUser'])->name('master.users.store');
+        Route::put('/master/pengguna/{user}', [DashboardController::class, 'updateMasterUser'])->name('master.users.update');
+        Route::delete('/master/pengguna/{user}', [DashboardController::class, 'destroyMasterUser'])->name('master.users.destroy');
+        Route::get('/master/kelas', [DashboardController::class, 'masterClasses'])->name('master.classes');
+        Route::post('/master/kelas', [DashboardController::class, 'storeMasterClass'])->name('master.classes.store');
+        Route::put('/master/kelas/{kelas}', [DashboardController::class, 'updateMasterClass'])->name('master.classes.update');
+        Route::delete('/master/kelas/{kelas}', [DashboardController::class, 'destroyMasterClass'])->name('master.classes.destroy');
+        Route::get('/master/siswa', [DashboardController::class, 'masterStudents'])->name('master.students');
+        Route::post('/master/siswa', [DashboardController::class, 'storeMasterStudent'])->name('master.students.store');
+        Route::put('/master/siswa/{siswa}', [DashboardController::class, 'updateMasterStudent'])->name('master.students.update');
+        Route::delete('/master/siswa/{siswa}', [DashboardController::class, 'destroyMasterStudent'])->name('master.students.destroy');
+        Route::get('/master/kategori-poin', [DashboardController::class, 'masterCategories'])->name('master.categories');
+        Route::post('/master/kategori-poin', [DashboardController::class, 'storeMasterCategory'])->name('master.categories.store');
+        Route::put('/master/kategori-poin/{kategori}', [DashboardController::class, 'updateMasterCategory'])->name('master.categories.update');
+        Route::delete('/master/kategori-poin/{kategori}', [DashboardController::class, 'destroyMasterCategory'])->name('master.categories.destroy');
+        Route::get('/master/threshold', [DashboardController::class, 'masterThresholds'])->name('master.thresholds');
+        Route::post('/master/threshold', [DashboardController::class, 'storeMasterThreshold'])->name('master.thresholds.store');
+        Route::put('/master/threshold/{threshold}', [DashboardController::class, 'updateMasterThreshold'])->name('master.thresholds.update');
+        Route::delete('/master/threshold/{threshold}', [DashboardController::class, 'destroyMasterThreshold'])->name('master.thresholds.destroy');
     });
 
     Route::middleware('role:Guru BK,Guru Pelapor')->prefix('guru')->name('guru.')->group(function () {
-        Route::get('/dashboard', [DashboardController::class, 'teacher'])->name('dashboard');
         Route::get('/catatan-poin', [DashboardController::class, 'records'])->name('records');
         Route::get('/catatan-poin/{catatan}', [DashboardController::class, 'teacherRecord'])->name('records.show');
         Route::post('/catatan-poin', [DashboardController::class, 'storeRecord'])->name('records.store');
+    });
+
+    Route::middleware('role:Guru BK')->prefix('guru')->name('guru.')->group(function () {
+        Route::get('/dashboard', [DashboardController::class, 'teacher'])->name('dashboard');
         Route::post('/catatan-poin/{catatan}/validasi', [DashboardController::class, 'validateRecord'])->name('records.validate');
         Route::get('/rekap-siswa', [DashboardController::class, 'studentRecap'])->name('students');
         Route::get('/laporan', [DashboardController::class, 'teacherReports'])->name('reports');

@@ -1,7 +1,6 @@
-@php($title = 'Detail Siswa')
-@php($navigation = [['wali-kelas.dashboard', 'Ringkasan kelas','dashboard'], ['wali-kelas.students', 'Daftar siswa','users'], ['wali-kelas.notifications', 'Notifikasi','bell']])
+﻿@php($title = 'Detail Siswa')
 
-<x-layouts.app :title="$title" :navigation="$navigation">
+<x-layouts.app :title="$title" >
     <a class="inline-flex items-center gap-[.4rem] text-[.7rem] font-extrabold text-[#6d1a1a] mb-[1.2rem]" href="{{ route('wali-kelas.students') }}">
         <svg>
             <use href="#icon-arrow-right"></use>
@@ -12,7 +11,7 @@
     <x-dashboard
         title="{{ $siswa->user->nama_lengkap }}"
         eyebrow="PROFIL PEMANTAUAN"
-        copy="{{ $siswa->nisn }} · {{ $kelas->nama_kelas }}"
+        copy="{{ $siswa->nisn }} Â· {{ $kelas->nama_kelas }}"
     />
 
     <div class="mb-[1.2rem] grid grid-cols-2 gap-[0.7rem] min-[761px]:gap-4 min-[1051px]:grid-cols-4">

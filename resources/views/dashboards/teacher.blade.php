@@ -1,7 +1,6 @@
-@php($title='Dashboard '.auth()->user()->role->nama_role)
-@php($navigation=[['guru.dashboard','Ringkasan','dashboard'],['guru.records','Catatan poin','note'],['guru.students','Rekap siswa','users'],['guru.reports','Laporan kesiswaan','file'],['guru.letters','Surat panggilan','letter']])
+﻿@php($title='Dashboard '.auth()->user()->role->nama_role)
 
-<x-layouts.app :title="$title" :navigation="$navigation">
+<x-layouts.app :title="$title" >
     <x-dashboard
         title="Ruang kerja Guru BK"
         eyebrow="VALIDASI DAN PENDAMPINGAN"
@@ -48,7 +47,7 @@
                     <span class="inline-block h-[10px] w-[10px] rounded-full {{ $record->kategoriPoin->jenis === 'pelanggaran' ? 'bg-[#b71c1c]' : 'bg-[#fbc02d]' }}"></span>
                     <div class="flex-1">
                         <strong class="block text-[.74rem] text-[#4a1c1c]">{{ $record->siswa->user->nama_lengkap }}</strong>
-                        <small class="mt-[.2rem] block text-[.63rem] text-[#8d6e63]">{{ $record->kategoriPoin->nama_kategori }} · {{ $record->tanggal->format('d/m/Y') }}</small>
+                        <small class="mt-[.2rem] block text-[.63rem] text-[#8d6e63]">{{ $record->kategoriPoin->nama_kategori }} Â· {{ $record->tanggal->format('d/m/Y') }}</small>
                     </div>
                     <a class="inline-flex items-center gap-[.4rem] text-[.7rem] font-extrabold text-[#6d1a1a] hover:underline" href="{{ route('guru.records.show', $record) }}">
                         <svg class="h-4 w-4">

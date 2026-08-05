@@ -1,7 +1,6 @@
-@php($title='Laporan Kesiswaan')
-@php($navigation=[['guru.dashboard','Ringkasan','dashboard'],['guru.records','Catatan poin','note'],['guru.students','Rekap siswa','users'],['guru.reports','Laporan kesiswaan','file'],['guru.letters','Surat panggilan','letter']])
+﻿@php($title='Laporan Kesiswaan')
 
-<x-layouts.app :title="$title" :navigation="$navigation">
+<x-layouts.app :title="$title" >
     <x-dashboard
         title="Kirim laporan penanganan"
         eyebrow="ALUR TINDAK LANJUT"
@@ -17,7 +16,7 @@
                     <select name="siswa_id" required class="min-w-0 flex-1 rounded-[11px] border border-[#fce4c4] bg-white p-[.9rem_1rem] text-[#4a1c1c] outline-none">
                         @foreach($students as $student)
                             <option value="{{ $student->id }}">
-                                {{ $student->user->nama_lengkap }} · {{ $student->total_poin_pelanggaran }} poin
+                                {{ $student->user->nama_lengkap }} Â· {{ $student->total_poin_pelanggaran }} poin
                             </option>
                         @endforeach
                     </select>

@@ -1,7 +1,6 @@
-@php($title = 'Detail Kelas')
-@php($navigation=[['kesiswaan.dashboard','Statistik sekolah','dashboard'],['kesiswaan.reports','Laporan masuk','file'],['kesiswaan.letters','Surat panggilan','letter']])
+﻿@php($title = 'Detail Kelas')
 
-<x-layouts.app :title="$title" :navigation="$navigation">
+<x-layouts.app :title="$title" >
     <x-dashboard
         title="Kelas {{ $kelas->nama_kelas }}"
         eyebrow="RINGKASAN KELAS"

@@ -1,7 +1,6 @@
-@php($title = 'Dashboard Wali Kelas')
-@php($navigation = [['wali-kelas.dashboard', 'Ringkasan kelas','dashboard'], ['wali-kelas.students', 'Daftar siswa','users'], ['wali-kelas.notifications', 'Notifikasi','bell']])
+﻿@php($title = 'Dashboard Wali Kelas')
 
-<x-layouts.app :title="$title" :navigation="$navigation">
+<x-layouts.app :title="$title" >
     <x-dashboard
         title="Kelas {{ $kelas->nama_kelas }}"
         eyebrow="RUANG WALI KELAS"
@@ -107,7 +106,7 @@
                         <svg>
                             <use href="#icon-bell"></use>
                         </svg>
-                        {{ $alert->siswa->user->nama_lengkap }} · {{ $alert->judul }}
+                        {{ $alert->siswa->user->nama_lengkap }} Â· {{ $alert->judul }}
                     </strong>
                     <p class="mt-[.3rem] text-[.78rem] leading-[1.5] text-[#8c6d6d]">{{ $alert->pesan }}</p>
                     <small class="text-[#a1887f]">{{ $alert->created_at->diffForHumans() }}</small>

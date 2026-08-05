@@ -1,7 +1,6 @@
-@php($title='Detail Poin')
-@php($navigation=[['guru.dashboard','Ringkasan','dashboard'],['guru.records','Catatan poin','note'],['guru.students','Rekap siswa','users'],['guru.reports','Laporan kesiswaan','file'],['guru.letters','Surat panggilan','letter']])
+﻿@php($title='Detail Poin')
 
-<x-layouts.app :title="$title" :navigation="$navigation">
+<x-layouts.app :title="$title" >
     <a class="inline-flex items-center gap-[.4rem] text-[.7rem] font-extrabold text-[#6d1a1a] mb-[1.2rem]" href="{{ route('guru.records') }}">
         <svg>
             <use href="#icon-arrow-right"></use>
@@ -42,7 +41,7 @@
                 </div>
                 <div class="flex justify-between gap-[1rem] border-b border-[#fce4c4] p-[1rem]">
                     <dt class="text-[.75rem] text-[#8c6d6d]">Siswa</dt>
-                    <dd class="m-0 text-[.8rem] font-bold text-right">{{ $record->siswa->user->nama_lengkap }} · {{ $record->siswa->nisn }}</dd>
+                    <dd class="m-0 text-[.8rem] font-bold text-right">{{ $record->siswa->user->nama_lengkap }} Â· {{ $record->siswa->nisn }}</dd>
                 </div>
                 <div class="flex justify-between gap-[1rem] p-[1rem]">
                     <dt class="text-[.75rem] text-[#8c6d6d]">Status</dt>

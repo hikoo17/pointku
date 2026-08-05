@@ -1,117 +1,127 @@
-@php($title='Dashboard Kesiswaan')
-@php($navigation=[['kesiswaan.dashboard','Statistik sekolah','dashboard'],['kesiswaan.reports','Laporan masuk','file'],['kesiswaan.letters','Surat panggilan','letter']])
+﻿@php($title='Dashboard Kesiswaan')
 
-<x-layouts.app :title="$title" :navigation="$navigation">
+<x-layouts.app :title="$title">
     <x-dashboard
         title="Pantau seluruh sekolah"
         eyebrow="RUANG KESISWAAN"
         copy="Tinjau laporan, threshold, dan keputusan tindak lanjut siswa."
     />
 
-    <div class="mb-[1.2rem] grid grid-cols-2 gap-[0.7rem] min-[761px]:gap-4 min-[1051px]:grid-cols-4">
+    {{-- Stats Grid --}}
+    <div class="mb-6 grid grid-cols-2 gap-4 min-[1051px]:grid-cols-4">
         @foreach([
-            ['Pelanggaran', 'violations', 'alert', 'text-[#b71c1c] border-t-[3px] border-t-[#b71c1c]'],
-            ['Apresiasi', 'appreciations', 'heart', 'text-[#f9a825] border-t-[3px] border-t-[#fbc02d66]'],
-            ['Laporan pending', 'pending', 'clock', 'text-[#f57f17] border-t-[3px] border-t-[#fbc02d]'],
-            ['Perlu penanganan', 'attention', 'users', 'text-[#6d1a1a] border-t-[3px] border-t-[#6d1a1a]'],
-        ] as [$label,$key,$icon,$theme])
-            <article class="relative min-h-[135px] overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white p-4 shadow-[0_5px_18px_rgba(74,28,28,.03)] after:absolute after:-right-8 after:-bottom-11 after:h-[115px] after:w-[115px] after:rounded-full after:bg-current after:opacity-[.07] min-[761px]:min-h-[155px] min-[761px]:p-[1.35rem] {{ $theme }}">
-                <span class="absolute top-[0.9rem] right-[0.9rem] grid h-7 w-7 place-items-center rounded-[10px] bg-current opacity-[.85] max-[460px]:opacity-55 min-[761px]:top-[1.2rem] min-[761px]:right-[1.2rem] min-[761px]:h-8 min-[761px]:w-8">
-                    <svg class="text-white">
-                        <use href="#icon-{{ $icon }}"></use>
-                    </svg>
-                </span>
-                <span class="block text-[.68rem] font-[750] text-[#8c6d6d] max-[460px]:max-w-[85px]">{{ $label }}</span>
-                <strong class="my-[.7rem] mb-[.1rem] block text-[2.15rem] leading-none font-bold tracking-[-.06em] min-[761px]:text-[2.7rem]">{{ $stats[$key] }}</strong>
-                <small class="text-[.62rem] text-[#8c6d6d]">Data terbaru</small>
+            ['Pelanggaran', 'violations', 'alert', 'text-rose-700', 'bg-rose-50 border-rose-100', 'border-t-rose-600'],
+            ['Apresiasi', 'appreciations', 'heart', 'text-amber-700', 'bg-amber-50 border-amber-100', 'border-t-amber-500'],
+            ['Laporan Pending', 'pending', 'clock', 'text-orange-700', 'bg-orange-50 border-orange-100', 'border-t-orange-500'],
+            ['Perlu Penanganan', 'attention', 'users', 'text-[#5c1919]', 'bg-[#5c1919]/5 border-[#5c1919]/10', 'border-t-[#5c1919]'],
+        ] as [$label, $key, $icon, $textColor, $badgeBg, $borderTop])
+            <article class="relative flex flex-col justify-between overflow-hidden rounded-xl border border-slate-200/80 border-t-[3px] {{ $borderTop }} bg-white p-4.5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md min-[761px]:p-5">
+                <div class="flex items-center justify-between gap-2">
+                    <span class="text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">{{ $label }}</span>
+                    <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border {{ $badgeBg }} {{ $textColor }}">
+                        <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24">
+                            <use href="#icon-{{ $icon }}"></use>
+                        </svg>
+                    </span>
+                </div>
+                <div class="mt-3">
+                    <strong class="block text-3xl font-bold tracking-tight text-slate-900">{{ $stats[$key] }}</strong>
+                    <small class="mt-0.5 block text-[0.65rem] font-medium text-slate-400">Data realtime</small>
+                </div>
             </article>
         @endforeach
     </div>
 
-    <div class="mt-[1.2rem] grid grid-cols-1 gap-[1.2rem] min-[761px]:grid-cols-[1.05fr_.95fr]">
-        <section class="overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white shadow-[0_5px_20px_rgba(74,28,28,.025)]">
-            <div class="flex items-center justify-between gap-4 border-b border-[#fce4c4] p-[1.1rem] min-[461px]:px-6 min-[461px]:py-[1.35rem]">
+    {{-- Content Grid --}}
+    <div class="mt-6 grid grid-cols-1 gap-6 min-[761px]:grid-cols-2">
+        {{-- Laporan Terbaru --}}
+        <section class="flex flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+            <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
                 <div>
-                    <p class="mb-[.65rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">LAPORAN</p>
-                    <h3 class="mb-[.25rem] text-[1.08rem] font-bold tracking-[-.025em]">Laporan terbaru</h3>
+                    <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">LAPORAN</span>
+                    <h3 class="text-base font-bold text-slate-900">Laporan Terbaru</h3>
                 </div>
-                <a class="inline-flex items-center gap-[.4rem] text-[.7rem] font-extrabold text-[#6d1a1a]" href="{{ route('kesiswaan.reports') }}">
+                <a class="group inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200/70 hover:text-slate-900" href="{{ route('kesiswaan.reports') }}">
                     Lihat semua
-                    <svg>
-                        <use href="#icon-arrow-right"></use>
+                    <svg class="h-3.5 w-3.5 fill-none stroke-current transition-transform duration-200 group-hover:translate-x-0.5" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/>
                     </svg>
                 </a>
             </div>
 
-            @forelse($reports as $report)
-                <a class="mx-6 flex items-center gap-[.8rem] border-b border-[#fce4c4] py-4" href="{{ route('kesiswaan.reports') }}">
-                    <span class="grid h-[30px] w-[30px] place-items-center rounded-full bg-[#ffebee] text-[#b71c1c]">
-                        <svg>
-                            <use href="#icon-user"></use>
-                        </svg>
-                    </span>
-                    <div>
-                        <strong class="block text-[.74rem]">{{ $report->siswa->user->nama_lengkap }}</strong>
-                        <small class="mt-[.2rem] block text-[.63rem] text-[#8d6e63]">{{ $report->jenis_tindakan }} · {{ $report->status }}</small>
-                    </div>
-                </a>
-            @empty
-                <p class="p-6 text-center text-[#8c6d6d]">Belum ada laporan.</p>
-            @endforelse
+            <div class="divide-y divide-slate-100">
+                @forelse($reports as $report)
+                    <a class="flex items-center gap-3.5 px-5 py-3.5 transition hover:bg-slate-50/80" href="{{ route('kesiswaan.reports') }}">
+                        <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-rose-50 text-rose-700 border border-rose-100">
+                            <svg class="h-4 w-4 fill-current" viewBox="0 0 24 24">
+                                <use href="#icon-user"></use>
+                            </svg>
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <strong class="block truncate text-xs font-bold text-slate-800">{{ $report->siswa->user->nama_lengkap }}</strong>
+                            <small class="mt-0.5 block text-[0.68rem] font-medium text-slate-500">{{ $report->jenis_tindakan }} • <span class="font-semibold text-rose-600">{{ $report->status }}</span></small>
+                        </div>
+                    </a>
+                @empty
+                    <p class="py-8 text-center text-xs font-medium text-slate-400">Belum ada laporan.</p>
+                @endforelse
+            </div>
         </section>
 
-        <section class="overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white shadow-[0_5px_20px_rgba(74,28,28,.025)]">
-            <div class="flex items-center justify-between gap-4 border-b border-[#fce4c4] p-[1.1rem] min-[461px]:px-6 min-[461px]:py-[1.35rem]">
-                <div>
-                    <p class="mb-[.65rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">THRESHOLD</p>
-                    <h3 class="mb-[.25rem] text-[1.08rem] font-bold tracking-[-.025em]">Perlu perhatian</h3>
-                </div>
+        {{-- Threshold / Perlu Perhatian --}}
+        <section class="flex flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+            <div class="border-b border-slate-100 px-5 py-4">
+                <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">THRESHOLD</span>
+                <h3 class="text-base font-bold text-slate-900">Perlu Perhatian</h3>
             </div>
 
-            @forelse($students as $student)
-                <a class="mx-6 flex items-center gap-[.8rem] border-b border-[#fce4c4] py-4" href="{{ route('kesiswaan.dashboard') }}">
-                    <span class="inline-block h-[10px] w-[10px] rounded-full bg-[#b71c1c]"></span>
-                    <div>
-                        <strong class="block text-[.74rem]">{{ $student->user->nama_lengkap }}</strong>
-                        <small class="mt-[.2rem] block text-[.63rem] text-[#8d6e63]">{{ $student->kelas->nama_kelas ?? '-' }} · {{ $student->total_poin_pelanggaran }} poin</small>
-                    </div>
-                </a>
-            @empty
-                <p class="p-6 text-center text-[#8c6d6d]">Tidak ada siswa melewati threshold.</p>
-            @endforelse
+            <div class="divide-y divide-slate-100">
+                @forelse($students as $student)
+                    <a class="flex items-center gap-3.5 px-5 py-3.5 transition hover:bg-slate-50/80" href="{{ route('kesiswaan.dashboard') }}">
+                        <span class="h-2.5 w-2.5 shrink-0 rounded-full bg-rose-600 ring-4 ring-rose-50"></span>
+                        <div class="min-w-0 flex-1">
+                            <strong class="block truncate text-xs font-bold text-slate-800">{{ $student->user->nama_lengkap }}</strong>
+                            <small class="mt-0.5 block text-[0.68rem] font-medium text-slate-500">{{ $student->kelas->nama_kelas ?? '-' }} • <span class="font-bold text-rose-600">{{ $student->total_poin_pelanggaran }} poin</span></small>
+                        </div>
+                    </a>
+                @empty
+                    <p class="py-8 text-center text-xs font-medium text-slate-400">Tidak ada siswa melewati threshold.</p>
+                @endforelse
+            </div>
         </section>
     </div>
 
-    <section class="mt-[1.2rem] overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white shadow-[0_5px_20px_rgba(74,28,28,.025)]">
-        <div class="flex items-center justify-between gap-4 border-b border-[#fce4c4] p-[1.1rem] min-[461px]:px-6 min-[461px]:py-[1.35rem]">
-            <div>
-                <p class="mb-[.65rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">KELAS</p>
-                <h3 class="mb-[.25rem] text-[1.08rem] font-bold tracking-[-.025em]">Ringkasan kelas</h3>
-            </div>
+    {{-- Ringkasan Kelas Table --}}
+    <section class="mt-6 overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+        <div class="border-b border-slate-100 px-5 py-4">
+            <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">KELAS</span>
+            <h3 class="text-base font-bold text-slate-900">Ringkasan Kelas</h3>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full border-collapse border-separate min-w-[760px]">
+            <table class="w-full min-w-[640px] border-collapse text-left text-xs">
                 <thead>
-                    <tr>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Kelas</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Siswa</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Pelanggaran</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Apresiasi</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-center text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Aksi</th>
+                    <tr class="border-b border-slate-100 bg-slate-50/80 font-bold uppercase tracking-wider text-slate-500">
+                        <th class="px-5 py-3">Kelas</th>
+                        <th class="px-5 py-3">Siswa</th>
+                        <th class="px-5 py-3">Pelanggaran</th>
+                        <th class="px-5 py-3">Apresiasi</th>
+                        <th class="px-5 py-3 text-center">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-slate-100 text-slate-700">
                     @foreach($classes as $class)
-                        <tr class="transition-colors hover:bg-[#fffdf5]">
-                            <td class="px-[1.5rem] py-[1rem] text-[.75rem] font-bold text-[#4a1c1c] border-t border-[#fff3e0]"><strong>{{ $class->nama_kelas }}</strong></td>
-                            <td class="px-[1.5rem] py-[1rem] text-[.72rem] text-[#5d4037] border-t border-[#fff3e0]">{{ $class->total_siswa }}</td>
-                            <td class="px-[1.5rem] py-[1rem] text-[.72rem] text-[#c62828] border-t border-[#fff3e0]">{{ $class->pelanggaran }}</td>
-                            <td class="px-[1.5rem] py-[1rem] text-[.72rem] text-[#5d4037] border-t border-[#fff3e0]">+{{ $class->apresiasi }}</td>
-                            <td class="px-[1.5rem] py-[1rem] text-center border-t border-[#fff3e0]">
-                                <a class="inline-flex justify-center items-center gap-[.55rem] min-h-[42px] rounded-[10px] border border-[#fce4c4] bg-white px-[1rem] py-[.72rem] text-[.8rem] font-[750] text-[#5d4037] shadow-[0_5px_18px_rgba(74,28,28,.03)] transition hover:bg-[#fff8e1]" href="{{ route('kesiswaan.classes.show', $class->id) }}">
+                        <tr class="transition hover:bg-slate-50/80">
+                            <td class="px-5 py-3.5 font-bold text-slate-900">{{ $class->nama_kelas }}</td>
+                            <td class="px-5 py-3.5 font-medium text-slate-600">{{ $class->total_siswa }} Siswa</td>
+                            <td class="px-5 py-3.5 font-bold text-rose-600">{{ $class->pelanggaran }}</td>
+                            <td class="px-5 py-3.5 font-bold text-emerald-600">+{{ $class->apresiasi }}</td>
+                            <td class="px-5 py-3.5 text-center">
+                                <a class="group inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900" href="{{ route('kesiswaan.classes.show', $class->id) }}">
                                     Detail
-                                    <svg class="h-3.5 w-3.5"><use href="#icon-arrow-right"></use></svg>
+                                    <svg class="h-3 w-3 fill-none stroke-current transition-transform duration-200 group-hover:translate-x-0.5" stroke-width="2.5" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
+                                    </svg>
                                 </a>
                             </td>
                         </tr>

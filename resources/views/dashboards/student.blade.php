@@ -1,7 +1,6 @@
-@php($title = 'Dashboard Saya')
-@php($navigation = [['siswa.dashboard', 'Ringkasan', 'dashboard'], ['siswa.history', 'Riwayat poin', 'clock'], ['siswa.notifications', 'Notifikasi', 'bell']])
+﻿@php($title = 'Dashboard Saya')
 
-<x-layouts.app :title="$title" :navigation="$navigation">
+<x-layouts.app :title="$title" >
     <x-dashboard
         title="Halo, {{ auth()->user()->nama_lengkap }}"
         eyebrow="RUANG SISWA"

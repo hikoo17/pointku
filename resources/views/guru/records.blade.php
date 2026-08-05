@@ -1,7 +1,6 @@
-@php($title='Catatan Poin')
-@php($navigation=[['guru.dashboard','Ringkasan','dashboard'],['guru.records','Catatan poin','note'],['guru.students','Rekap siswa','users'],['guru.reports','Laporan kesiswaan','file'],['guru.letters','Surat panggilan','letter']])
+﻿@php($title='Catatan Poin')
 
-<x-layouts.app :title="$title" :navigation="$navigation">
+<x-layouts.app :title="$title" >
     <x-dashboard
         title="Catatan poin"
         eyebrow="KEJADIAN SISWA"
@@ -18,7 +17,7 @@
                         <option value="">Pilih siswa</option>
                         @foreach($students as $student)
                             <option value="{{ $student->id }}">
-                                {{ $student->user->nama_lengkap }} · {{ $student->nisn }}
+                                {{ $student->user->nama_lengkap }} Â· {{ $student->nisn }}
                             </option>
                         @endforeach
                     </select>
@@ -29,7 +28,7 @@
                         <option value="">Pilih kategori</option>
                         @foreach($categories as $category)
                             <option value="{{ $category->id }}">
-                                {{ ucfirst($category->jenis) }} · {{ $category->nama_kategori }} ({{ $category->bobot_poin }})
+                                {{ ucfirst($category->jenis) }} Â· {{ $category->nama_kategori }} ({{ $category->bobot_poin }})
                             </option>
                         @endforeach
                     </select>

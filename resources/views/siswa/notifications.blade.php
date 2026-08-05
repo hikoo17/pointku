@@ -1,7 +1,6 @@
-@php($title = 'Notifikasi')
-@php($navigation = [['siswa.dashboard', 'Ringkasan','dashboard'], ['siswa.history', 'Riwayat poin','clock'], ['siswa.notifications', 'Notifikasi','bell']])
+﻿@php($title = 'Notifikasi')
 
-<x-layouts.app :title="$title" :navigation="$navigation">
+<x-layouts.app :title="$title" >
     <x-dashboard
         title="Notifikasi dan tindak lanjut"
         eyebrow="PEMANTAUAN PRIBADI"
@@ -22,7 +21,7 @@
                     <p class="mb-[.45rem] text-[.72rem] text-[#6d4c41]">{{ $notification->pesan }}</p>
                     <small class="text-[.6rem] text-[#a1887f]">
                         {{ $notification->created_at->translatedFormat('d F Y, H:i') }}
-                        ·
+                        Â·
                         {{ $notification->is_resolved ? 'Sudah ditindaklanjuti' : 'Dalam pemantauan' }}
                     </small>
                 </div>

@@ -1,7 +1,6 @@
-@php($title='Surat Panggilan')
-@php($navigation=[['guru.dashboard','Ringkasan','dashboard'],['guru.records','Catatan poin','note'],['guru.students','Rekap siswa','users'],['guru.reports','Laporan kesiswaan','file'],['guru.letters','Surat panggilan','letter']])
+﻿@php($title='Surat Panggilan')
 
-<x-layouts.app :title="$title" :navigation="$navigation">
+<x-layouts.app :title="$title" >
     <x-dashboard
         title="Draf surat panggilan"
         eyebrow="TINDAK LANJUT BK"

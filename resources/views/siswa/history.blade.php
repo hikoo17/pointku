@@ -1,7 +1,6 @@
-@php($title = 'Riwayat Poin')
-@php($navigation = [['siswa.dashboard', 'Ringkasan','dashboard'], ['siswa.history', 'Riwayat poin','clock'], ['siswa.notifications', 'Notifikasi','bell']])
+﻿@php($title = 'Riwayat Poin')
 
-<x-layouts.app :title="$title" :navigation="$navigation">
+<x-layouts.app :title="$title" >
     <x-dashboard
         title="Riwayat poin saya"
         eyebrow="CATATAN PRIBADI"

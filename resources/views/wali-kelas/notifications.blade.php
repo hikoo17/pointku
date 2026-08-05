@@ -1,7 +1,6 @@
-@php($title = 'Notifikasi Kelas')
-@php($navigation = [['wali-kelas.dashboard', 'Ringkasan kelas','dashboard'], ['wali-kelas.students', 'Daftar siswa','users'], ['wali-kelas.notifications', 'Notifikasi','bell']])
+﻿@php($title = 'Notifikasi Kelas')
 
-<x-layouts.app :title="$title" :navigation="$navigation">
+<x-layouts.app :title="$title" >
     <x-dashboard
         title="Peringatan kelas {{ $kelas->nama_kelas }}"
         eyebrow="THRESHOLD SISWA"
@@ -17,12 +16,12 @@
                     </svg>
                 </span>
                 <div>
-                    <p class="mb-[.3rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">{{ $notification->siswa->user->nama_lengkap }} · {{ $notification->aturanThreshold->poin_batas ?? '-' }} POIN</p>
+                    <p class="mb-[.3rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">{{ $notification->siswa->user->nama_lengkap }} Â· {{ $notification->aturanThreshold->poin_batas ?? '-' }} POIN</p>
                     <h3 class="mb-[.45rem] text-[.9rem] font-bold">{{ $notification->judul }}</h3>
                     <p class="mb-[.45rem] text-[.72rem] text-[#6d4c41]">{{ $notification->pesan }}</p>
                     <small class="text-[.6rem] text-[#a1887f]">
                         {{ $notification->created_at->translatedFormat('d F Y, H:i') }}
-                        ·
+                        Â·
                         {{ $notification->is_resolved ? 'Sudah ditindaklanjuti' : 'Dalam pemantauan' }}
                     </small>
                 </div>

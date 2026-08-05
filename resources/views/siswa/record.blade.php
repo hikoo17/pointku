@@ -1,7 +1,6 @@
-@php($title = 'Detail Poin')
-@php($navigation = [['siswa.dashboard', 'Ringkasan','dashboard'], ['siswa.history', 'Riwayat poin','clock'], ['siswa.notifications', 'Notifikasi','bell']])
+﻿@php($title = 'Detail Poin')
 
-<x-layouts.app :title="$title" :navigation="$navigation">
+<x-layouts.app :title="$title" >
     <a class="inline-flex items-center gap-[.4rem] text-[.7rem] font-extrabold text-[#6d1a1a] mb-[1.2rem]" href="{{ route('siswa.history') }}">
         <svg>
             <use href="#icon-arrow-right"></use>
