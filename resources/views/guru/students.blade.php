@@ -1,56 +1,57 @@
-﻿@php($title='Rekap Siswa')
+﻿@php($title = 'Rekap Siswa')
 
-<x-layouts.app :title="$title" >
+<x-layouts.app :title="$title">
     <x-dashboard
         title="Rekap perkembangan siswa"
         eyebrow="PEMANTAUAN BK"
         copy="Cari siswa yang membutuhkan pendampingan berdasarkan saldo dan total pelanggaran."
     />
 
-    <section class="overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white shadow-[0_5px_20px_rgba(74,28,28,.025)]">
+    {{-- Student Table --}}
+    <section class="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
         <div class="overflow-x-auto">
-            <table class="w-full border-collapse border-separate min-w-[760px]">
+            <table class="w-full min-w-[760px] border-collapse text-left text-xs">
                 <thead>
-                    <tr>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Siswa</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Kelas</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Pelanggaran</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Apresiasi</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Saldo</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Status</th>
+                    <tr class="border-b border-slate-100 bg-slate-50/80 font-bold uppercase tracking-wider text-slate-500">
+                        <th class="px-5 py-3">Siswa</th>
+                        <th class="px-5 py-3">Kelas</th>
+                        <th class="px-5 py-3 text-right">Pelanggaran</th>
+                        <th class="px-5 py-3 text-right">Apresiasi</th>
+                        <th class="px-5 py-3 text-right">Saldo</th>
+                        <th class="px-5 py-3">Status</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-slate-100 text-slate-700">
                     @forelse($students as $student)
-                        <tr>
-                            <td class="px-[1.5rem] py-[1rem] border-t border-[#fff3e0]">
-                                <div class="flex items-center gap-[.7rem]">
-                                    <span class="grid h-[31px] w-[31px] place-items-center rounded-[9px] bg-[#6d1a1a] font-[850] text-white">{{ substr($student->user->nama_lengkap,0,1) }}</span>
-                                    <span>
-                                        <strong class="block text-[.75rem] text-[#4a1c1c]">{{ $student->user->nama_lengkap }}</strong>
-                                        <small class="mt-[.18rem] block text-[.61rem] text-[#a1887f]">{{ $student->nisn }}</small>
+                        <tr class="transition hover:bg-slate-50/80">
+                            <td class="px-5 py-3.5">
+                                <div class="flex items-center gap-3">
+                                    <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#6d1a1a] text-xs font-extrabold text-white">
+                                        {{ substr($student->user->nama_lengkap, 0, 1) }}
                                     </span>
+                                    <div class="min-w-0">
+                                        <strong class="block truncate text-xs font-bold text-slate-800">{{ $student->user->nama_lengkap }}</strong>
+                                        <small class="block truncate text-[0.68rem] font-medium text-slate-500">{{ $student->nisn }}</small>
+                                    </div>
                                 </div>
                             </td>
-                            <td class="px-[1.5rem] py-[1rem] text-[.72rem] text-[#5d4037] border-t border-[#fff3e0]">{{ $student->kelas->nama_kelas ?? '-' }}</td>
-                            <td class="px-[1.5rem] py-[1rem] text-[.72rem] text-[#c62828] border-t border-[#fff3e0]">{{ $student->total_poin_pelanggaran }}</td>
-                            <td class="px-[1.5rem] py-[1rem] text-[.72rem] text-[#5d4037] border-t border-[#fff3e0]">+{{ $student->total_poin_apresiasi }}</td>
-                            <td class="px-[1.5rem] py-[1rem] border-t border-[#fff3e0]"><strong>{{ $student->saldo_poin }}</strong></td>
-                            <td class="px-[1.5rem] py-[1rem] border-t border-[#fff3e0]">
-                                <span class="inline-flex items-center gap-[.35rem] rounded-[99px] px-[.55rem] py-[.3rem] text-[.58rem] font-extrabold capitalize text-[#bf360c] bg-[#ffe0b2]">
+                            <td class="px-5 py-3.5 font-medium text-slate-600">{{ $student->kelas->nama_kelas ?? '-' }}</td>
+                            <td class="px-5 py-3.5 text-right font-bold text-rose-600">{{ $student->total_poin_pelanggaran }}</td>
+                            <td class="px-5 py-3.5 text-right font-bold text-emerald-600">+{{ $student->total_poin_apresiasi }}</td>
+                            <td class="px-5 py-3.5 text-right font-bold text-slate-900">{{ $student->saldo_poin }}</td>
+                            <td class="px-5 py-3.5">
+                                <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[0.68rem] font-bold {{ $student->total_poin_pelanggaran >= 25 ? 'text-rose-700 bg-rose-50 border border-rose-100' : 'text-slate-600 bg-slate-100 border border-slate-200/60' }}">
                                     {{ $student->total_poin_pelanggaran >= 25 ? 'Perlu ditindaklanjuti' : 'Normal' }}
                                 </span>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="h-[180px] text-center text-[#a1887f] border-t border-[#fff3e0]">
-                                <span class="mx-auto mb-[.7rem] grid h-[42px] w-[42px] place-items-center rounded-[12px] bg-[#ffebee] text-[#b71c1c]">
-                                    <svg>
-                                        <use href="#icon-users"></use>
-                                    </svg>
+                            <td colspan="6" class="py-12 text-center text-slate-400">
+                                <span class="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-xl bg-slate-50 text-slate-400">
+                                    <i data-lucide="users" class="h-5 w-5"></i>
                                 </span>
-                                Belum ada data siswa.
+                                <span class="block text-xs font-medium">Belum ada data siswa.</span>
                             </td>
                         </tr>
                     @endforelse
@@ -58,6 +59,10 @@
             </table>
         </div>
 
-        {{ $students->links() }}
+        @if($students->hasPages())
+            <div class="border-t border-slate-100 px-5 py-3 bg-slate-50/50">
+                {{ $students->links() }}
+            </div>
+        @endif
     </section>
 </x-layouts.app>

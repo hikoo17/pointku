@@ -71,8 +71,6 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="h-full font-sans text-[#4a1c1c] antialiased">
-    @include('partials.icons')
-
     <div class="flex min-h-screen">
         <!-- Sidebar -->
         <aside id="app-sidebar" 

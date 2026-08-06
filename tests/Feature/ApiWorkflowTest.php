@@ -157,6 +157,51 @@ class ApiWorkflowTest extends TestCase
         $this->assertDatabaseCount('surat_panggilan', 1);
     }
 
+    public function test_highest_letter_threshold_creates_a_new_draft_at_each_multiple(): void
+    {
+        [$siswa, $pencatat] = $this->createStudentAndRecorder();
+        $pelanggaran = KategoriPoin::create([
+            'jenis' => 'pelanggaran',
+            'nama_kategori' => 'Pelanggaran berat',
+            'bobot_poin' => 100,
+            'tingkat' => 'berat',
+        ]);
+        $berat = AturanThreshold::create([
+            'poin_batas' => 100,
+            'level' => 'berat',
+            'judul_notifikasi' => 'Peringatan Berat',
+            'deskripsi' => 'Perlu tindak lanjut BK dan Kesiswaan.',
+            'has_surat_panggilan' => true,
+            'is_active' => true,
+        ]);
+
+        $this->createApprovedViolation($siswa, $pencatat, $pelanggaran, 'Pelanggaran pertama');
+
+        $this->assertDatabaseHas('surat_panggilan', [
+            'siswa_id' => $siswa->id,
+            'aturan_threshold_id' => $berat->id,
+            'poin_pemicu' => 100,
+            'total_poin' => 100,
+            'status' => 'draft',
+        ]);
+
+        $suratPertama = SuratPanggilan::firstOrFail();
+        $suratPertama->update(['status' => 'selesai']);
+
+        $this->createApprovedViolation($siswa, $pencatat, $pelanggaran, 'Pelanggaran kedua');
+
+        $this->assertSame(200, $siswa->refresh()->total_poin_pelanggaran);
+        $this->assertDatabaseCount('surat_panggilan', 2);
+        $this->assertDatabaseHas('surat_panggilan', [
+            'siswa_id' => $siswa->id,
+            'aturan_threshold_id' => $berat->id,
+            'poin_pemicu' => 200,
+            'total_poin' => 200,
+            'status' => 'draft',
+        ]);
+        $this->assertSame('selesai', $suratPertama->fresh()->status);
+    }
+
     public function test_reporter_cannot_access_or_delete_another_reporters_record(): void
     {
         [$siswa, $owner] = $this->createStudentAndRecorder();

@@ -1,4 +1,4 @@
-﻿@php($title = 'Notifikasi')
+@php($title = 'Notifikasi')
 
 <x-layouts.app :title="$title" >
     <x-dashboard
@@ -7,49 +7,30 @@
         copy="Informasi threshold dan tindak lanjut yang dapat kamu lihat."
     />
 
-    <div class="grid gap-[.8rem]">
+    <div class="grid gap-4">
         @forelse($notifications as $notification)
-            <article class="grid grid-cols-[auto_1fr_auto] items-center gap-[1rem] rounded-[13px] border border-[#fce4c4] border-l-[3px] border-l-[#b71c1c] bg-white p-[1.25rem] {{ $notification->dibaca_pada ? 'opacity-[.72] border-l-[#f9a825]' : '' }}">
-                <span class="grid h-[42px] w-[42px] place-items-center rounded-[12px] bg-[#ffebee] text-[#b71c1c]">
-                    <svg>
-                        <use href="#icon-{{ $notification->level === 'berat' ? 'alert' : ($notification->level === 'sedang' ? 'warning' : 'info') }}"></use>
-                    </svg>
-                </span>
-                <div>
-                    <p class="mb-[.3rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">AMBANG {{ $notification->aturanThreshold->poin_batas ?? '-' }} POIN</p>
-                    <h3 class="mb-[.45rem] text-[.9rem] font-bold">{{ $notification->judul }}</h3>
-                    <p class="mb-[.45rem] text-[.72rem] text-[#6d4c41]">{{ $notification->pesan }}</p>
-                    <small class="text-[.6rem] text-[#a1887f]">
-                        {{ $notification->created_at->translatedFormat('d F Y, H:i') }}
-                        Â·
-                        {{ $notification->is_resolved ? 'Sudah ditindaklanjuti' : 'Dalam pemantauan' }}
-                    </small>
-                </div>
-
-                @unless($notification->dibaca_pada)
-                    <form method="POST" action="{{ route('siswa.notifications.read', $notification) }}">
-                        @csrf
-                        <button class="inline-flex justify-center items-center gap-[.55rem] min-h-[42px] rounded-[10px] border-0 bg-[#6d1a1a] px-[1rem] py-[.72rem] text-[.75rem] font-[750] text-white shadow-[0_8px_20px_#6d1a1a38] transition hover:-translate-y-px hover:bg-[#5a1515]" type="submit">
-                            <svg>
-                                <use href="#icon-check"></use>
-                            </svg>
+            <article class="flex items-start gap-4 rounded-xl border border-slate-200/80 border-l-[3px] p-5 shadow-xs transition hover:shadow-md {{ $notification->dibaca_pada ? 'border-l-slate-300 bg-white' : 'border-l-[#5c1919] bg-white' }}">
+                <span class="grid h-11 w-11 shrink-0 place-items-center rounded-lg {{ $notification->level === 'berat' ? 'bg-rose-50 text-rose-600' : ($notification->level === 'sedang' ? 'bg-orange-50 text-orange-500' : 'bg-blue-50 text-blue-500') }}">
+                    <i data-lucide="check" class="h-5 w-5"></i>
                             Tandai dibaca
                         </button>
                     </form>
                 @endunless
             </article>
         @empty
-            <div class="flex min-h-[420px] flex-col items-center justify-center gap-[.55rem] text-center text-[#a1887f]">
-                <span class="mx-auto mb-[.7rem] grid h-[42px] w-[42px] place-items-center rounded-[12px] bg-[#ffebee] text-[#b71c1c]">
-                    <svg>
-                        <use href="#icon-bell"></use>
-                    </svg>
+            <div class="flex min-h-[420px] flex-col items-center justify-center gap-2 text-center text-slate-400">
+                <span class="mx-auto mb-2 grid h-12 w-12 place-items-center rounded-xl bg-slate-100 text-slate-400">
+                    <i data-lucide="bell" class="h-6 w-6"></i>
                 </span>
-                <strong class="text-[#4a1c1c]">Belum ada notifikasi</strong>
-                <p class="max-w-[400px] text-[.78rem]">Sistem akan menampilkan informasi saat threshold tertentu tercapai.</p>
+                <strong class="text-sm font-bold text-slate-700">Belum ada notifikasi</strong>
+                <p class="max-w-[400px] text-xs font-medium">Sistem akan menampilkan informasi saat threshold tertentu tercapai.</p>
             </div>
         @endforelse
     </div>
 
-    {{ $notifications->links() }}
+    @if($notifications->hasPages())
+        <div class="mt-5">
+            {{ $notifications->links() }}
+        </div>
+    @endif
 </x-layouts.app>

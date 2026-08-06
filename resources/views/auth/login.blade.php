@@ -6,7 +6,7 @@
     <title>Masuk | POINTKU</title>
     <link rel="icon" href="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" type="image/png">
     <link rel="shortcut icon" href="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" type="image/png">
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
     <main class="grid min-h-screen grid-cols-1 bg-white min-[761px]:grid-cols-[minmax(420px,1.08fr)_minmax(420px,.92fr)]">
@@ -79,9 +79,12 @@
                         </span>
                     </label>
 
-                    <button class="mt-5 flex min-h-[48px] w-full items-center justify-between rounded-[10px] border-0 bg-[#6d1a1a] px-5 py-3 text-[.8rem] font-bold text-white shadow-[0_8px_20px_#6d1a1a38] transition hover:-translate-y-px hover:bg-[#5a1515]" type="submit">
-                        <span>Masuk ke dashboard</span>
-                        <span>→</span>
+                    <button id="login-btn" class="mt-5 flex min-h-[48px] w-full items-center justify-center rounded-[10px] border-0 bg-[#6d1a1a] px-5 py-3 text-[.8rem] font-bold text-white shadow-[0_8px_20px_#6d1a1a38] transition hover:-translate-y-px hover:bg-[#5a1515] disabled:cursor-not-allowed disabled:opacity-80" type="submit">
+                        <span id="login-text" class="flex w-full items-center justify-between">
+                            <span>Masuk ke dashboard</span>
+                            <span>→</span>
+                        </span>
+                        <i id="login-spinner" data-lucide="loader-circle" class="hidden h-5 w-5 animate-spin"></i>
                     </button>
 
                     @error('username')
@@ -108,6 +111,15 @@
             toggle.textContent = visible ? 'Lihat' : 'Sembunyikan';
             toggle.setAttribute('aria-label', visible ? 'Tampilkan password' : 'Sembunyikan password');
             toggle.setAttribute('aria-pressed', String(!visible));
+        });
+
+        const loginForm = document.querySelector('.login-form');
+        const loginBtn = document.getElementById('login-btn');
+
+        loginForm.addEventListener('submit', () => {
+            loginBtn.disabled = true;
+            document.getElementById('login-text')?.classList.add('hidden');
+            document.getElementById('login-spinner')?.classList.remove('hidden');
         });
     </script>
 </body>

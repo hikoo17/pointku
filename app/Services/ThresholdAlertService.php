@@ -37,7 +37,32 @@ class ThresholdAlertService
                 $this->createNotification($siswa, $catatan, $threshold, $totals['pelanggaran']);
 
                 if ($threshold->has_surat_panggilan) {
-                    $this->createDraftLetter($siswa, $catatan, $threshold, $totals['pelanggaran']);
+                    $this->createDraftLetter($siswa, $catatan, $threshold, $totals['pelanggaran'], $threshold->poin_batas);
+                }
+            }
+
+            $highestLetterThreshold = AturanThreshold::query()
+                ->where('is_active', true)
+                ->where('has_surat_panggilan', true)
+                ->orderByDesc('poin_batas')
+                ->first();
+
+            if ($highestLetterThreshold) {
+                $firstRecurringPoint = (intdiv($totalSebelumnya, $highestLetterThreshold->poin_batas) + 1)
+                    * $highestLetterThreshold->poin_batas;
+
+                for ($triggerPoint = $firstRecurringPoint; $triggerPoint <= $totals['pelanggaran']; $triggerPoint += $highestLetterThreshold->poin_batas) {
+                    if ($triggerPoint <= $highestLetterThreshold->poin_batas) {
+                        continue;
+                    }
+
+                    $this->createDraftLetter(
+                        $siswa,
+                        $catatan,
+                        $highestLetterThreshold,
+                        $totals['pelanggaran'],
+                        $triggerPoint
+                    );
                 }
             }
         });
@@ -81,12 +106,19 @@ class ThresholdAlertService
         );
     }
 
-    private function createDraftLetter(Siswa $siswa, CatatanPoin $catatan, AturanThreshold $threshold, int $totalPoin): void
+    private function createDraftLetter(
+        Siswa $siswa,
+        CatatanPoin $catatan,
+        AturanThreshold $threshold,
+        int $totalPoin,
+        int $triggerPoint
+    ): void
     {
         SuratPanggilan::firstOrCreate(
             [
                 'siswa_id' => $siswa->id,
                 'aturan_threshold_id' => $threshold->id,
+                'poin_pemicu' => $triggerPoint,
             ],
             [
                 'nomor_surat' => null,

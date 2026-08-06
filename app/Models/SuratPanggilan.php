@@ -12,6 +12,7 @@ class SuratPanggilan extends Model
         'siswa_id',
         'laporan_kesiswaan_id',
         'aturan_threshold_id',
+        'poin_pemicu',
         'nomor_surat',
         'tanggal_surat',
         'alasan_pemanggilan',

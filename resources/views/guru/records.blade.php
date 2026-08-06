@@ -1,143 +1,186 @@
-﻿@php($title='Catatan Poin')
+@php
+    $title = 'Catatan Poin';
+@endphp
 
-<x-layouts.app :title="$title" >
+<x-layouts.app :title="$title">
     <x-dashboard
         title="Catatan poin"
         eyebrow="KEJADIAN SISWA"
         copy="Catat pelanggaran atau apresiasi dengan kronologi yang dapat ditindaklanjuti."
     />
 
-    <section class="overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white shadow-[0_5px_20px_rgba(74,28,28,.025)]">
-        <form method="POST" action="{{ route('guru.records.store') }}" enctype="multipart/form-data" class="p-[1.5rem]">
+    {{-- Form Pencatatan --}}
+    <section class="mt-6 overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+        <div class="border-b border-slate-100 px-5 py-4">
+            <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">FORM KEJADIAN</span>
+            <h3 class="text-base font-bold text-slate-900">Catat poin baru</h3>
+        </div>
+        <form method="POST" action="{{ route('guru.records.store') }}" enctype="multipart/form-data" class="p-5">
             @csrf
-            <div class="grid grid-cols-1 gap-[1rem] min-[461px]:grid-cols-2">
-                <label class="grid gap-[.55rem] text-[.78rem] font-bold text-[#5d4037]">
+            <div class="grid grid-cols-1 gap-4 min-[461px]:grid-cols-2">
+                <label class="grid gap-1.5 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
                     Siswa
-                    <select name="siswa_id" required class="min-w-0 flex-1 rounded-[11px] border border-[#fce4c4] bg-white p-[.9rem_1rem] text-[#4a1c1c] outline-none">
+                    <select name="siswa_id" required class="min-w-0 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 outline-none transition focus:border-slate-400 focus:bg-slate-50">
                         <option value="">Pilih siswa</option>
                         @foreach($students as $student)
                             <option value="{{ $student->id }}">
-                                {{ $student->user->nama_lengkap }} Â· {{ $student->nisn }}
+                                {{ $student->user->nama_lengkap }} · {{ $student->nisn }}
                             </option>
                         @endforeach
                     </select>
                 </label>
-                <label class="grid gap-[.55rem] text-[.78rem] font-bold text-[#5d4037]">
+                <label class="grid gap-1.5 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
                     Kategori
-                    <select name="kategori_poin_id" required class="min-w-0 flex-1 rounded-[11px] border border-[#fce4c4] bg-white p-[.9rem_1rem] text-[#4a1c1c] outline-none">
+                    <select name="kategori_poin_id" required class="min-w-0 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 outline-none transition focus:border-slate-400 focus:bg-slate-50">
                         <option value="">Pilih kategori</option>
                         @foreach($categories as $category)
                             <option value="{{ $category->id }}">
-                                {{ ucfirst($category->jenis) }} Â· {{ $category->nama_kategori }} ({{ $category->bobot_poin }})
+                                {{ ucfirst($category->jenis) }} · {{ $category->nama_kategori }} ({{ $category->bobot_poin }})
                             </option>
                         @endforeach
                     </select>
                 </label>
-                <label class="grid gap-[.55rem] text-[.78rem] font-bold text-[#5d4037]">
+                <label class="grid gap-1.5 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
                     Tanggal
-                    <input type="date" name="tanggal" value="{{ now()->format('Y-m-d') }}" required class="min-w-0 flex-1 rounded-[11px] border border-[#fce4c4] bg-white p-[.9rem_1rem] text-[#4a1c1c] outline-none">
+                    <input type="date" name="tanggal" value="{{ now()->format('Y-m-d') }}" required class="min-w-0 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 outline-none transition focus:border-slate-400 focus:bg-slate-50">
                 </label>
-                <label class="grid gap-[.55rem] text-[.78rem] font-bold text-[#5d4037]">
+                <label class="grid gap-1.5 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
                     Bukti foto
-                    <input type="file" name="bukti_foto" accept="image/*" class="min-w-0 flex-1 rounded-[11px] border border-[#fce4c4] bg-white p-[.9rem_1rem] text-[#4a1c1c] outline-none">
+                    <input type="file" name="bukti_foto" accept="image/*" class="min-w-0 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 outline-none transition focus:border-slate-400 focus:bg-slate-50">
                 </label>
             </div>
 
-            <label class="mt-4 grid gap-[.55rem] text-[.78rem] font-bold text-[#5d4037]">
+            <label class="mt-4 grid gap-1.5 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
                 Kronologi
-                <textarea name="keterangan" required placeholder="Jelaskan kejadian secara objektif" class="min-h-[120px] min-w-0 flex-1 rounded-[11px] border border-[#fce4c4] bg-white p-[.9rem_1rem] text-[#4a1c1c] outline-none resize-y"></textarea>
+                <textarea name="keterangan" required placeholder="Jelaskan kejadian secara objektif" class="min-h-[120px] min-w-0 resize-y rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-800 outline-none transition focus:border-slate-400 focus:bg-slate-50"></textarea>
             </label>
 
-            <button class="mt-5 inline-flex justify-center items-center gap-[.55rem] min-h-[42px] rounded-[10px] border-0 bg-[#6d1a1a] px-[1rem] py-[.72rem] text-[.8rem] font-[750] text-white shadow-[0_8px_20px_#6d1a1a38] transition hover:-translate-y-px hover:bg-[#5a1515]" type="submit">
-                <svg>
-                    <use href="#icon-plus"></use>
-                </svg>
-                Simpan catatan
-            </button>
+            <div class="mt-5 flex justify-end">
+                <button class="inline-flex items-center gap-1.5 rounded-lg bg-[#5c1919] px-4 py-2.5 text-xs font-semibold text-white shadow-xs transition hover:bg-[#4a1414]" type="submit">
+                    <i data-lucide="plus" class="h-4 w-4"></i>
+                    Simpan catatan
+                </button>
+            </div>
         </form>
     </section>
 
-    <section class="overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white shadow-[0_5px_20px_rgba(74,28,28,.025)] mt-[1.2rem]">
-        <div class="flex items-center justify-between gap-4 border-b border-[#fce4c4] p-[1.1rem] min-[461px]:px-6 min-[461px]:py-[1.35rem]">
+    {{-- Daftar Catatan --}}
+    <section class="mt-6 overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+        <div class="flex flex-col gap-3 border-b border-slate-100 px-5 py-4 min-[641px]:flex-row min-[641px]:items-center min-[641px]:justify-between">
             <div>
-                <p class="mb-[.65rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">RIWAYAT</p>
-                <h3 class="mb-[.25rem] text-[1.08rem] font-bold tracking-[-.025em]">Riwayat dan validasi</h3>
+                <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">DAFTAR KEJADIAN</span>
+                <h3 class="text-base font-bold text-slate-900">Catatan poin siswa</h3>
             </div>
+            <form method="GET" action="{{ route('guru.records') }}" class="flex items-center gap-2">
+                <div class="relative">
+                    <i data-lucide="search" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari nama siswa..." class="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm font-medium text-slate-800 outline-none transition focus:border-slate-400 focus:bg-slate-50 min-[641px]:w-64">
+                </div>
+            </form>
         </div>
 
         <div class="overflow-x-auto">
-            <table class="w-full border-collapse border-separate min-w-[760px]">
+            <table class="w-full min-w-[760px] border-collapse text-left text-xs">
                 <thead>
-                    <tr>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Siswa</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Kategori</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Tanggal</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Status</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-center text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Aksi</th>
+                    <tr class="border-b border-slate-100 bg-slate-50/80 font-bold uppercase tracking-wider text-slate-500">
+                        <th class="px-5 py-3">Siswa</th>
+                        <th class="px-5 py-3">Kategori</th>
+                        <th class="px-5 py-3">Tanggal</th>
+                        <th class="px-5 py-3">Status</th>
+                        <th class="px-5 py-3 text-center">Aksi</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @forelse($records as $record)
-                        <tr>
-                            <td class="px-[1.5rem] py-[1rem] border-t border-[#fff3e0]">
-                                <div class="flex items-center gap-[.7rem]">
-                                    <span class="grid h-[31px] w-[31px] place-items-center rounded-[9px] bg-[#6d1a1a] font-[850] text-white">{{ substr($record->siswa->user->nama_lengkap,0,1) }}</span>
-                                    <span>
-                                        <strong class="block text-[.75rem] text-[#4a1c1c]">{{ $record->siswa->user->nama_lengkap }}</strong>
-                                        <small class="mt-[.18rem] block text-[.61rem] text-[#a1887f]">{{ $record->siswa->nisn ?? '-' }}</small>
+                <tbody class="divide-y divide-slate-100 text-slate-700">
+                    @if($records->isNotEmpty())
+                    @foreach($records as $record)
+                        <tr class="transition hover:bg-slate-50/80">
+                            {{-- Siswa --}}
+                            <td class="px-5 py-3.5">
+                                <div class="flex items-center gap-3">
+                                    <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#5c1919] font-bold text-white shadow-2xs">
+                                        {{ strtoupper(substr($record->siswa->user->nama_lengkap ?? 'S', 0, 1)) }}
                                     </span>
+                                    <div class="min-w-0">
+                                        <strong class="block truncate text-xs font-bold text-slate-800">{{ $record->siswa->user->nama_lengkap }}</strong>
+                                        <small class="block text-[0.68rem] font-medium text-slate-400">{{ $record->siswa->nisn ?? '-' }}</small>
+                                    </div>
                                 </div>
                             </td>
-                            <td class="px-[1.5rem] py-[1rem] border-t border-[#fff3e0]">
-                                <span class="inline-flex items-center gap-[.35rem] rounded-[99px] px-[.55rem] py-[.3rem] text-[.58rem] font-extrabold capitalize {{ $record->kategoriPoin->jenis === 'apresiasi' ? 'text-[#5d4037] bg-[#fff9c4]' : 'text-[#c62828] bg-[#ffebee]' }}">
-                                    {{ ucfirst($record->kategoriPoin->jenis) }}
+
+                            {{-- Kategori --}}
+                            <td class="px-5 py-3.5 font-medium text-slate-600">
+                                {{ $record->kategoriPoin->nama_kategori }}
+                                <small class="block text-[0.68rem] capitalize text-slate-400">{{ $record->kategoriPoin->jenis }}</small>
+                            </td>
+
+                            {{-- Tanggal --}}
+                            <td class="px-5 py-3.5 font-medium text-slate-600">
+                                {{ $record->tanggal->format('d/m/Y') }}
+                            </td>
+
+                            {{-- Status Badge --}}
+                            <td class="px-5 py-3.5">
+                                @php
+                                    $statusStyles = [
+                                        'disetujui' => 'bg-emerald-50 text-emerald-700 border-emerald-200/60',
+                                        'ditolak' => 'bg-rose-50 text-rose-700 border-rose-200/60',
+                                        'menunggu_validasi' => 'bg-amber-50 text-amber-700 border-amber-200/60',
+                                        'draft' => 'bg-slate-100 text-slate-600 border-slate-200/60',
+                                    ];
+                                    $statusLabel = [
+                                        'disetujui' => 'Disetujui',
+                                        'ditolak' => 'Ditolak',
+                                        'menunggu_validasi' => 'Menunggu',
+                                        'draft' => 'Draft',
+                                    ];
+                                @endphp
+                                <span class="inline-flex items-center rounded-md border px-2.5 py-1 text-[0.68rem] font-semibold capitalize {{ $statusStyles[$record->status_validasi] ?? 'bg-slate-100 text-slate-600 border-slate-200/60' }}">
+                                    {{ $statusLabel[$record->status_validasi] ?? $record->status_validasi }}
                                 </span>
-                                <small class="mt-[.18rem] block text-[.61rem] text-[#a1887f]">{{ $record->kategoriPoin->nama_kategori }}</small>
                             </td>
-                            <td class="px-[1.5rem] py-[1rem] text-[.72rem] text-[#5d4037] border-t border-[#fff3e0]">{{ $record->tanggal->format('d/m/Y') }}</td>
-                            <td class="px-[1.5rem] py-[1rem] border-t border-[#fff3e0]">
-                                <span class="inline-flex items-center gap-[.35rem] rounded-[99px] px-[.55rem] py-[.3rem] text-[.58rem] font-extrabold capitalize text-[#6d4c41] bg-[#f5e6d3]">{{ $record->status_validasi }}</span>
-                            </td>
-                            <td class="px-[1.5rem] py-[1rem] text-center border-t border-[#fff3e0]">
-                                <a class="inline-flex items-center gap-1 text-[.7rem] font-extrabold text-[#6d1a1a] hover:underline" href="{{ route('guru.records.show', $record) }}">
-                                    <svg class="h-4 w-4">
-                                        <use href="#icon-eye"></use>
-                                    </svg>
-                                    Detail
-                                </a>
-                                @if(auth()->user()->hasRole('Guru BK') && $record->status_validasi === 'menunggu_validasi')
-                                    <form method="POST" action="{{ route('guru.records.validate',$record) }}" class="inline-flex items-center gap-[.4rem] ml-2">
-                                        @csrf
-                                        <button class="inline-flex justify-center items-center gap-[.55rem] min-h-[42px] rounded-[10px] border-0 bg-[#6d1a1a] px-[1rem] py-[.72rem] text-[.8rem] font-[750] text-white shadow-[0_8px_20px_#6d1a1a38] transition hover:-translate-y-px hover:bg-[#5a1515]" name="status_validasi" value="disetujui" title="Setujui" data-confirm="Catatan poin ini akan disetujui." data-confirm-title="Setujui catatan?" data-confirm-button="Ya, setujui">
-                                            <svg>
-                                                <use href="#icon-check"></use>
-                                            </svg>
-                                        </button>
-                                        <button class="inline-flex justify-center items-center gap-[.55rem] min-h-[42px] rounded-[10px] border border-[#fce4c4] bg-white px-[1rem] py-[.72rem] text-[.8rem] font-[750] text-[#5d4037] shadow-[0_5px_18px_rgba(74,28,28,.03)] transition hover:bg-[#fff8e1]" name="status_validasi" value="ditolak" title="Tolak" data-confirm="Catatan poin ini akan ditolak." data-confirm-title="Tolak catatan?" data-confirm-button="Ya, tolak">
-                                            <svg>
-                                                <use href="#icon-close"></use>
-                                            </svg>
-                                        </button>
-                                    </form>
-                                @endif
+
+                            {{-- Aksi --}}
+                            <td class="px-5 py-3.5">
+                                <div class="flex items-center justify-center gap-2">
+                                    <a class="group inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200/70 hover:text-slate-900" href="{{ route('guru.records.show', $record) }}">
+                                        <i data-lucide="eye" class="h-3.5 w-3.5 fill-none stroke-current"></i>
+                                        Detail
+                                    </a>
+                                    @if(auth()->user()->hasRole('Guru BK') && $record->status_validasi === 'menunggu_validasi')
+                                        <form method="POST" action="{{ route('guru.records.validate', $record) }}" class="inline-flex items-center gap-1.5">
+                                            @csrf
+                                            <button class="inline-flex items-center gap-1.5 rounded-lg bg-[#5c1919] px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:bg-[#4a1414]" name="status_validasi" value="disetujui" data-confirm="Catatan poin ini akan disetujui." data-confirm-title="Setujui catatan?" data-confirm-button="Ya, setujui">
+                                                <i data-lucide="check" class="h-3.5 w-3.5 fill-none stroke-current"></i>
+                                                Setujui
+                                            </button>
+                                            <button class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-xs transition hover:bg-slate-50" name="status_validasi" value="ditolak" data-confirm="Catatan poin ini akan ditolak." data-confirm-title="Tolak catatan?" data-confirm-button="Ya, tolak">
+                                                <i data-lucide="x" class="h-3.5 w-3.5 fill-none stroke-current"></i>
+                                                Tolak
+                                            </button>
+                                        </form>
+                                    @endif
+                                </div>
                             </td>
                         </tr>
-                    @empty
+                    @endforeach
+                    @else
                         <tr>
-                            <td colspan="5" class="h-[180px] text-center text-[#a1887f] border-t border-[#fff3e0]">
-                                <span class="mx-auto mb-[.7rem] grid h-[42px] w-[42px] place-items-center rounded-[12px] bg-[#fff3e0] text-[#6d1a1a]">
-                                    <svg>
-                                        <use href="#icon-note"></use>
-                                    </svg>
-                                </span>
-                                Belum ada catatan.
+                            <td colspan="5" class="py-12 text-center text-slate-400">
+                                <div class="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-slate-400">
+                                    <i data-lucide="notebook-pen" class="h-5 w-5 fill-none stroke-current"></i>
+                                </div>
+                                <span class="text-xs font-medium">Belum ada catatan.</span>
                             </td>
                         </tr>
-                    @endforelse
+                    @endif
                 </tbody>
             </table>
         </div>
 
-        {{ $records->links() }}
+        @if($records->hasPages())
+            <div class="border-t border-slate-100 px-5 py-3 bg-slate-50/50">
+                {{ $records->links() }}
+            </div>
+        @endif
     </section>
 </x-layouts.app>
