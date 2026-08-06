@@ -1,10 +1,22 @@
 @php
     $title = 'Detail Poin';
+    $statusStyles = [
+        'disetujui' => 'bg-emerald-50 text-emerald-700 border-emerald-200/60',
+        'ditolak' => 'bg-rose-50 text-rose-700 border-rose-200/60',
+        'menunggu_validasi' => 'bg-amber-50 text-amber-700 border-amber-200/60',
+        'draft' => 'bg-slate-100 text-slate-600 border-slate-200/60',
+    ];
+    $statusLabel = [
+        'disetujui' => 'Disetujui',
+        'ditolak' => 'Ditolak',
+        'menunggu_validasi' => 'Menunggu',
+        'draft' => 'Draft',
+    ];
 @endphp
 
 <x-layouts.app :title="$title">
-    <a class="mb-[1.2rem] inline-flex items-center gap-[.4rem] text-[.7rem] font-extrabold text-[#6d1a1a]" href="{{ route('guru.records') }}">
-        <i data-lucide="arrow-left" class="h-3.5 w-3.5"></i>
+    <a class="mb-5 inline-flex items-center gap-1.5 text-[0.7rem] font-extrabold text-[#5c1919] hover:underline" href="{{ route('guru.records') }}">
+        <i data-lucide="arrow-left" class="h-4 w-4"></i>
         Kembali ke catatan poin
     </a>
 
@@ -14,75 +26,77 @@
         copy="Informasi lengkap catatan yang dapat divalidasi oleh Guru BK."
     />
 
-    <div class="grid grid-cols-1 gap-[1rem] min-[461px]:grid-cols-[minmax(280px,.8fr)_minmax(0,1.2fr)]">
-        <section class="overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white shadow-[0_5px_20px_rgba(74,28,28,.025)]">
+    <div class="grid grid-cols-1 gap-5 min-[761px]:grid-cols-[minmax(280px,.8fr)_minmax(0,1.2fr)]">
+        <section class="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+            <div class="border-b border-slate-100 px-5 py-4">
+                <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">RINGKASAN</span>
+                <h3 class="text-base font-bold text-slate-900">Informasi catatan</h3>
+            </div>
             <dl class="m-0">
-                <div class="flex justify-between gap-[1rem] border-b border-[#fce4c4] p-[1rem]">
-                    <dt class="text-[.75rem] text-[#8c6d6d]">Jenis</dt>
-                    <dd>
-                        <span class="inline-flex items-center gap-[.35rem] rounded-[99px] px-[.55rem] py-[.3rem] text-[.58rem] font-extrabold capitalize {{ $record->kategoriPoin->jenis === 'apresiasi' ? 'bg-[#fff9c4] text-[#5d4037]' : 'bg-[#ffebee] text-[#c62828]' }}">
+                <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-3.5">
+                    <dt class="text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Jenis</dt>
+                    <dd class="m-0">
+                        <span class="inline-flex items-center rounded-md border px-2.5 py-1 text-[0.68rem] font-semibold capitalize {{ $record->kategoriPoin->jenis === 'apresiasi' ? 'bg-emerald-50 text-emerald-700 border-emerald-200/60' : 'bg-rose-50 text-rose-700 border-rose-200/60' }}">
                             {{ ucfirst($record->kategoriPoin->jenis) }}
                         </span>
                     </dd>
                 </div>
-                <div class="flex justify-between gap-[1rem] border-b border-[#fce4c4] p-[1rem]">
-                    <dt class="text-[.75rem] text-[#8c6d6d]">Bobot poin</dt>
-                    <dd class="text-right text-[.8rem] font-bold {{ $record->kategoriPoin->jenis === 'apresiasi' ? 'text-[#5d4037]' : 'text-[#c62828]' }}">
-                        <strong>{{ $record->kategoriPoin->jenis === 'apresiasi' ? '+' : '-' }}{{ $record->kategoriPoin->bobot_poin }}</strong>
+                <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-3.5">
+                    <dt class="text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Bobot poin</dt>
+                    <dd class="m-0 text-sm font-bold {{ $record->kategoriPoin->jenis === 'apresiasi' ? 'text-emerald-600' : 'text-rose-600' }}">
+                        {{ $record->kategoriPoin->jenis === 'apresiasi' ? '+' : '-' }}{{ $record->kategoriPoin->bobot_poin }}
                     </dd>
                 </div>
-                <div class="flex justify-between gap-[1rem] border-b border-[#fce4c4] p-[1rem]">
-                    <dt class="text-[.75rem] text-[#8c6d6d]">Tanggal</dt>
-                    <dd class="m-0 text-right text-[.8rem] font-bold">{{ $record->tanggal->translatedFormat('d F Y') }}</dd>
+                <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-3.5">
+                    <dt class="text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Tanggal</dt>
+                    <dd class="m-0 text-sm font-medium text-slate-700">{{ $record->tanggal->translatedFormat('d F Y') }}</dd>
                 </div>
-                <div class="flex justify-between gap-[1rem] border-b border-[#fce4c4] p-[1rem]">
-                    <dt class="text-[.75rem] text-[#8c6d6d]">Pencatat</dt>
-                    <dd class="m-0 text-right text-[.8rem] font-bold">{{ $record->pencatat->nama_lengkap }}</dd>
+                <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-3.5">
+                    <dt class="text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Pencatat</dt>
+                    <dd class="m-0 text-sm font-medium text-slate-700">{{ $record->pencatat->nama_lengkap }}</dd>
                 </div>
-                <div class="flex justify-between gap-[1rem] border-b border-[#fce4c4] p-[1rem]">
-                    <dt class="text-[.75rem] text-[#8c6d6d]">Siswa</dt>
-                    <dd class="m-0 text-right text-[.8rem] font-bold">{{ $record->siswa->user->nama_lengkap }} &middot; {{ $record->siswa->nisn }}</dd>
+                <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-3.5">
+                    <dt class="text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Siswa</dt>
+                    <dd class="m-0 text-right text-sm font-medium text-slate-700">{{ $record->siswa->user->nama_lengkap }} &middot; {{ $record->siswa->nisn }}</dd>
                 </div>
-                <div class="flex justify-between gap-[1rem] p-[1rem]">
-                    <dt class="text-[.75rem] text-[#8c6d6d]">Status</dt>
+                <div class="flex items-center justify-between gap-4 px-5 py-3.5">
+                    <dt class="text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Status</dt>
                     <dd class="m-0">
-                        @if($record->status_validasi === 'disetujui')
-                            <span class="inline-flex items-center gap-[.35rem] rounded-[7px] bg-[#2e7d32] px-[.55rem] py-[.35rem] text-[.58rem] font-extrabold tracking-[.08em] text-white">Disetujui</span>
-                        @elseif($record->status_validasi === 'ditolak')
-                            <span class="inline-flex items-center gap-[.35rem] rounded-[7px] bg-[#c62828] px-[.55rem] py-[.35rem] text-[.58rem] font-extrabold tracking-[.08em] text-white">Ditolak</span>
-                        @else
-                            <span class="inline-flex items-center gap-[.35rem] rounded-[7px] bg-[#f5e6d3] px-[.55rem] py-[.35rem] text-[.58rem] font-extrabold tracking-[.08em] text-[#5d4037]">Menunggu validasi</span>
-                        @endif
+                        <span class="inline-flex items-center rounded-md border px-2.5 py-1 text-[0.68rem] font-semibold capitalize {{ $statusStyles[$record->status_validasi] ?? 'bg-slate-100 text-slate-600 border-slate-200/60' }}">
+                            {{ $statusLabel[$record->status_validasi] ?? $record->status_validasi }}
+                        </span>
                     </dd>
                 </div>
             </dl>
         </section>
 
-        <section class="overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white shadow-[0_5px_20px_rgba(74,28,28,.025)]">
-            <div class="p-[1.5rem]">
-                <p class="mb-[.65rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">KRONOLOGI</p>
-                <h3 class="mb-[.25rem] text-[1.08rem] font-bold tracking-[-.025em]">Detail catatan</h3>
-                <p class="mt-[.3rem] whitespace-pre-line text-[.78rem] leading-[1.8] text-[#6d4c41]">{{ $record->keterangan }}</p>
+        <section class="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+            <div class="border-b border-slate-100 px-5 py-4">
+                <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">KRONOLOGI</span>
+                <h3 class="text-base font-bold text-slate-900">Detail catatan</h3>
+            </div>
+            <div class="p-5">
+                <p class="whitespace-pre-line text-sm leading-relaxed text-slate-600">{{ $record->keterangan }}</p>
 
                 @if($record->bukti_foto)
-                    <a class="mt-5 inline-flex min-h-[42px] items-center gap-[.55rem] rounded-[10px] border border-[#fce4c4] bg-white px-[1rem] py-[.72rem] text-[.8rem] font-[750] text-[#5d4037] shadow-[0_5px_18px_rgba(74,28,28,.03)] transition hover:bg-[#fff8e1]" href="{{ asset('storage/'.$record->bukti_foto) }}" target="_blank" rel="noopener">
+                    <a class="mt-5 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 shadow-xs transition hover:bg-slate-50" href="{{ asset('storage/'.$record->bukti_foto) }}" target="_blank" rel="noopener">
                         <i data-lucide="eye" class="h-4 w-4"></i>
                         Lihat bukti
                     </a>
                 @endif
 
                 @if($record->status_validasi === 'menunggu_validasi' && auth()->user()->hasRole('Guru BK'))
-                    <div class="mt-[1.2rem] flex items-center gap-[.7rem]">
+                    <div class="mt-5 flex items-center gap-2">
                         <form method="POST" action="{{ route('guru.records.validate', $record) }}">
                             @csrf
-                            <button class="inline-flex min-h-[42px] items-center justify-center gap-[.55rem] rounded-[10px] border-0 bg-[#6d1a1a] px-[1rem] py-[.72rem] text-[.8rem] font-[750] text-white shadow-[0_8px_20px_#6d1a1a38] transition hover:-translate-y-px hover:bg-[#5a1515]" name="status_validasi" value="disetujui" data-confirm="Catatan poin ini akan disetujui." data-confirm-title="Setujui catatan?" data-confirm-button="Ya, setujui">
+                            <button class="inline-flex items-center gap-1.5 rounded-lg bg-[#5c1919] px-3 py-1.5 text-xs font-semibold text-white shadow-xs transition hover:bg-[#4a1414]" name="status_validasi" value="disetujui" data-confirm="Catatan poin ini akan disetujui." data-confirm-title="Setujui catatan?" data-confirm-button="Ya, setujui">
                                 <i data-lucide="check" class="h-4 w-4"></i>
                                 Setujui
                             </button>
                         </form>
                         <form method="POST" action="{{ route('guru.records.validate', $record) }}">
                             @csrf
-                            <button class="inline-flex min-h-[42px] items-center justify-center gap-[.55rem] rounded-[10px] border border-[#fce4c4] bg-white px-[1rem] py-[.72rem] text-[.8rem] font-[750] text-[#5d4037] shadow-[0_5px_18px_rgba(74,28,28,.03)] transition hover:bg-[#fff8e1]" name="status_validasi" value="ditolak" data-confirm="Catatan poin ini akan ditolak." data-confirm-title="Tolak catatan?" data-confirm-button="Ya, tolak">
+                            <button class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-xs transition hover:bg-slate-50" name="status_validasi" value="ditolak" data-confirm="Catatan poin ini akan ditolak." data-confirm-title="Tolak catatan?" data-confirm-button="Ya, tolak">
                                 <i data-lucide="x" class="h-4 w-4"></i>
                                 Tolak
                             </button>

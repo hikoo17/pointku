@@ -16,7 +16,7 @@
     <div class="header">
         <h2>SURAT PANGGILAN ORANG TUA/WALI</h2>
         <p>Nomor: {{ $surat->nomor_surat }}</p>
-        <p>Tanggal: {{ \Carbon\Carbon::parse($surat->tanggal_surat)->format('d F Y') }}</p>
+        <p>Tanggal: {{ \Carbon\Carbon::parse($surat->tanggal_surat)->translatedFormat('d F Y') }}</p>
     </div>
 
     <div class="content">
@@ -50,7 +50,7 @@
     <div class="signature">
         <p>__________________________</p>
         <p>Guru BK / Kesiswaan</p>
-        <p>{{ \Carbon\Carbon::now()->format('d F Y') }}</p>
+        <p>{{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
     </div>
 </body>
 </html>
