@@ -12,6 +12,8 @@ use App\Models\User;
 use App\Models\SuratPanggilan;
 use App\Services\SuratPanggilanWorkflowService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ApiWorkflowTest extends TestCase
@@ -259,6 +261,61 @@ class ApiWorkflowTest extends TestCase
             ->getJson('/api/siswa/riwayat')
             ->assertOk()
             ->assertJsonPath('total', 0);
+    }
+
+    public function test_teacher_can_store_multiple_evidence_photos(): void
+    {
+        Storage::fake('public');
+        [$siswa, $pencatat] = $this->createStudentAndRecorder();
+        $kategori = KategoriPoin::create([
+            'jenis' => 'pelanggaran',
+            'nama_kategori' => 'Terlambat',
+            'bobot_poin' => 5,
+            'tingkat' => 'ringan',
+        ]);
+
+        $this->actingAs($pencatat)->post(route('guru.records.store'), [
+            'siswa_id' => $siswa->id,
+            'kategori_poin_id' => $kategori->id,
+            'tanggal' => now()->toDateString(),
+            'keterangan' => 'Bukti lebih dari satu foto',
+            'bukti_foto' => [
+                UploadedFile::fake()->image('foto-1.jpg'),
+                UploadedFile::fake()->image('foto-2.jpg'),
+            ],
+        ])->assertSessionHasNoErrors();
+
+        $catatan = CatatanPoin::latest('id')->firstOrFail();
+
+        $this->assertCount(2, $catatan->bukti_foto_list);
+        foreach ($catatan->bukti_foto_list as $path) {
+            Storage::disk('public')->assertExists($path);
+        }
+    }
+
+    public function test_evidence_photo_upload_is_limited_to_five_files(): void
+    {
+        Storage::fake('public');
+        [$siswa, $pencatat] = $this->createStudentAndRecorder();
+        $kategori = KategoriPoin::create([
+            'jenis' => 'pelanggaran',
+            'nama_kategori' => 'Terlambat',
+            'bobot_poin' => 5,
+            'tingkat' => 'ringan',
+        ]);
+
+        $this->actingAs($pencatat)->post(route('guru.records.store'), [
+            'siswa_id' => $siswa->id,
+            'kategori_poin_id' => $kategori->id,
+            'tanggal' => now()->toDateString(),
+            'keterangan' => 'Terlalu banyak bukti',
+            'bukti_foto' => array_map(
+                fn ($index) => UploadedFile::fake()->image("foto-$index.jpg"),
+                range(1, 6)
+            ),
+        ])->assertSessionHasErrors('bukti_foto');
+
+        $this->assertDatabaseMissing('catatan_poin', ['keterangan' => 'Terlalu banyak bukti']);
     }
 
     public function test_letter_workflow_requires_valid_transition_and_records_history(): void

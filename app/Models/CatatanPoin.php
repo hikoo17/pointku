@@ -23,6 +23,17 @@ class CatatanPoin extends Model
         'tanggal' => 'date',
     ];
 
+    public function getBuktiFotoListAttribute(): array
+    {
+        if (! $this->bukti_foto) {
+            return [];
+        }
+
+        $paths = json_decode($this->bukti_foto, true);
+
+        return is_array($paths) ? $paths : [$this->bukti_foto];
+    }
+
     public function siswa()
     {
         return $this->belongsTo(Siswa::class);

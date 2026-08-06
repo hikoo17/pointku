@@ -253,12 +253,16 @@ class DashboardController extends Controller
         $data = $request->validate([
             'siswa_id' => ['required', 'exists:siswa,id'], 'kategori_poin_id' => ['required', 'exists:kategori_poin,id'],
             'tanggal' => ['required', 'date'], 'keterangan' => ['required', 'string', 'max:3000'],
-            'bukti_foto' => ['nullable', 'image', 'max:2048'], 'status_validasi' => ['nullable', 'in:draft,disetujui'],
+            'bukti_foto' => ['nullable', 'array', 'max:5'],
+            'bukti_foto.*' => ['image', 'max:2048'], 'status_validasi' => ['nullable', 'in:draft,disetujui'],
         ]);
         $data['pencatat_id'] = $request->user()->id;
         $data['status_validasi'] = $request->user()->hasRole('Guru Pelapor') ? 'menunggu_validasi' : ($data['status_validasi'] ?? 'disetujui');
         if ($request->hasFile('bukti_foto')) {
-            $data['bukti_foto'] = $request->file('bukti_foto')->store('bukti-poin', 'public');
+            $data['bukti_foto'] = json_encode(array_map(
+                fn ($foto) => $foto->store('bukti-poin', 'public'),
+                $request->file('bukti_foto')
+            ));
         }
         CatatanPoin::create($data);
 

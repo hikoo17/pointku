@@ -1,132 +1,158 @@
 @php($title = 'Dashboard Wali Kelas')
 
-<x-layouts.app :title="$title" >
+<x-layouts.app :title="$title">
     <x-dashboard
         title="Kelas {{ $kelas->nama_kelas }}"
         eyebrow="RUANG WALI KELAS"
         copy="Pantau perkembangan seluruh siswa di kelas tanpa mengubah transaksi poin."
     />
 
-    <div class="mb-[1.2rem] grid grid-cols-2 gap-[0.7rem] min-[761px]:gap-4 min-[1051px]:grid-cols-4">
-        <article class="relative min-h-[135px] overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white p-4 shadow-[0_5px_18px_rgba(74,28,28,.03)] after:absolute after:-right-8 after:-bottom-11 after:h-[115px] after:w-[115px] after:rounded-full after:bg-current after:opacity-[.07] min-[761px]:min-h-[155px] min-[761px]:p-[1.35rem] text-[#6d1a1a] border-t-[3px] border-t-[#6d1a1a]">
-            <span class="absolute top-[0.9rem] right-[0.9rem] grid h-7 w-7 place-items-center rounded-[10px] bg-current opacity-[.85] text-white min-[761px]:top-[1.2rem] min-[761px]:right-[1.2rem] min-[761px]:h-8 min-[761px]:w-8">
-                <i data-lucide="circle-alert" class="block text-[.68rem] font-[750] text-[#8c6d6d]"></i>
-            </span>
-            <span class="block text-[.68rem] font-[750] text-[#8c6d6d]">Perlu dipantau</span>
-            <strong class="my-[.7rem] mb-[.1rem] block text-[2.15rem] leading-none font-bold tracking-[-.06em] min-[761px]:text-[2.7rem]">{{ $students->where('total_poin_pelanggaran', '>=', 25)->count() }}</strong>
-            <small class="text-[.62rem] text-[#8c6d6d]">Melewati 25 poin</small>
-        </article>
-
-        <article class="relative min-h-[135px] overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white p-4 shadow-[0_5px_18px_rgba(74,28,28,.03)] after:absolute after:-right-8 after:-bottom-11 after:h-[115px] after:w-[115px] after:rounded-full after:bg-current after:opacity-[.07] min-[761px]:min-h-[155px] min-[761px]:p-[1.35rem] text-[#f57f17] border-t-[3px] border-t-[#fbc02d]">
-            <span class="absolute top-[0.9rem] right-[0.9rem] grid h-7 w-7 place-items-center rounded-[10px] bg-current opacity-[.85] text-white min-[761px]:top-[1.2rem] min-[761px]:right-[1.2rem] min-[761px]:h-8 min-[761px]:w-8">
-                <i data-lucide="heart" class="block text-[.68rem] font-[750] text-[#8c6d6d]"></i>
-            </span>
-            <span class="block text-[.68rem] font-[750] text-[#8c6d6d]">Poin apresiasi</span>
-            <strong class="my-[.7rem] mb-[.1rem] block text-[2.15rem] leading-none font-bold tracking-[-.06em] min-[761px]:text-[2.7rem]">{{ $students->sum('total_poin_apresiasi') }}</strong>
-            <small class="text-[.62rem] text-[#8c6d6d]">Akumulasi positif</small>
-        </article>
+    {{-- Stats Grid --}}
+    <div class="mb-6 grid grid-cols-2 gap-4 min-[1051px]:grid-cols-4">
+        @foreach([
+            ['Total Siswa', $students->count(), 'users', 'text-slate-700', 'bg-slate-100 border-slate-200/60', 'border-t-slate-400', null],
+            ['Perlu Dipantau', $students->where('total_poin_pelanggaran', '>=', 25)->count(), 'circle-alert', 'text-rose-700', 'bg-rose-50 border-rose-100', 'border-t-rose-600', route('wali-kelas.students', ['status' => 'dipantau'])],
+            ['Poin Apresiasi', $students->sum('total_poin_apresiasi'), 'heart', 'text-amber-700', 'bg-amber-50 border-amber-100', 'border-t-amber-500', null],
+            ['Poin Pelanggaran', $students->sum('total_poin_pelanggaran'), 'triangle-alert', 'text-[#5c1919]', 'bg-[#5c1919]/5 border-[#5c1919]/10', 'border-t-[#5c1919]', null],
+        ] as [$label, $value, $icon, $textColor, $badgeBg, $borderTop, $href])
+            <article class="relative flex flex-col justify-between overflow-hidden rounded-xl border border-slate-200/80 border-t-[3px] {{ $borderTop }} bg-white p-4.5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md min-[761px]:p-5">
+                @if($href)
+                    <a class="absolute inset-0 z-10" href="{{ $href }}" aria-label="Lihat {{ strtolower($label) }}"></a>
+                @endif
+                <div class="flex items-center justify-between gap-2">
+                    <span class="text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">{{ $label }}</span>
+                    <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border {{ $badgeBg }} {{ $textColor }}">
+                        <i data-lucide="{{ $icon }}" class="h-4 w-4"></i>
+                    </span>
+                </div>
+                <div class="mt-3">
+                    <strong class="block text-3xl font-bold tracking-tight text-slate-900">{{ $value }}</strong>
+                    <small class="mt-0.5 flex items-center gap-1 text-[0.65rem] font-medium text-slate-400">
+                        @if($href)
+                            <span class="font-bold text-slate-500">Lihat detail</span>
+                        @endif
+                    </small>
+                </div>
+            </article>
+        @endforeach
     </div>
 
-    <div class="mt-[1.2rem] grid grid-cols-1 gap-[1.2rem] min-[761px]:grid-cols-[1.05fr_.95fr]">
-        <section class="overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white shadow-[0_5px_20px_rgba(74,28,28,.025)]">
-            <div class="flex items-center justify-between gap-4 border-b border-[#fce4c4] p-[1.1rem] min-[461px]:px-6 min-[461px]:py-[1.35rem]">
+    <div class="mt-6 grid grid-cols-1 gap-6 min-[761px]:grid-cols-2">
+        {{-- Siswa Perlu Dipantau --}}
+        <section class="flex flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+            <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4">
                 <div>
-                    <p class="mb-[.65rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">PRIORITAS PENDAMPINGAN</p>
-                    <h3 class="mb-[.25rem] text-[1.08rem] font-bold tracking-[-.025em]">Siswa perlu dipantau</h3>
+                    <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">PRIORITAS PENDAMPINGAN</span>
+                    <h3 class="text-base font-bold text-slate-900">Siswa perlu dipantau</h3>
                 </div>
-                <a class="inline-flex items-center gap-[.4rem] text-[.7rem] font-extrabold text-[#6d1a1a]" href="{{ route('wali-kelas.students', ['status' => 'dipantau']) }}">
+                <a class="group hidden shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200/70 hover:text-slate-900 min-[761px]:inline-flex" href="{{ route('wali-kelas.students', ['status' => 'dipantau']) }}">
                     Lihat semua
-                    <i data-lucide="chevron-right" class="h-4 w-4"></i>
+                    <i data-lucide="chevron-right" class="h-3.5 w-3.5 fill-none stroke-current transition-transform duration-200 group-hover:translate-x-0.5"></i>
                 </a>
             </div>
-            <div class="divide-y divide-[#fce4c4]">
+            <div class="divide-y divide-slate-100">
                 @forelse($students->where('total_poin_pelanggaran', '>=', 25) as $student)
-                    <a class="flex items-center gap-[.8rem] px-6 py-4 transition hover:bg-[#fff8e1]" href="{{ route('wali-kelas.student', $student) }}">
-                        <span class="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-[10px] bg-[#6d1a1a] font-[850] text-white">{{ substr($student->user->nama_lengkap, 0, 1) }}</span>
-                        <span class="grid flex-1 gap-[.15rem]">
-                            <strong class="block text-[.75rem] text-[#4a1c1c]">{{ $student->user->nama_lengkap }}</strong>
-                            <small class="mt-[.18rem] block text-[.61rem] text-[#a1887f]">NISN {{ $student->nisn }}</small>
-                        </span>
-                        <b class="text-[.75rem]">{{ $student->total_poin_pelanggaran }} poin</b>
+                    <a class="flex items-center gap-3 px-5 py-3.5 transition hover:bg-slate-50/80" href="{{ route('wali-kelas.students.show', $student) }}">
+                        <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#6d1a1a] text-xs font-extrabold text-white">{{ substr($student->user->nama_lengkap, 0, 1) }}</span>
+                        <div class="min-w-0 flex-1">
+                            <strong class="block truncate text-xs font-bold text-slate-800">{{ $student->user->nama_lengkap }}</strong>
+                            <small class="mt-0.5 block text-[0.68rem] font-medium text-slate-500">NISN {{ $student->nisn }}</small>
+                        </div>
+                        <span class="inline-flex items-center rounded-full px-2.5 py-1 text-[0.68rem] font-bold text-rose-700 bg-rose-50 border border-rose-100">{{ $student->total_poin_pelanggaran }} poin</span>
                     </a>
                 @empty
-                    <p class="p-6 text-center text-[#8c6d6d]">Belum ada siswa melewati threshold.</p>
+                    <div class="grid min-h-36 place-items-center px-5 py-8 text-center">
+                        <div>
+                            <span class="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-full bg-emerald-50 text-emerald-600">
+                                <i data-lucide="shield-check" class="h-5 w-5"></i>
+                            </span>
+                            <strong class="block text-xs font-bold text-slate-700">Kondisi siswa terkendali</strong>
+                            <p class="mt-1 text-[0.68rem] font-medium text-slate-400">Tidak ada siswa yang melewati threshold.</p>
+                        </div>
+                    </div>
                 @endforelse
             </div>
         </section>
 
-        <section class="overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white shadow-[0_5px_20px_rgba(74,28,28,.025)]">
-            <div class="flex items-center justify-between gap-4 border-b border-[#fce4c4] p-[1.1rem] min-[461px]:px-6 min-[461px]:py-[1.35rem]">
+        {{-- Peringatan Terbaru --}}
+        <section class="flex flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+            <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4">
                 <div>
-                    <p class="mb-[.65rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">NOTIFIKASI KELAS</p>
-                    <h3 class="mb-[.25rem] text-[1.08rem] font-bold tracking-[-.025em]">Peringatan terbaru</h3>
+                    <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">NOTIFIKASI KELAS</span>
+                    <h3 class="text-base font-bold text-slate-900">Peringatan terbaru</h3>
                 </div>
-                <a class="inline-flex items-center gap-[.4rem] text-[.7rem] font-extrabold text-[#6d1a1a]" href="{{ route('wali-kelas.notifications') }}">
+                <a class="group hidden shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200/70 hover:text-slate-900 min-[761px]:inline-flex" href="{{ route('wali-kelas.notifications') }}">
                     Lihat semua
-                    <i data-lucide="chevron-right" class="h-4 w-4"></i>
+                    <i data-lucide="chevron-right" class="h-3.5 w-3.5 fill-none stroke-current transition-transform duration-200 group-hover:translate-x-0.5"></i>
                 </a>
             </div>
-            <div class="divide-y divide-[#fce4c4]">
+            <div class="divide-y divide-slate-100">
                 @forelse($alerts as $alert)
-                    <a class="block px-6 py-4 transition hover:bg-[#fff8e1] {{ $alert->dibaca_pada ? 'opacity-[.65]' : '' }}" href="{{ route('wali-kelas.notifications') }}">
-                        <strong class="block text-[.75rem] font-bold text-[#4a1c1c]">
+                    <a class="block px-5 py-3.5 transition hover:bg-slate-50/80 {{ $alert->dibaca_pada ? 'opacity-65' : '' }}" href="{{ route('wali-kelas.notifications') }}">
+                        <strong class="flex items-center gap-1.5 text-xs font-bold text-slate-800">
                             {{ $alert->siswa->user->nama_lengkap }} · {{ $alert->judul }}
                         </strong>
-                        <p class="mt-[.3rem] text-[.78rem] leading-[1.5] text-[#8c6d6d]">{{ $alert->pesan }}</p>
-                        <small class="text-[#a1887f]">{{ $alert->created_at->diffForHumans() }}</small>
+                        <p class="mt-1 text-[0.78rem] leading-relaxed text-slate-500">{{ $alert->pesan }}</p>
+                        <small class="mt-1 block text-[0.68rem] font-medium text-slate-400">{{ $alert->created_at->diffForHumans() }}</small>
                     </a>
                 @empty
-                    <p class="p-6 text-center text-[#8c6d6d]">Belum ada notifikasi threshold.</p>
+                    <div class="grid min-h-36 place-items-center px-5 py-8 text-center">
+                        <div>
+                            <span class="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-full bg-emerald-50 text-emerald-600">
+                                <i data-lucide="bell" class="h-5 w-5"></i>
+                            </span>
+                            <strong class="block text-xs font-bold text-slate-700">Belum ada notifikasi</strong>
+                            <p class="mt-1 text-[0.68rem] font-medium text-slate-400">Peringatan akan tampil saat siswa mencapai threshold.</p>
+                        </div>
+                    </div>
                 @endforelse
             </div>
         </section>
     </div>
 
-    <section class="overflow-hidden rounded-[15px] border border-[#fce4c4] bg-white shadow-[0_5px_20px_rgba(74,28,28,.025)] mt-[1.2rem]">
-        <div class="flex items-center justify-between gap-4 border-b border-[#fce4c4] p-[1.1rem] min-[461px]:px-6 min-[461px]:py-[1.35rem]">
+    {{-- Catatan Terbaru --}}
+    <section class="mt-6 overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+        <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4">
             <div>
-                <p class="mb-[.65rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">AKTIVITAS TERVALIDASI</p>
-                <h3 class="mb-[.25rem] text-[1.08rem] font-bold tracking-[-.025em]">Catatan terbaru kelas</h3>
+                <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">AKTIVITAS TERVALIDASI</span>
+                <h3 class="text-base font-bold text-slate-900">Catatan terbaru kelas</h3>
             </div>
         </div>
         <div class="overflow-x-auto">
-            <table class="w-full border-collapse border-separate min-w-[760px]">
+            <table class="w-full min-w-[760px] border-collapse text-left text-xs">
                 <thead>
-                    <tr>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Siswa</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Jenis</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Kategori</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Tanggal</th>
-                        <th class="px-[1.5rem] py-[.75rem] text-left text-[.6rem] font-bold uppercase tracking-[.09em] text-[#8d6e63] bg-[#fff8e1]">Poin</th>
+                    <tr class="border-b border-slate-100 bg-slate-50/80 font-bold uppercase tracking-wider text-slate-500">
+                        <th class="px-5 py-3">Siswa</th>
+                        <th class="px-5 py-3">Jenis</th>
+                        <th class="px-5 py-3">Kategori</th>
+                        <th class="px-5 py-3">Tanggal</th>
+                        <th class="px-5 py-3 text-right">Poin</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-slate-100 text-slate-700">
                     @forelse($recentRecords as $record)
-                        <tr>
-                            <td class="px-[1.5rem] py-[1rem] border-t border-[#fff3e0]">
-                                <div class="flex items-center gap-[.7rem]">
-                                    <span class="grid h-[31px] w-[31px] place-items-center rounded-[9px] bg-[#6d1a1a] font-[850] text-white">{{ substr($record->siswa->user->nama_lengkap,0,1) }}</span>
-                                    <span>{{ $record->siswa->user->nama_lengkap }}</span>
+                        <tr class="transition hover:bg-slate-50/80">
+                            <td class="px-5 py-3.5">
+                                <div class="flex items-center gap-3">
+                                    <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#6d1a1a] text-xs font-extrabold text-white">{{ substr($record->siswa->user->nama_lengkap, 0, 1) }}</span>
+                                    <span class="font-medium text-slate-700">{{ $record->siswa->user->nama_lengkap }}</span>
                                 </div>
                             </td>
-                            <td class="px-[1.5rem] py-[1rem] border-t border-[#fff3e0]">
-                                <span class="inline-flex items-center gap-[.35rem] rounded-[99px] px-[.55rem] py-[.3rem] text-[.58rem] font-extrabold capitalize {{ $record->kategoriPoin->jenis === 'apresiasi' ? 'text-[#5d4037] bg-[#fff9c4]' : 'text-[#c62828] bg-[#ffebee]' }}">
+                            <td class="px-5 py-3.5">
+                                <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.68rem] font-semibold capitalize {{ $record->kategoriPoin->jenis === 'apresiasi' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60' : 'bg-rose-50 text-rose-700 border border-rose-200/60' }}">
                                     {{ ucfirst($record->kategoriPoin->jenis) }}
                                 </span>
                             </td>
-                            <td class="px-[1.5rem] py-[1rem] text-[.72rem] text-[#5d4037] border-t border-[#fff3e0]">{{ $record->kategoriPoin->nama_kategori }}</td>
-                            <td class="px-[1.5rem] py-[1rem] text-[.72rem] text-[#5d4037] border-t border-[#fff3e0]">{{ $record->tanggal->format('d/m/Y') }}</td>
-                            <td class="px-[1.5rem] py-[1rem] border-t border-[#fff3e0] {{ $record->kategoriPoin->jenis === 'apresiasi' ? 'text-[#5d4037]' : 'text-[#c62828]' }}">
-                                <strong>{{ $record->kategoriPoin->jenis === 'apresiasi' ? '+' : '-' }}{{ $record->kategoriPoin->bobot_poin }}</strong>
+                            <td class="px-5 py-3.5 font-medium text-slate-600">{{ $record->kategoriPoin->nama_kategori }}</td>
+                            <td class="px-5 py-3.5 font-medium text-slate-600">{{ $record->tanggal->format('d/m/Y') }}</td>
+                            <td class="px-5 py-3.5 text-right font-bold {{ $record->kategoriPoin->jenis === 'apresiasi' ? 'text-emerald-600' : 'text-rose-600' }}">
+                                {{ $record->kategoriPoin->jenis === 'apresiasi' ? '+' : '-' }}{{ $record->kategoriPoin->bobot_poin }}
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="h-[180px] text-center text-[#a1887f] border-t border-[#fff3e0]">
-                                <span class="mx-auto mb-[.7rem] grid h-[42px] w-[42px] place-items-center rounded-[12px] bg-[#fff3e0] text-[#6d1a1a]">
-                                    <i data-lucide="notebook-pen" class="h-6 w-6"></i>
-                                </span>
-                                Belum ada aktivitas.
+                            <td colspan="5" class="py-12 text-center text-slate-400">
+                                <span class="text-xs font-medium">Belum ada aktivitas tervalidasi.</span>
                             </td>
                         </tr>
                     @endforelse

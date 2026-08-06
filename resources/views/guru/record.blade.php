@@ -78,11 +78,15 @@
             <div class="p-5">
                 <p class="whitespace-pre-line text-sm leading-relaxed text-slate-600">{{ $record->keterangan }}</p>
 
-                @if($record->bukti_foto)
-                    <a class="mt-5 inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-xs font-semibold text-slate-700 shadow-xs transition hover:bg-slate-50" href="{{ asset('storage/'.$record->bukti_foto) }}" target="_blank" rel="noopener">
-                        <i data-lucide="eye" class="h-4 w-4"></i>
-                        Lihat bukti
-                    </a>
+                @if($record->bukti_foto_list)
+                    <div class="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        @foreach($record->bukti_foto_list as $index => $foto)
+                            <a class="group relative aspect-square overflow-hidden rounded-lg border border-slate-200 bg-slate-50" href="{{ asset('storage/'.$foto) }}" target="_blank" rel="noopener">
+                                <img class="h-full w-full object-cover transition group-hover:scale-105" src="{{ asset('storage/'.$foto) }}" alt="Bukti foto {{ $index + 1 }}" loading="lazy">
+                                <span class="absolute inset-x-0 bottom-0 bg-slate-950/65 px-2 py-1.5 text-center text-[0.68rem] font-semibold text-white">Lihat foto {{ $index + 1 }}</span>
+                            </a>
+                        @endforeach
+                    </div>
                 @endif
 
                 @if($record->status_validasi === 'menunggu_validasi' && auth()->user()->hasRole('Guru BK'))
