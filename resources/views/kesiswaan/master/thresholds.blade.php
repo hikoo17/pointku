@@ -33,23 +33,22 @@
     {{-- Table Section --}}
     <section class="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
         <div class="overflow-x-auto">
-            <table class="w-full min-w-[780px] border-collapse text-left text-xs">
+            <table class="w-full min-w-[700px] border-collapse text-left text-xs">
                 <thead>
                     <tr class="border-b border-slate-100 bg-slate-50/80 font-bold uppercase tracking-wider text-slate-500">
                         <th class="px-5 py-3">Batas</th>
                         <th class="px-5 py-3">Notifikasi & Deskripsi</th>
                         <th class="px-5 py-3">Level</th>
-                        <th class="px-5 py-3">Surat</th>
-                        <th class="px-5 py-3">Status</th>
+                        <th class="px-5 py-3 text-center">Surat</th>
                         <th class="px-5 py-3 text-right">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-100 text-slate-700">
                     @forelse($thresholds as $threshold)
                         <tr class="transition hover:bg-slate-50/80">
-                            {{-- Batas Poin --}}
-                            <td class="px-5 py-3.5">
-                                <span class="inline-flex h-8 min-w-[2rem] items-center justify-center rounded-lg bg-slate-100 px-2 text-xs font-bold text-slate-800 border border-slate-200">
+                            {{-- Batas Poin (Badge ke Samping) --}}
+                            <td class="px-5 py-3.5 whitespace-nowrap">
+                                <span class="inline-flex items-center rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-800 border border-slate-200">
                                     {{ $threshold->poin_batas }} Poin
                                 </span>
                             </td>
@@ -71,19 +70,21 @@
                                 </span>
                             </td>
 
-                            {{-- Surat Panggilan --}}
-                            <td class="px-5 py-3.5">
-                                <span class="inline-flex items-center rounded-md px-2 py-0.5 text-[0.68rem] font-semibold border {{ $threshold->has_surat_panggilan ? 'bg-indigo-50 text-indigo-700 border-indigo-200/60' : 'bg-slate-50 text-slate-500 border-slate-200' }}">
-                                    {{ $threshold->has_surat_panggilan ? 'Ya' : 'Tidak' }}
-                                </span>
-                            </td>
-
-                            {{-- Status --}}
-                            <td class="px-5 py-3.5">
-                                <span class="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[0.68rem] font-semibold border {{ $threshold->is_active ? 'bg-emerald-50 text-emerald-700 border-emerald-200/60' : 'bg-rose-50 text-rose-700 border-rose-200/60' }}">
-                                    <span class="h-1.5 w-1.5 rounded-full {{ $threshold->is_active ? 'bg-emerald-500' : 'bg-rose-500' }}"></span>
-                                    {{ $threshold->is_active ? 'Aktif' : 'Nonaktif' }}
-                                </span>
+                            {{-- Surat Panggilan (Icon Ceklis / X) --}}
+                            <td class="px-5 py-3.5 text-center">
+                                @if($threshold->has_surat_panggilan)
+                                    <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200/60" title="Ada Surat Panggilan">
+                                        <svg class="h-3.5 w-3.5 stroke-current" viewBox="0 0 24 24" fill="none" stroke-width="3">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                        </svg>
+                                    </span>
+                                @else
+                                    <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-400 border border-slate-200/60" title="Tidak Ada Surat Panggilan">
+                                        <svg class="h-3.5 w-3.5 stroke-current" viewBox="0 0 24 24" fill="none" stroke-width="3">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </span>
+                                @endif
                             </td>
 
                             {{-- Aksi --}}
@@ -95,7 +96,7 @@
                                         </svg>
                                         Edit
                                     </button>
-                                    <form method="POST" action="{{ route('kesiswaan.master.thresholds.destroy', $threshold) }}" onsubmit="return confirm('Hapus aturan ini?')" class="inline">
+                                    <form method="POST" action="{{ route('kesiswaan.master.thresholds.destroy', $threshold) }}" class="inline" data-confirm="Aturan threshold yang dihapus tidak dapat dipulihkan." data-confirm-title="Hapus aturan?" data-confirm-button="Ya, hapus">
                                         @csrf 
                                         @method('DELETE')
                                         <button class="group inline-flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100" type="submit">
@@ -110,7 +111,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="py-12 text-center text-slate-400">
+                            <td colspan="5" class="py-12 text-center text-slate-400">
                                 <span class="text-xs font-medium">Belum ada aturan threshold.</span>
                             </td>
                         </tr>

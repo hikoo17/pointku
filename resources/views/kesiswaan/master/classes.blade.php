@@ -5,13 +5,31 @@
     <div class="mb-6">
         <x-dashboard
             eyebrow="DATA MASTER"
-            title="Kelas"
+            title="Data Kelas"
             copy="Setiap wali kelas hanya dapat menangani satu kelas."
         />
     </div>
 
-    {{-- Toolbar Section: Tombol Tambah Kelas Sejajar di Kanan --}}
-    <div class="mb-4 flex items-center justify-end">
+    {{-- Toolbar Section --}}
+    <div class="mb-4 flex flex-col gap-3 min-[640px]:flex-row min-[640px]:items-center min-[640px]:justify-between">
+        <form method="GET" action="{{ route('kesiswaan.master.classes') }}" class="flex w-full items-center gap-2 min-[640px]:max-w-md">
+            <label for="class-search" class="sr-only">Cari kelas atau wali kelas</label>
+            <div class="relative min-w-0 flex-1">
+                <input id="class-search" class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs text-slate-800 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100" name="q" value="{{ request('q') }}" placeholder="Cari kelas atau wali kelas...">
+            </div>
+            <button type="submit" class="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-700 shadow-2xs transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900">
+                <svg class="h-3.5 w-3.5 fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
+                Cari
+            </button>
+            @if(request()->filled('q'))
+                <a href="{{ route('kesiswaan.master.classes') }}" class="inline-flex h-9 items-center rounded-lg px-2 text-xs font-semibold text-slate-500 transition hover:bg-slate-100 hover:text-slate-800">
+                    Reset
+                </a>
+            @endif
+        </form>
+
         <button type="button" data-open="create-class" class="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#5c1919] px-4 text-xs font-bold text-white shadow-2xs transition hover:bg-[#4a1414]">
             <svg class="h-4 w-4 fill-none stroke-current" stroke-width="2.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
@@ -23,12 +41,15 @@
     {{-- Table Section --}}
     <section class="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
         <div class="overflow-x-auto">
-            <table class="w-full min-w-[650px] border-collapse text-left text-xs">
+            <table class="w-full min-w-[920px] border-collapse text-left text-xs">
                 <thead>
                     <tr class="border-b border-slate-100 bg-slate-50/80 font-bold uppercase tracking-wider text-slate-500">
                         <th class="px-5 py-3">Kelas</th>
                         <th class="px-5 py-3">Wali Kelas</th>
                         <th class="px-5 py-3">Jumlah Siswa</th>
+                        <th class="px-5 py-3 text-center">Pelanggaran</th>
+                        <th class="px-5 py-3 text-center">Apresiasi</th>
+                        <th class="px-5 py-3 text-center">Perlu Penanganan</th>
                         <th class="px-5 py-3 text-right">Aksi</th>
                     </tr>
                 </thead>
@@ -52,16 +73,43 @@
                                 </span>
                             </td>
 
+                            {{-- Pelanggaran --}}
+                            <td class="px-5 py-3.5 text-center font-bold text-rose-600">
+                                {{ $class->pelanggaran_count }}
+                            </td>
+
+                            {{-- Apresiasi --}}
+                            <td class="px-5 py-3.5 text-center font-bold text-emerald-600">
+                                {{ $class->apresiasi_count }}
+                            </td>
+
+                            {{-- Perlu Penanganan --}}
+                            <td class="px-5 py-3.5 text-center">
+                                @if($class->perhatian_count > 0)
+                                    <span class="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-1 text-[0.68rem] font-bold text-rose-700 border border-rose-100">
+                                        {{ $class->perhatian_count }}
+                                    </span>
+                                @else
+                                    <span class="text-[0.68rem] font-medium text-slate-400">0</span>
+                                @endif
+                            </td>
+
                             {{-- Aksi --}}
                             <td class="px-5 py-3.5 text-right">
                                 <div class="inline-flex items-center justify-end gap-2">
+                                    <a href="{{ route('kesiswaan.classes.show', $class) }}" class="group inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900">
+                                        Detail
+                                        <svg class="h-3.5 w-3.5 fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/>
+                                        </svg>
+                                    </a>
                                     <button type="button" data-open="edit-class-{{ $class->id }}" class="group inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900">
                                         <svg class="h-3.5 w-3.5 fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2.5">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                         </svg>
                                         Edit
                                     </button>
-                                    <form method="POST" action="{{ route('kesiswaan.master.classes.destroy', $class) }}" onsubmit="return confirm('Hapus kelas ini?')" class="inline">
+                                    <form method="POST" action="{{ route('kesiswaan.master.classes.destroy', $class) }}" class="inline" data-confirm="Data kelas yang dihapus tidak dapat dipulihkan." data-confirm-title="Hapus kelas?" data-confirm-button="Ya, hapus">
                                         @csrf 
                                         @method('DELETE')
                                         <button class="group inline-flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100" type="submit">
@@ -76,8 +124,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="py-12 text-center text-slate-400">
-                                <span class="text-xs font-medium">Belum ada kelas.</span>
+                            <td colspan="7" class="py-12 text-center text-slate-400">
+                                <span class="text-xs font-medium">{{ request()->filled('q') ? 'Kelas atau wali kelas tidak ditemukan.' : 'Belum ada kelas.' }}</span>
                             </td>
                         </tr>
                     @endforelse

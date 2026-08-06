@@ -109,7 +109,7 @@
                 @php($actions = $isBk ? ['draft' => 'diajukan', 'perlu_revisi' => 'diajukan'] : ['diajukan' => 'disetujui', 'disetujui' => 'dicetak', 'dicetak' => 'dikirim', 'dikirim' => 'selesai'])
                 
                 @if(isset($actions[$surat->status]))
-                    <form method="POST" action="{{ route($isBk ? 'guru.letters.transition' : 'kesiswaan.letters.transition', $surat) }}">
+                    <form method="POST" action="{{ route($isBk ? 'guru.letters.transition' : 'kesiswaan.letters.transition', $surat) }}" data-confirm="Status surat akan diubah menjadi {{ str_replace('_', ' ', $actions[$surat->status]) }}." data-confirm-title="Lanjutkan proses surat?" data-confirm-button="Ya, lanjutkan">
                         @csrf
                         <input type="hidden" name="status" value="{{ $actions[$surat->status] }}">
                         <button class="w-full rounded-lg bg-[#5c1919] px-4 py-2.5 text-xs font-bold capitalize text-white shadow-2xs transition hover:bg-[#4a1414]" type="submit">
@@ -119,7 +119,7 @@
                 @endif
 
                 @if(!$isBk && $surat->status === 'diajukan')
-                    <form class="mt-3 space-y-2.5" method="POST" action="{{ route('kesiswaan.letters.transition', $surat) }}">
+                    <form class="mt-3 space-y-2.5" method="POST" action="{{ route('kesiswaan.letters.transition', $surat) }}" data-confirm="Surat akan dikembalikan kepada Guru BK untuk direvisi." data-confirm-title="Minta revisi surat?" data-confirm-button="Ya, minta revisi">
                         @csrf
                         <input type="hidden" name="status" value="perlu_revisi">
                         <textarea class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-800 outline-none transition focus:border-slate-400 focus:bg-white" name="catatan" placeholder="Tulis catatan revisi..." required></textarea>

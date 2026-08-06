@@ -22,4 +22,9 @@ class Kelas extends Model
     {
         return $this->hasMany(Siswa::class);
     }
+
+    public function catatanPoin()
+    {
+        return $this->hasManyThrough(CatatanPoin::class, Siswa::class);
+    }
 }

@@ -35,7 +35,29 @@ class DashboardController extends Controller
 
     public function kesiswaan()
     {
-        $classes = DB::table('kelas')->leftJoin('siswa', 'kelas.id', '=', 'siswa.kelas_id')->select('kelas.id', 'kelas.nama_kelas', DB::raw('COUNT(siswa.id) as total_siswa'), DB::raw('COALESCE(SUM(siswa.total_poin_pelanggaran), 0) as pelanggaran'), DB::raw('COALESCE(SUM(siswa.total_poin_apresiasi), 0) as apresiasi'))->groupBy('kelas.id', 'kelas.nama_kelas')->get();
+        $recordCounts = DB::table('catatan_poin')
+            ->join('kategori_poin', 'kategori_poin.id', '=', 'catatan_poin.kategori_poin_id')
+            ->join('siswa', 'siswa.id', '=', 'catatan_poin.siswa_id')
+            ->where('catatan_poin.status_validasi', 'disetujui')
+            ->select(
+                'siswa.kelas_id',
+                DB::raw("SUM(CASE WHEN kategori_poin.jenis = 'pelanggaran' THEN 1 ELSE 0 END) as violations"),
+                DB::raw("SUM(CASE WHEN kategori_poin.jenis = 'apresiasi' THEN 1 ELSE 0 END) as appreciations"),
+            )
+            ->groupBy('siswa.kelas_id');
+
+        $classes = DB::table('kelas')
+            ->leftJoin('siswa', 'kelas.id', '=', 'siswa.kelas_id')
+            ->leftJoinSub($recordCounts, 'record_counts', fn ($join) => $join->on('kelas.id', '=', 'record_counts.kelas_id'))
+            ->select(
+                'kelas.id',
+                'kelas.nama_kelas',
+                DB::raw('COUNT(siswa.id) as total_siswa'),
+                DB::raw('COALESCE(MAX(record_counts.violations), 0) as pelanggaran'),
+                DB::raw('COALESCE(MAX(record_counts.appreciations), 0) as apresiasi'),
+            )
+            ->groupBy('kelas.id', 'kelas.nama_kelas')
+            ->get();
 
         return view('dashboards.kesiswaan', [
             'stats' => $this->schoolStats(),
@@ -284,11 +306,18 @@ class DashboardController extends Controller
     {
         $students = $kelas->siswa()->with('user')->orderByDesc('total_poin_pelanggaran')->get();
 
+        $violations = $kelas->catatanPoin()->where('status_validasi', 'disetujui')
+            ->whereHas('kategoriPoin', fn ($query) => $query->where('jenis', 'pelanggaran'))
+            ->count();
+        $appreciations = $kelas->catatanPoin()->where('status_validasi', 'disetujui')
+            ->whereHas('kategoriPoin', fn ($query) => $query->where('jenis', 'apresiasi'))
+            ->count();
+
         return view('kesiswaan.class', compact('kelas', 'students') + [
             'summary' => [
                 'students' => $students->count(),
-                'violations' => $students->sum('total_poin_pelanggaran'),
-                'appreciations' => $students->sum('total_poin_apresiasi'),
+                'violations' => $violations,
+                'appreciations' => $appreciations,
                 'attention' => $students->where('total_poin_pelanggaran', '>=', 25)->count(),
             ],
         ]);
@@ -391,10 +420,20 @@ class DashboardController extends Controller
         return back()->with('success', 'Pengguna berhasil dihapus.');
     }
 
-    public function masterClasses()
+    public function masterClasses(Request $request)
     {
         return view('kesiswaan.master.classes', [
-            'classes' => Kelas::with('waliKelas')->withCount('siswa')->orderBy('nama_kelas')->paginate(20),
+            'classes' => Kelas::with('waliKelas')
+                ->withCount('siswa')
+                ->withCount([
+                    'catatanPoin as pelanggaran_count' => fn ($query) => $query->where('status_validasi', 'disetujui')->whereHas('kategoriPoin', fn ($kategori) => $kategori->where('jenis', 'pelanggaran')),
+                    'catatanPoin as apresiasi_count' => fn ($query) => $query->where('status_validasi', 'disetujui')->whereHas('kategoriPoin', fn ($kategori) => $kategori->where('jenis', 'apresiasi')),
+                    'siswa as perhatian_count' => fn ($query) => $query->where('total_poin_pelanggaran', '>=', 25),
+                ])
+                ->when($request->filled('q'), fn ($query) => $query->where(fn ($search) => $search
+                    ->where('nama_kelas', 'like', '%'.$request->q.'%')
+                    ->orWhereHas('waliKelas', fn ($teacher) => $teacher->where('nama_lengkap', 'like', '%'.$request->q.'%'))))
+                ->orderBy('nama_kelas')->paginate(20)->withQueryString(),
             'homeroomTeachers' => User::whereHas('role', fn ($query) => $query->where('nama_role', 'Wali Kelas'))->orderBy('nama_lengkap')->get(),
         ]);
     }
@@ -577,7 +616,13 @@ class DashboardController extends Controller
 
     private function schoolStats(): array
     {
-        return ['violations' => Siswa::sum('total_poin_pelanggaran'), 'appreciations' => Siswa::sum('total_poin_apresiasi'), 'pending' => LaporanKesiswaan::where('status', 'pending')->count(), 'attention' => Siswa::where('total_poin_pelanggaran', '>=', 25)->count(), 'alerts' => Notifikasi::where('is_resolved', false)->count()];
+        $recordCounts = CatatanPoin::where('status_validasi', 'disetujui')
+            ->join('kategori_poin', 'kategori_poin.id', '=', 'catatan_poin.kategori_poin_id')
+            ->selectRaw("SUM(CASE WHEN kategori_poin.jenis = 'pelanggaran' THEN 1 ELSE 0 END) as violations")
+            ->selectRaw("SUM(CASE WHEN kategori_poin.jenis = 'apresiasi' THEN 1 ELSE 0 END) as appreciations")
+            ->first();
+
+        return ['violations' => (int) $recordCounts->violations, 'appreciations' => (int) $recordCounts->appreciations, 'pending' => LaporanKesiswaan::where('status', 'pending')->count(), 'attention' => Siswa::where('total_poin_pelanggaran', '>=', 25)->count(), 'alerts' => Notifikasi::where('is_resolved', false)->count()];
     }
 
     private function studentFor(Request $request): Siswa

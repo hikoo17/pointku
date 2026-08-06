@@ -15,6 +15,7 @@
         "vite": "^8.0.0"
     },
     "dependencies": {
+        "chart.js": "^4.5.1",
         "lucide": "^1.28.0",
         "sweetalert2": "^11.26.25"
     }

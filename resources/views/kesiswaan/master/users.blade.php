@@ -5,7 +5,7 @@
     <div class="mb-6">
         <x-dashboard
             eyebrow="DATA MASTER"
-            title="Pengguna"
+            title="Data Pengguna"
             copy="Kelola akun petugas dan wali kelas. Akun siswa dibuat dari menu Siswa."
         />
     </div>
@@ -78,7 +78,7 @@
                                         </svg>
                                         Edit
                                     </button>
-                                    <form method="POST" action="{{ route('kesiswaan.master.users.destroy', $user) }}" onsubmit="return confirm('Hapus pengguna ini?')" class="inline">
+                                    <form method="POST" action="{{ route('kesiswaan.master.users.destroy', $user) }}" class="inline" data-confirm="Data pengguna yang dihapus tidak dapat dipulihkan." data-confirm-title="Hapus pengguna?" data-confirm-button="Ya, hapus">
                                         @csrf 
                                         @method('DELETE')
                                         <button class="group inline-flex items-center gap-1.5 rounded-lg border border-rose-200 bg-rose-50 px-3 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100" type="submit">

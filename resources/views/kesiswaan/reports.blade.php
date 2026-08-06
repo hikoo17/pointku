@@ -53,7 +53,7 @@
 
                             {{-- Form Keputusan --}}
                             <td class="px-5 py-3.5 text-center">
-                                <form method="POST" action="{{ route('kesiswaan.reports.approval', $report) }}" class="inline-flex items-center justify-center gap-1.5">
+                                <form method="POST" action="{{ route('kesiswaan.reports.approval', $report) }}" class="inline-flex items-center justify-center gap-1.5" data-confirm="Status laporan akan diperbarui sesuai keputusan yang dipilih." data-confirm-title="Simpan keputusan?" data-confirm-button="Ya, simpan">
                                     @csrf
                                     <select name="status" class="h-8 rounded-lg border border-slate-200 bg-slate-50 px-2.5 text-xs font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:bg-white">
                                         <option value="disetujui">Setujui</option>
