@@ -54,7 +54,7 @@
                 </div>
                 <a class="group inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200/70 hover:text-slate-900" href="{{ route('guru.records') }}">
                     Buka semua
-                    <i data-lucide="arrow-right" class="h-3.5 w-3.5 fill-none stroke-current transition-transform duration-200 group-hover:translate-x-0.5"></i>
+                    <i data-lucide="arrow-right" class="h-3.5 w-3.5 fill-none stroke-current transition-transform duration-200 group-hover:translate-x-1"></i>
                 </a>
             </div>
 
@@ -103,7 +103,7 @@
                 <p class="mb-4 text-sm leading-relaxed text-slate-500">Setelah catatan disetujui, Guru BK dapat mengirim laporan ke Kesiswaan untuk keputusan resmi.</p>
                 <a class="group inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200/70 hover:text-slate-900" href="{{ route('guru.reports') }}">
                     Kelola laporan
-                    <i data-lucide="arrow-right" class="h-3.5 w-3.5 fill-none stroke-current transition-transform duration-200 group-hover:translate-x-0.5"></i>
+                    <i data-lucide="arrow-right" class="h-3.5 w-3.5 fill-none stroke-current transition-transform duration-200 group-hover:translate-x-1"></i>
                 </a>
             </div>
         </section>

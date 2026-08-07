@@ -13,9 +13,18 @@ class Siswa extends Model
         'kelas_id',
         'nisn',
         'jenis_kelamin',
+        'status',
+        'dinonaktifkan_pada',
         'total_poin_pelanggaran',
         'total_poin_apresiasi',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'dinonaktifkan_pada' => 'datetime',
+        ];
+    }
 
     public function user()
     {

@@ -23,6 +23,10 @@ class WebAuthController extends Controller
             return back()->withErrors(['username' => 'Username atau password tidak sesuai.'])->withInput();
         }
 
+        if ($user->siswa && $user->siswa->status !== 'aktif') {
+            return back()->withErrors(['username' => 'Akun siswa sudah dinonaktifkan. Hubungi pihak sekolah.'])->withInput();
+        }
+
         // The current users table does not have remember_token, so use a session-only login.
         Auth::login($user);
         $request->session()->regenerate();

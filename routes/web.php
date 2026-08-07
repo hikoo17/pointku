@@ -32,8 +32,12 @@ Route::middleware('auth')->group(function () {
         Route::put('/master/kelas/{kelas}', [DashboardController::class, 'updateMasterClass'])->name('master.classes.update');
         Route::delete('/master/kelas/{kelas}', [DashboardController::class, 'destroyMasterClass'])->name('master.classes.destroy');
         Route::get('/master/siswa', [DashboardController::class, 'masterStudents'])->name('master.students');
+        Route::post('/master/siswa/import', [DashboardController::class, 'importMasterStudents'])->name('master.students.import');
+        Route::get('/master/siswa/template', [DashboardController::class, 'studentImportTemplate'])->name('master.students.template');
+        Route::get('/master/siswa/export', [DashboardController::class, 'exportMasterStudents'])->name('master.students.export');
         Route::post('/master/siswa', [DashboardController::class, 'storeMasterStudent'])->name('master.students.store');
         Route::put('/master/siswa/{siswa}', [DashboardController::class, 'updateMasterStudent'])->name('master.students.update');
+        Route::patch('/master/siswa/{siswa}/aktifkan', [DashboardController::class, 'activateMasterStudent'])->name('master.students.activate');
         Route::delete('/master/siswa/{siswa}', [DashboardController::class, 'destroyMasterStudent'])->name('master.students.destroy');
         Route::get('/master/kategori-poin', [DashboardController::class, 'masterCategories'])->name('master.categories');
         Route::post('/master/kategori-poin', [DashboardController::class, 'storeMasterCategory'])->name('master.categories.store');

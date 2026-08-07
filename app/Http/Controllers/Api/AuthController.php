@@ -27,6 +27,13 @@ class AuthController extends Controller
             ]);
         }
 
+
+        if ($user->siswa && $user->siswa->status !== 'aktif') {
+            throw ValidationException::withMessages([
+                'username' => ['Akun siswa sudah dinonaktifkan. Hubungi pihak sekolah.'],
+            ]);
+        }
+
         $token = $user->createToken('auth-token')->plainTextToken;
 
         $userData = $user->load('role');

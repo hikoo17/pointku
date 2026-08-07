@@ -18,6 +18,7 @@ use App\Services\SuratPanggilanWorkflowService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardController extends Controller
 {
@@ -466,12 +467,86 @@ class DashboardController extends Controller
 
     public function masterStudents(Request $request)
     {
-        $students = Siswa::with(['user', 'kelas'])->when($request->filled('q'), fn ($query) => $query->where(fn ($search) => $search
+        $status = in_array($request->status, ['aktif', 'nonaktif'], true) ? $request->status : 'aktif';
+        $students = Siswa::with(['user', 'kelas'])
+            ->withExists([
+                'catatanPoin as has_catatan_poin',
+                'laporanKesiswaan as has_laporan_kesiswaan',
+                'notifikasi as has_notifikasi',
+                'suratPanggilan as has_surat_panggilan',
+            ])
+            ->where('status', $status)
+            ->when($request->filled('q'), fn ($query) => $query->where(fn ($search) => $search
             ->where('nisn', 'like', '%'.$request->q.'%')
             ->orWhereHas('user', fn ($user) => $user->where('nama_lengkap', 'like', '%'.$request->q.'%')->orWhere('username', 'like', '%'.$request->q.'%'))))
             ->orderBy('nisn')->paginate(20)->withQueryString();
 
-        return view('kesiswaan.master.students', ['students' => $students, 'classes' => Kelas::orderBy('nama_kelas')->get()]);
+        return view('kesiswaan.master.students', ['students' => $students, 'classes' => Kelas::orderBy('nama_kelas')->get(), 'status' => $status]);
+    }
+
+    public function importMasterStudents(Request $request)
+    {
+        $request->validate(['file' => ['required', 'file', 'mimes:csv,txt', 'max:5120']]);
+        $handle = fopen($request->file('file')->getRealPath(), 'rb');
+        $headers = fgetcsv($handle, 0, ',');
+        $headers = $headers === false ? [] : array_map(fn ($header) => strtolower(trim((string) $header)), $headers);
+        $required = ['nama_lengkap', 'username', 'password', 'nisn', 'nama_kelas', 'jenis_kelamin'];
+        if (array_diff($required, $headers)) {
+            return back()->withErrors(['file' => 'Kolom wajib: '.implode(', ', $required).'.']);
+        }
+        $rows = [];
+        $errors = [];
+        $line = 1;
+        while (($values = fgetcsv($handle, 0, ',')) !== false) {
+            $line++;
+            if (count($values) === 1 && trim((string) $values[0]) === '') {
+                continue;
+            }
+            $row = array_combine($headers, array_pad($values, count($headers), null));
+            $row['jenis_kelamin'] = strtoupper(trim((string) ($row['jenis_kelamin'] ?? '')));
+            $validator = validator($row, ['nama_lengkap' => ['required', 'string', 'max:255'], 'username' => ['required', 'string', 'max:255'], 'password' => ['required', 'string', 'min:8'], 'nisn' => ['required', 'string', 'max:20'], 'nama_kelas' => ['required', 'string', 'max:100'], 'jenis_kelamin' => ['required', 'in:L,P']]);
+            if ($validator->fails()) {
+                $errors[] = 'Baris '.$line.': '.implode(' ', $validator->errors()->all());
+            } else {
+                $rows[] = $row;
+            }
+        }
+        fclose($handle);
+        if ($errors) {
+            return back()->withErrors(['file' => implode(' | ', $errors)]);
+        }
+        DB::transaction(function () use ($rows) {
+            $role = Role::where('nama_role', 'Siswa')->firstOrFail();
+            foreach ($rows as $row) {
+                $class = Kelas::where('nama_kelas', $row['nama_kelas'])->firstOrFail();
+                $user = User::updateOrCreate(['username' => $row['username']], ['nama_lengkap' => $row['nama_lengkap'], 'password' => $row['password'], 'role_id' => $role->id]);
+                Siswa::updateOrCreate(['nisn' => $row['nisn']], ['user_id' => $user->id, 'kelas_id' => $class->id, 'jenis_kelamin' => $row['jenis_kelamin']]);
+            }
+        });
+
+        return back()->with('success', count($rows).' data siswa berhasil diimpor.');
+    }
+
+    public function studentImportTemplate(): StreamedResponse
+    {
+        return response()->streamDownload(function () {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['nama_lengkap', 'username', 'password', 'nisn', 'nama_kelas', 'jenis_kelamin']);
+            fclose($out);
+        }, 'template-import-siswa.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    public function exportMasterStudents(Request $request): StreamedResponse
+    {
+        $students = Siswa::with(['user', 'kelas'])->when($request->filled('q'), fn ($query) => $query->where('nisn', 'like', '%'.$request->q.'%'))->cursor();
+
+        return response()->streamDownload(function () use ($students) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['nama_lengkap', 'username', 'nisn', 'nama_kelas', 'jenis_kelamin']);
+            foreach ($students as $student) {
+                fputcsv($out, [$student->user->nama_lengkap, $student->user->username, $student->nisn, $student->kelas->nama_kelas, $student->jenis_kelamin]);
+            } fclose($out);
+        }, 'data-siswa.csv', ['Content-Type' => 'text/csv']);
     }
 
     public function storeMasterStudent(Request $request)
@@ -506,10 +581,30 @@ class DashboardController extends Controller
 
     public function destroyMasterStudent(Siswa $siswa)
     {
-        abort_if($siswa->catatanPoin()->exists() || $siswa->laporanKesiswaan()->exists() || $siswa->notifikasi()->exists(), 422, 'Siswa memiliki histori dan tidak dapat dihapus.');
+        $hasHistory = $siswa->catatanPoin()->exists()
+            || $siswa->laporanKesiswaan()->exists()
+            || $siswa->notifikasi()->exists()
+            || $siswa->suratPanggilan()->exists();
+
+        if ($hasHistory) {
+            DB::transaction(function () use ($siswa) {
+                $siswa->update(['status' => 'nonaktif', 'dinonaktifkan_pada' => now()]);
+                $siswa->user->tokens()->delete();
+            });
+
+            return back()->with('success', 'Siswa dinonaktifkan. Seluruh histori tetap tersimpan.');
+        }
+
         DB::transaction(fn () => $siswa->user->delete());
 
         return back()->with('success', 'Akun dan profil siswa berhasil dihapus.');
+    }
+
+    public function activateMasterStudent(Siswa $siswa)
+    {
+        $siswa->update(['status' => 'aktif', 'dinonaktifkan_pada' => null]);
+
+        return back()->with('success', 'Akun siswa berhasil diaktifkan kembali.');
     }
 
     public function masterCategories()

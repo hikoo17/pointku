@@ -62,6 +62,20 @@ class ApiWorkflowTest extends TestCase
         ])->assertOk()->assertJsonStructure(['user', 'token']);
     }
 
+    public function test_inactive_student_cannot_login_through_api(): void
+    {
+        [$student] = $this->createStudentAndRecorder();
+        $student->update(['status' => 'nonaktif', 'dinonaktifkan_pada' => now()]);
+
+        $this->postJson('/api/login', [
+            'username' => $student->user->username,
+            'password' => 'rahasia123',
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('username');
+
+        $this->assertDatabaseMissing('personal_access_tokens', ['tokenable_id' => $student->user_id]);
+    }
+
     public function test_point_totals_follow_approved_records_only(): void
     {
         [$siswa, $pencatat] = $this->createStudentAndRecorder();

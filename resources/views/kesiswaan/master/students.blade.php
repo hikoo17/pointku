@@ -1,7 +1,7 @@
 ﻿@php($title = 'Data Siswa')
 
 <x-layouts.app :title="$title">
-    {{-- Header Page Konsisten --}}
+    {{-- Header Page --}}
     <div class="mb-6">
         <x-dashboard
             eyebrow="DATA MASTER"
@@ -10,10 +10,15 @@
         />
     </div>
 
-    {{-- Toolbar Section: Search di Kiri & Tambah Siswa di Kanan --}}
+    {{-- Toolbar Section --}}
     <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
         <form class="flex w-full max-w-sm gap-2" method="GET">
-            <input class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs text-slate-800 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100" name="q" value="{{ request('q') }}" placeholder="Cari nama, username, atau NISN...">
+            <input 
+                class="h-9 w-full rounded-lg border border-slate-200 bg-slate-50/50 px-3 text-xs text-slate-800 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100" 
+                name="q" 
+                value="{{ request('q') }}" 
+                placeholder="Cari nama, username, atau NISN..."
+            >
             <button class="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-700 shadow-2xs transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900" type="submit">
                 <svg class="h-3.5 w-3.5 fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
@@ -22,12 +27,17 @@
             </button>
         </form>
 
-        <button type="button" data-open="create-student" class="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#5c1919] px-4 text-xs font-bold text-white shadow-2xs transition hover:bg-[#4a1414]">
-            <svg class="h-4 w-4 fill-none stroke-current" stroke-width="2.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-            </svg>
-            Tambah Siswa
-        </button>
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ route('kesiswaan.master.students.export', request()->query()) }}" class="inline-flex h-9 items-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 hover:bg-slate-50">Ekspor CSV</a>
+            <a href="{{ route('kesiswaan.master.students.template') }}" class="inline-flex h-9 items-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 hover:bg-slate-50">Template CSV</a>
+            <button type="button" data-open="import-student" class="inline-flex h-9 items-center rounded-lg border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 hover:bg-slate-50">Import CSV</button>
+            <button type="button" data-open="create-student" class="inline-flex h-9 items-center gap-1.5 rounded-lg bg-[#5c1919] px-4 text-xs font-bold text-white shadow-2xs transition hover:bg-[#4a1414]">
+                <svg class="h-4 w-4 fill-none stroke-current" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+                </svg>
+                Tambah Siswa
+            </button>
+        </div>
     </div>
 
     {{-- Table Section --}}
@@ -50,14 +60,14 @@
                             <td class="px-5 py-3.5">
                                 <div class="flex items-center gap-3">
                                     <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#5c1919] font-bold text-white shadow-2xs">
-                                        {{ strtoupper(substr($student->user->nama_lengkap ?? 'S', 0, 1)) }}
+                                        {{ strtoupper(mb_substr($student->user->nama_lengkap ?? 'S', 0, 1)) }}
                                     </span>
                                     <div>
                                         <span class="block font-bold text-slate-900">
-                                            {{ $student->user->nama_lengkap }}
+                                            {{ $student->user->nama_lengkap ?? '-' }}
                                         </span>
                                         <span class="block text-[0.68rem] text-slate-400 font-normal">
-                                            {{ $student->user->username }}
+                                            {{ $student->user->username ?? '-' }}
                                         </span>
                                     </div>
                                 </div>
@@ -120,55 +130,124 @@
         @endif
     </section>
 
-    {{-- Dialog Modals --}}
-    @foreach(collect([null])->concat($students) as $student)
-        <dialog id="{{ $student ? 'edit-student-'.$student->id : 'create-student' }}" class="fixed inset-0 m-auto w-[min(92vw,600px)] overflow-hidden rounded-xl border border-slate-200/80 bg-white p-0 shadow-2xl backdrop:bg-slate-900/40 backdrop:backdrop-blur-sm open:animate-in open:fade-in-0 open:zoom-in-95 backdrop:open:animate-in backdrop:open:fade-in-0 transition-all">
-            <form method="POST" action="{{ $student ? route('kesiswaan.master.students.update', $student) : route('kesiswaan.master.students.store') }}">
-                @csrf 
-                @if($student) @method('PUT') @endif
+    {{-- Dialog Import --}}
+    <dialog id="import-student" class="fixed inset-0 m-auto w-[min(92vw,480px)] rounded-xl border border-slate-200/80 bg-white p-6 shadow-2xl backdrop:bg-slate-900/40 backdrop:backdrop-blur-sm">
+        <form method="POST" action="{{ route('kesiswaan.master.students.import') }}" enctype="multipart/form-data" class="space-y-4">
+            @csrf
+            <h2 class="text-sm font-bold text-slate-900">Import Data Siswa</h2>
+            <p class="text-xs text-slate-500">Gunakan template CSV. File Excel dapat disimpan sebagai CSV UTF-8 terlebih dahulu.</p>
+            <input required type="file" name="file" accept=".csv,.txt,text/csv" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2 text-xs text-slate-700 outline-none">
+            <div class="flex justify-end gap-2 pt-2">
+                <button type="button" data-close class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100">Batal</button>
+                <button type="submit" class="rounded-lg bg-[#5c1919] px-4 py-2 text-xs font-bold text-white hover:bg-[#4a1414]">Impor</button>
+            </div>
+        </form>
+    </dialog>
 
-                {{-- Modal Header --}}
+    {{-- Dialog Create Siswa --}}
+    <dialog id="create-student" class="fixed inset-0 m-auto w-[min(92vw,600px)] overflow-hidden rounded-xl border border-slate-200/80 bg-white p-0 shadow-2xl backdrop:bg-slate-900/40 backdrop:backdrop-blur-sm open:animate-in open:fade-in-0 open:zoom-in-95">
+        <form method="POST" action="{{ route('kesiswaan.master.students.store') }}">
+            @csrf
+            <div class="flex items-center justify-between border-b border-slate-100 bg-slate-50/80 px-6 py-4">
+                <h2 class="text-sm font-bold text-slate-900">Tambah Siswa</h2>
+                <button type="button" data-close class="inline-flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-200/60 hover:text-slate-700">
+                    <svg class="h-4 w-4 fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="grid gap-4 p-6 text-xs sm:grid-cols-2">
+                <div class="sm:col-span-2">
+                    <label class="block font-bold text-slate-700 mb-1">Nama Lengkap</label>
+                    <input required name="nama_lengkap" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100" placeholder="Masukkan nama lengkap siswa">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Username</label>
+                    <input required name="username" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100" placeholder="Username">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Password</label>
+                    <input type="password" minlength="8" required name="password" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100" placeholder="••••••••">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">NISN</label>
+                    <input required name="nisn" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100" placeholder="Nomor NISN">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Kelas</label>
+                    <select required name="kelas_id" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100">
+                        <option value="" disabled selected>Pilih kelas...</option>
+                        @foreach($classes as $class)
+                            <option value="{{ $class->id }}">{{ $class->nama_kelas }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="sm:col-span-2">
+                    <label class="block font-bold text-slate-700 mb-1">Jenis Kelamin</label>
+                    <select name="jenis_kelamin" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100">
+                        <option value="L">Laki-laki</option>
+                        <option value="P">Perempuan</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 border-t border-slate-100 bg-slate-50/50 px-6 py-3.5">
+                <button type="button" data-close class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100">Batal</button>
+                <button type="submit" class="inline-flex items-center gap-1.5 rounded-lg bg-[#5c1919] px-4 py-2 text-xs font-bold text-white hover:bg-[#4a1414]">Simpan</button>
+            </div>
+        </form>
+    </dialog>
+
+    {{-- Dialog Edit Siswa --}}
+    @foreach($students as $student)
+        <dialog id="edit-student-{{ $student->id }}" class="fixed inset-0 m-auto w-[min(92vw,600px)] overflow-hidden rounded-xl border border-slate-200/80 bg-white p-0 shadow-2xl backdrop:bg-slate-900/40 backdrop:backdrop-blur-sm open:animate-in open:fade-in-0 open:zoom-in-95">
+            <form method="POST" action="{{ route('kesiswaan.master.students.update', $student) }}">
+                @csrf 
+                @method('PUT')
+
                 <div class="flex items-center justify-between border-b border-slate-100 bg-slate-50/80 px-6 py-4">
-                    <h2 class="text-sm font-bold text-slate-900">
-                        {{ $student ? 'Edit Siswa' : 'Tambah Siswa' }}
-                    </h2>
-                    <button type="button" data-close class="inline-flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 transition hover:bg-slate-200/60 hover:text-slate-700">
+                    <h2 class="text-sm font-bold text-slate-900">Edit Siswa</h2>
+                    <button type="button" data-close class="inline-flex h-7 w-7 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-200/60 hover:text-slate-700">
                         <svg class="h-4 w-4 fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
 
-                {{-- Modal Content --}}
                 <div class="grid gap-4 p-6 text-xs sm:grid-cols-2">
                     <div class="sm:col-span-2">
                         <label class="block font-bold text-slate-700 mb-1">Nama Lengkap</label>
-                        <input required name="nama_lengkap" value="{{ old('nama_lengkap', $student?->user?->nama_lengkap) }}" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100 font-normal" placeholder="Masukkan nama lengkap siswa">
+                        <input required name="nama_lengkap" value="{{ old('nama_lengkap', $student->user->nama_lengkap ?? '') }}" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100" placeholder="Masukkan nama lengkap siswa">
                     </div>
 
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">Username</label>
-                        <input required name="username" value="{{ old('username', $student?->user?->username) }}" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100 font-normal" placeholder="Username">
+                        <input required name="username" value="{{ old('username', $student->user->username ?? '') }}" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100" placeholder="Username">
                     </div>
 
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">
-                            Password <span class="font-normal text-slate-400">{{ $student ? '(Opsional)' : '' }}</span>
+                            Password <span class="font-normal text-slate-400">(Opsional)</span>
                         </label>
-                        <input type="password" minlength="8" name="password" {{ $student ? '' : 'required' }} class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100 font-normal" placeholder="••••••••">
+                        <input type="password" minlength="8" name="password" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100" placeholder="••••••••">
                     </div>
 
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">NISN</label>
-                        <input required name="nisn" value="{{ old('nisn', $student?->nisn) }}" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100 font-normal" placeholder="Nomor NISN">
+                        <input required name="nisn" value="{{ old('nisn', $student->nisn) }}" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100" placeholder="Nomor NISN">
                     </div>
 
                     <div>
                         <label class="block font-bold text-slate-700 mb-1">Kelas</label>
-                        <select required name="kelas_id" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100 font-normal">
-                            <option value="" disabled @selected(!$student)>Pilih kelas...</option>
+                        <select required name="kelas_id" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100">
                             @foreach($classes as $class)
-                                <option value="{{ $class->id }}" @selected(old('kelas_id', $student?->kelas_id) === $class->id)>
+                                <option value="{{ $class->id }}" @selected(old('kelas_id', $student->kelas_id) == $class->id)>
                                     {{ $class->nama_kelas }}
                                 </option>
                             @endforeach
@@ -177,24 +256,16 @@
 
                     <div class="sm:col-span-2">
                         <label class="block font-bold text-slate-700 mb-1">Jenis Kelamin</label>
-                        <select name="jenis_kelamin" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100 font-normal">
-                            <option value="L" @selected(old('jenis_kelamin', $student?->jenis_kelamin) === 'L')>Laki-laki</option>
-                            <option value="P" @selected(old('jenis_kelamin', $student?->jenis_kelamin) === 'P')>Perempuan</option>
+                        <select name="jenis_kelamin" class="w-full rounded-lg border border-slate-200 bg-slate-50/50 p-2.5 text-xs text-slate-900 outline-none transition focus:border-slate-400 focus:bg-white focus:ring-2 focus:ring-slate-100">
+                            <option value="L" @selected(old('jenis_kelamin', $student->jenis_kelamin) === 'L')>Laki-laki</option>
+                            <option value="P" @selected(old('jenis_kelamin', $student->jenis_kelamin) === 'P')>Perempuan</option>
                         </select>
                     </div>
                 </div>
 
-                {{-- Modal Footer --}}
                 <div class="flex justify-end gap-2 border-t border-slate-100 bg-slate-50/50 px-6 py-3.5">
-                    <button type="button" data-close class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-2xs transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900">
-                        Batal
-                    </button>
-                    <button type="submit" class="inline-flex items-center gap-1.5 rounded-lg bg-[#5c1919] px-4 py-2 text-xs font-bold text-white shadow-2xs transition hover:bg-[#4a1414]">
-                        <svg class="h-3.5 w-3.5 fill-none stroke-current" viewBox="0 0 24 24" stroke-width="2.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                        </svg>
-                        Simpan
-                    </button>
+                    <button type="button" data-close class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100">Batal</button>
+                    <button type="submit" class="inline-flex items-center gap-1.5 rounded-lg bg-[#5c1919] px-4 py-2 text-xs font-bold text-white hover:bg-[#4a1414]">Simpan</button>
                 </div>
             </form>
         </dialog>

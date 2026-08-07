@@ -47,7 +47,7 @@
                 </div>
                 <a class="group hidden shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200/70 hover:text-slate-900 min-[761px]:inline-flex" href="{{ route('wali-kelas.students', ['status' => 'dipantau']) }}">
                     Lihat semua
-                    <i data-lucide="chevron-right" class="h-3.5 w-3.5 fill-none stroke-current transition-transform duration-200 group-hover:translate-x-0.5"></i>
+                    <i data-lucide="arrow-right" class="h-3.5 w-3.5 fill-none stroke-current transition-transform duration-200 group-hover:translate-x-1"></i>
                 </a>
             </div>
             <div class="divide-y divide-slate-100">
@@ -83,7 +83,7 @@
                 </div>
                 <a class="group hidden shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200/70 hover:text-slate-900 min-[761px]:inline-flex" href="{{ route('wali-kelas.notifications') }}">
                     Lihat semua
-                    <i data-lucide="chevron-right" class="h-3.5 w-3.5 fill-none stroke-current transition-transform duration-200 group-hover:translate-x-0.5"></i>
+                    <i data-lucide="arrow-right" class="h-3.5 w-3.5 fill-none stroke-current transition-transform duration-200 group-hover:translate-x-1"></i>
                 </a>
             </div>
             <div class="divide-y divide-slate-100">
