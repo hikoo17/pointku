@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             KategoriPoinSeeder::class,
             AturanThresholdSeeder::class,
             DemoUserSeeder::class,
+            LargeDemoDataSeeder::class,
         ]);
     }
 }

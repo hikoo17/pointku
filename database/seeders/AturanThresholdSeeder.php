@@ -9,7 +9,7 @@ class AturanThresholdSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::table('aturan_threshold')->insert([
+        foreach ([
             [
                 'poin_batas' => 25,
                 'level' => 'ringan',
@@ -43,6 +43,11 @@ class AturanThresholdSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-        ]);
+        ] as $threshold) {
+            DB::table('aturan_threshold')->updateOrInsert(
+                ['poin_batas' => $threshold['poin_batas']],
+                $threshold
+            );
+        }
     }
 }

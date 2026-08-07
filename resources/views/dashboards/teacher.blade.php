@@ -1,5 +1,10 @@
 @php
     $title = 'Dashboard ' . auth()->user()->role->nama_role;
+    $topStudentChartData = $topStudents->map(fn ($student) => [
+        'label' => $student->user->nama_lengkap ?? 'Tanpa Nama',
+        'class' => $student->kelas->nama_kelas ?? '-',
+        'points' => (int) $student->total_poin_pelanggaran,
+    ])->values();
 @endphp
 
 <x-layouts.app :title="$title">
@@ -43,6 +48,38 @@
             </article>
         @endforeach
     </div>
+
+    {{-- Siswa dengan poin pelanggaran tertinggi --}}
+    <section class="mt-6 overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+        <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4">
+            <div>
+                <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">PRIORITAS PENDAMPINGAN</span>
+                <h3 class="text-base font-bold text-slate-900">Siswa dengan Poin Tertinggi</h3>
+                <p class="mt-1 text-xs font-medium text-slate-500">Sepuluh siswa dengan akumulasi poin pelanggaran tertinggi.</p>
+            </div>
+            <a class="group hidden shrink-0 items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:bg-slate-200/70 hover:text-slate-900 min-[761px]:inline-flex" href="{{ route('guru.students') }}">
+                Lihat rekap
+                <i data-lucide="arrow-right" class="h-3.5 w-3.5 fill-none stroke-current transition-transform duration-200 group-hover:translate-x-1"></i>
+            </a>
+        </div>
+        <div class="px-5 pb-6 pt-4">
+            @if($topStudents->isNotEmpty())
+                <div class="relative h-80">
+                    <canvas id="top-students-chart" data-chart='{!! $topStudentChartData->toJson() !!}'></canvas>
+                </div>
+            @else
+                <div class="grid min-h-48 place-items-center text-center">
+                    <div>
+                        <span class="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-full bg-emerald-50 text-emerald-600">
+                            <i data-lucide="shield-check" class="h-5 w-5"></i>
+                        </span>
+                        <strong class="block text-xs font-bold text-slate-700">Belum ada poin pelanggaran</strong>
+                        <p class="mt-1 text-[0.68rem] font-medium text-slate-400">Data siswa prioritas akan tampil setelah catatan disetujui.</p>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </section>
 
     {{-- Content Grid --}}
     <div class="mt-6 grid grid-cols-1 gap-6 min-[761px]:grid-cols-2">

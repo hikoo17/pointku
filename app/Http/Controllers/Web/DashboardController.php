@@ -74,12 +74,18 @@ class DashboardController extends Controller
         $records = CatatanPoin::with(['siswa.user', 'kategoriPoin'])
             ->when($isReporter, fn ($query) => $query->where('pencatat_id', $request->user()->id))
             ->latest()->limit(7)->get();
+        $topStudents = Siswa::with(['user', 'kelas'])
+            ->where('total_poin_pelanggaran', '>', 0)
+            ->orderByDesc('total_poin_pelanggaran')
+            ->limit(10)
+            ->get();
 
         return view('dashboards.teacher', compact('records', 'isReporter') + [
             'pendingCount' => CatatanPoin::where('status_validasi', 'menunggu_validasi')->count(),
             'studentCount' => Siswa::count(),
             'reportCount' => LaporanKesiswaan::where('bk_id', $request->user()->id)->where('status', 'pending')->count(),
             'letterCount' => SuratPanggilan::count(),
+            'topStudents' => $topStudents,
         ]);
     }
 

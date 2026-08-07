@@ -71,6 +71,62 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    const topStudentsChart = document.getElementById("top-students-chart");
+
+    if (topStudentsChart instanceof HTMLCanvasElement) {
+        const chartData = JSON.parse(topStudentsChart.dataset.chart ?? "[]");
+
+        new Chart(topStudentsChart, {
+            type: "bar",
+            data: {
+                labels: chartData.map((item) => item.label),
+                datasets: [
+                    {
+                        label: "Poin Pelanggaran",
+                        data: chartData.map((item) => item.points),
+                        backgroundColor: "rgba(190, 24, 93, 0.78)",
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    },
+                ],
+            },
+            options: {
+                indexAxis: "y",
+                maintainAspectRatio: false,
+                responsive: true,
+                interaction: {
+                    intersect: false,
+                    mode: "index",
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            afterLabel: (context) => `Kelas: ${chartData[context.dataIndex].class}`,
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { color: "rgba(226, 232, 240, 0.75)" },
+                        ticks: { color: "#64748b", precision: 0, font: { size: 11 } },
+                        title: {
+                            display: true,
+                            text: "Poin pelanggaran",
+                            color: "#64748b",
+                            font: { size: 11, weight: 600 },
+                        },
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: "#475569", font: { size: 11, weight: 600 } },
+                    },
+                },
+            },
+        });
+    }
+
     document.addEventListener("submit", async (event) => {
         const form = event.target;
         const submitter = event.submitter;
