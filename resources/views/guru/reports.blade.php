@@ -45,7 +45,26 @@
         </form>
     </section>
 
-    <section class="mt-6 overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+    <form method="GET" action="{{ route('guru.reports') }}" class="mt-6 flex flex-wrap items-end gap-3 rounded-xl border border-slate-200/80 bg-white p-4 shadow-xs">
+        <label class="grid gap-1.5 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
+            Status
+            <select name="status" class="h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-800 outline-none focus:border-slate-400">
+                <option value="">Semua status</option>
+                <option value="pending" @selected(request('status') === 'pending')>Diajukan</option>
+                <option value="disetujui" @selected(request('status') === 'disetujui')>Disetujui</option>
+                <option value="ditolak" @selected(request('status') === 'ditolak')>Ditolak</option>
+            </select>
+        </label>
+        <button type="submit" class="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-[#5c1919] px-4 text-xs font-semibold text-white transition hover:bg-[#4a1414]">
+            <i data-lucide="filter" class="h-3.5 w-3.5"></i>
+            Terapkan
+        </button>
+        @if(request()->filled('status'))
+            <a href="{{ route('guru.reports') }}" class="inline-flex h-9 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-600 transition hover:bg-slate-50">Reset</a>
+        @endif
+    </form>
+
+    <section class="mt-4 overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
         <div class="border-b border-slate-100 px-5 py-4">
             <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">RIWAYAT PENGAJUAN</span>
             <h3 class="text-base font-bold text-slate-900">Laporan saya</h3>

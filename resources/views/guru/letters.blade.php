@@ -14,12 +14,14 @@
         </label>
         <label class="grid gap-1.5 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
             Status
-            <select name="status" class="h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-800 outline-none focus:border-slate-400">
-                <option value="">Semua status</option>
-                @foreach(['draft' => 'Draft', 'diajukan' => 'Diajukan', 'perlu_revisi' => 'Perlu revisi', 'disetujui' => 'Disetujui', 'dicetak' => 'Dicetak', 'dikirim' => 'Dikirim', 'selesai' => 'Selesai', 'dibatalkan' => 'Dibatalkan'] as $value => $label)
-                    <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
-                @endforeach
-            </select>
+                <select name="status" class="h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-800 outline-none focus:border-slate-400">
+                    <option value="">Semua status</option>
+                    @foreach(['draft' => 'Draft', 'diajukan' => 'Diajukan', 'perlu_revisi' => 'Perlu revisi', 'disetujui' => 'Disetujui', 'dicetak' => 'Dicetak', 'dikirim' => 'Dikirim', 'selesai' => 'Selesai', 'dibatalkan' => 'Dibatalkan'] as $value => $label)
+                        @if(in_array($value, $statuses ?? []))
+                            <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
+                        @endif
+                    @endforeach
+                </select>
         </label>
         <label class="grid gap-1.5 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
             Dari tanggal

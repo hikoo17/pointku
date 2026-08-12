@@ -344,8 +344,13 @@ class DashboardController extends Controller
     {
         abort_if($request->user()->hasRole('Guru Pelapor'), 403);
 
+        $reports = LaporanKesiswaan::with(['siswa.user', 'kesiswaan'])
+            ->where('bk_id', $request->user()->id)
+            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))
+            ->latest()->paginate(15)->withQueryString();
+
         return view('guru.reports', [
-            'reports' => LaporanKesiswaan::with(['siswa.user', 'kesiswaan'])->where('bk_id', $request->user()->id)->latest()->paginate(15),
+            'reports' => $reports,
             'students' => Siswa::with(['user', 'kelas'])->where('total_poin_pelanggaran', '>=', 25)->orderByDesc('total_poin_pelanggaran')->get(),
         ]);
     }
@@ -414,9 +419,25 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function letters()
+    public function letters(Request $request)
     {
-        return view('kesiswaan.letters', ['letters' => SuratPanggilan::with(['siswa.user', 'aturanThreshold'])->latest()->paginate(15)]);
+        $letters = SuratPanggilan::with(['siswa.user', 'aturanThreshold'])
+            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))
+            ->latest()->paginate(15)->withQueryString();
+
+        $statuses = $this->suratStatuses();
+
+        return view('kesiswaan.letters', compact('letters', 'statuses'));
+    }
+
+    private function suratStatuses(): array
+    {
+        $all = ['draft', 'diajukan', 'perlu_revisi', 'disetujui', 'dicetak', 'dikirim', 'selesai', 'dibatalkan'];
+
+        return array_values(array_intersect(
+            $all,
+            SuratPanggilan::query()->distinct()->pluck('status')->filter()->all()
+        ));
     }
 
     public function teacherLetters(Request $request)
@@ -434,6 +455,7 @@ class DashboardController extends Controller
 
         return view('guru.letters', [
             'letters' => $query->latest()->paginate(15)->withQueryString(),
+            'statuses' => $this->suratStatuses(),
         ]);
     }
 
@@ -846,7 +868,7 @@ class DashboardController extends Controller
             ->selectRaw("SUM(CASE WHEN kategori_poin.jenis = 'apresiasi' THEN 1 ELSE 0 END) as appreciations")
             ->first();
 
-        return ['violations' => (int) $recordCounts->violations, 'appreciations' => (int) $recordCounts->appreciations, 'pending' => LaporanKesiswaan::where('status', 'pending')->count(), 'attention' => Siswa::where('total_poin_pelanggaran', '>=', 25)->count(), 'alerts' => Notifikasi::where('is_resolved', false)->count()];
+        return ['violations' => (int) $recordCounts->violations, 'appreciations' => (int) $recordCounts->appreciations, 'diajukan_surat' => SuratPanggilan::where('status', 'diajukan')->count(), 'attention' => Siswa::where('total_poin_pelanggaran', '>=', 25)->count(), 'alerts' => Notifikasi::where('is_resolved', false)->count()];
     }
 
     private function studentFor(Request $request): Siswa

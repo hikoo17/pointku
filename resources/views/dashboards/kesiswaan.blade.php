@@ -19,7 +19,7 @@
         @foreach([
             ['Jumlah Pelanggaran', 'violations', 'circle-alert', 'text-rose-700', 'bg-rose-50 border-rose-100', 'border-t-rose-600', null],
             ['Jumlah Apresiasi', 'appreciations', 'heart', 'text-amber-700', 'bg-amber-50 border-amber-100', 'border-t-amber-500', null],
-            ['Laporan Pending', 'pending', 'clock-3', 'text-orange-700', 'bg-orange-50 border-orange-100', 'border-t-orange-500', route('kesiswaan.reports', ['status' => 'pending'])],
+            ['Surat Diajukan', 'diajukan_surat', 'clock-3', 'text-orange-700', 'bg-orange-50 border-orange-100', 'border-t-orange-500', route('kesiswaan.letters', ['status' => 'diajukan'])],
             ['Perlu Penanganan', 'attention', 'users', 'text-[#5c1919]', 'bg-[#5c1919]/5 border-[#5c1919]/10', 'border-t-[#5c1919]', null],
         ] as [$label, $key, $icon, $textColor, $badgeBg, $borderTop, $href])
             <article class="relative flex flex-col justify-between overflow-hidden rounded-xl border border-slate-200/80 border-t-[3px] {{ $borderTop }} bg-white p-4.5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md min-[761px]:p-5">
@@ -35,7 +35,11 @@
                 <div class="mt-3">
                     <strong class="block text-3xl font-bold tracking-tight text-slate-900">{{ $stats[$key] }}</strong>
                     <small class="mt-0.5 flex items-center gap-1 text-[0.65rem] font-medium text-slate-400">
-                        {{ in_array($key, ['violations', 'appreciations']) ? 'Kejadian disetujui' : 'Akumulasi saat ini' }}
+                        {{ match ($key) {
+                            'violations', 'appreciations' => 'Kejadian disetujui',
+                            'diajukan_surat' => 'Menunggu tinjauan Anda',
+                            default => 'Akumulasi saat ini',
+                        } }}
                         @if($href)
                             <span class="font-bold text-slate-500">Lihat detail</span>
                         @endif
@@ -126,7 +130,7 @@
                         <small class="mt-1 flex flex-wrap items-center gap-2 text-[0.68rem] font-medium text-slate-500">
                             <span>{{ $report->jenis_tindakan }}</span>
                             <span class="h-3 w-px bg-slate-200" aria-hidden="true"></span>
-                            <span class="font-semibold text-rose-600">{{ $report->status }}</span>
+                            <span class="font-semibold text-rose-600">{{ $report->status === 'pending' ? 'Diajukan' : $report->status }}</span>
                         </small>
                     </div>
                 </a>
