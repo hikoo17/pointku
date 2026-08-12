@@ -7,7 +7,38 @@
         copy="Pantau surat yang dibuat otomatis setelah siswa melewati threshold."
     />
 
-    <section class="mt-6 overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+    <form method="GET" action="{{ route('guru.letters') }}" class="mt-6 grid grid-cols-1 gap-3 rounded-xl border border-slate-200/80 bg-white p-4 shadow-xs min-[761px]:grid-cols-[minmax(180px,1fr)_minmax(150px,.7fr)_minmax(140px,.6fr)_minmax(140px,.6fr)_auto_auto] min-[761px]:items-end">
+        <label class="grid gap-1.5 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
+            Cari surat atau siswa
+            <input type="text" name="q" value="{{ request('q') }}" placeholder="Nomor surat / nama siswa" class="h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-800 outline-none focus:border-slate-400">
+        </label>
+        <label class="grid gap-1.5 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
+            Status
+            <select name="status" class="h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-800 outline-none focus:border-slate-400">
+                <option value="">Semua status</option>
+                @foreach(['draft' => 'Draft', 'diajukan' => 'Diajukan', 'perlu_revisi' => 'Perlu revisi', 'disetujui' => 'Disetujui', 'dicetak' => 'Dicetak', 'dikirim' => 'Dikirim', 'selesai' => 'Selesai', 'dibatalkan' => 'Dibatalkan'] as $value => $label)
+                    <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
+                @endforeach
+            </select>
+        </label>
+        <label class="grid gap-1.5 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
+            Dari tanggal
+            <input type="date" name="dari" value="{{ request('dari') }}" class="h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-800 outline-none focus:border-slate-400">
+        </label>
+        <label class="grid gap-1.5 text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">
+            Sampai tanggal
+            <input type="date" name="sampai" value="{{ request('sampai') }}" class="h-9 rounded-lg border border-slate-200 bg-white px-3 text-xs font-medium text-slate-800 outline-none focus:border-slate-400">
+        </label>
+        <button type="submit" class="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-[#5c1919] px-4 text-xs font-semibold text-white transition hover:bg-[#4a1414]">
+            <i data-lucide="filter" class="h-3.5 w-3.5"></i>
+            Terapkan
+        </button>
+        @if(request()->hasAny(['q', 'status', 'dari', 'sampai']))
+            <a href="{{ route('guru.letters') }}" class="inline-flex h-9 items-center justify-center rounded-lg border border-slate-200 bg-white px-4 text-xs font-semibold text-slate-600 transition hover:bg-slate-50">Reset</a>
+        @endif
+    </form>
+
+    <section class="mt-4 overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
         <div class="overflow-x-auto">
             <table class="w-full min-w-[760px] border-collapse text-left text-xs">
                 <thead>

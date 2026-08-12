@@ -39,11 +39,17 @@
 
     {{-- Peringkat Siswa --}}
     <section class="mt-6 overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
-        <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4">
+        <div class="flex flex-col gap-4 border-b border-slate-100 px-5 py-4 min-[761px]:flex-row min-[761px]:items-end min-[761px]:justify-between">
             <div>
                 <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">PERINGKAT KELAS</span>
                 <h3 class="text-base font-bold text-slate-900">Siswa paling nakal & apresiasi tertinggi</h3>
             </div>
+            <form method="GET" action="{{ route('wali-kelas.dashboard') }}" class="grid grid-cols-2 gap-2 min-[461px]:grid-cols-[140px_140px_auto_auto] min-[461px]:items-end">
+                <label class="grid gap-1 text-[0.65rem] font-bold uppercase text-slate-500">Dari<input type="date" name="dari" value="{{ request('dari') }}" class="h-9 rounded-lg border border-slate-200 px-2 text-xs"></label>
+                <label class="grid gap-1 text-[0.65rem] font-bold uppercase text-slate-500">Sampai<input type="date" name="sampai" value="{{ request('sampai') }}" class="h-9 rounded-lg border border-slate-200 px-2 text-xs"></label>
+                <button class="h-9 rounded-lg bg-[#5c1919] px-3 text-xs font-semibold text-white" type="submit">Terapkan</button>
+                @if(request()->hasAny(['dari', 'sampai']))<a href="{{ route('wali-kelas.dashboard') }}" class="inline-flex h-9 items-center justify-center rounded-lg border border-slate-200 px-3 text-xs font-semibold text-slate-600">Reset</a>@endif
+            </form>
         </div>
         <div class="px-5 py-4">
             @if($chartData->isNotEmpty())

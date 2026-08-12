@@ -60,6 +60,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'teacher'])->name('dashboard');
         Route::post('/catatan-poin/{catatan}/validasi', [DashboardController::class, 'validateRecord'])->name('records.validate');
         Route::get('/rekap-siswa', [DashboardController::class, 'studentRecap'])->name('students');
+        Route::get('/rekap-siswa/export', [DashboardController::class, 'exportStudentRecap'])->name('students.export');
         Route::get('/laporan', [DashboardController::class, 'teacherReports'])->name('reports');
         Route::post('/laporan', [DashboardController::class, 'storeReport'])->name('reports.store');
         Route::get('/surat-panggilan', [DashboardController::class, 'teacherLetters'])->name('letters');

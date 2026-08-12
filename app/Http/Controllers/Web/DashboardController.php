@@ -34,12 +34,15 @@ class DashboardController extends Controller
         });
     }
 
-    public function kesiswaan()
+    public function kesiswaan(Request $request)
     {
+        $this->validateDateRange($request);
         $recordCounts = DB::table('catatan_poin')
             ->join('kategori_poin', 'kategori_poin.id', '=', 'catatan_poin.kategori_poin_id')
             ->join('siswa', 'siswa.id', '=', 'catatan_poin.siswa_id')
             ->where('catatan_poin.status_validasi', 'disetujui')
+            ->when($request->filled('dari'), fn ($query) => $query->whereDate('catatan_poin.tanggal', '>=', $request->dari))
+            ->when($request->filled('sampai'), fn ($query) => $query->whereDate('catatan_poin.tanggal', '<=', $request->sampai))
             ->select(
                 'siswa.kelas_id',
                 DB::raw("SUM(CASE WHEN kategori_poin.jenis = 'pelanggaran' THEN 1 ELSE 0 END) as violations"),
@@ -70,15 +73,23 @@ class DashboardController extends Controller
 
     public function teacher(Request $request)
     {
+        $this->validateDateRange($request);
         $isReporter = $request->user()->hasRole('Guru Pelapor');
         $records = CatatanPoin::with(['siswa.user', 'kategoriPoin'])
             ->when($isReporter, fn ($query) => $query->where('pencatat_id', $request->user()->id))
             ->latest()->limit(7)->get();
-        $topStudents = Siswa::with(['user', 'kelas'])
-            ->where('total_poin_pelanggaran', '>', 0)
-            ->orderByDesc('total_poin_pelanggaran')
-            ->limit(10)
-            ->get();
+        $topStudents = DB::table('catatan_poin')
+            ->join('kategori_poin', 'kategori_poin.id', '=', 'catatan_poin.kategori_poin_id')
+            ->join('siswa', 'siswa.id', '=', 'catatan_poin.siswa_id')
+            ->join('users', 'users.id', '=', 'siswa.user_id')
+            ->leftJoin('kelas', 'kelas.id', '=', 'siswa.kelas_id')
+            ->where('catatan_poin.status_validasi', 'disetujui')
+            ->where('kategori_poin.jenis', 'pelanggaran')
+            ->when($request->filled('dari'), fn ($query) => $query->whereDate('catatan_poin.tanggal', '>=', $request->dari))
+            ->when($request->filled('sampai'), fn ($query) => $query->whereDate('catatan_poin.tanggal', '<=', $request->sampai))
+            ->select('siswa.id', 'users.nama_lengkap', 'kelas.nama_kelas', DB::raw('SUM(kategori_poin.bobot_poin) as points'))
+            ->groupBy('siswa.id', 'users.nama_lengkap', 'kelas.nama_kelas')
+            ->orderByDesc('points')->limit(10)->get();
 
         return view('dashboards.teacher', compact('records', 'isReporter') + [
             'pendingCount' => CatatanPoin::where('status_validasi', 'menunggu_validasi')->count(),
@@ -91,20 +102,33 @@ class DashboardController extends Controller
 
     public function homeroom(Request $request)
     {
+        $this->validateDateRange($request);
         $kelas = $this->homeroomFor($request);
         $students = $kelas->siswa()->with('user')->orderByDesc('total_poin_pelanggaran')->get();
         $alerts = Notifikasi::with('siswa.user')->whereHas('siswa', fn ($q) => $q->where('kelas_id', $kelas->id))->latest()->limit(5)->get();
         $recentRecords = CatatanPoin::with(['siswa.user', 'kategoriPoin'])->whereHas('siswa', fn ($q) => $q->where('kelas_id', $kelas->id))->where('status_validasi', 'disetujui')->latest('tanggal')->limit(6)->get();
 
-        $chartStudents = $kelas->siswa()->with('user')
-            ->orderByDesc('total_poin_pelanggaran')->limit(8)->get()
-            ->concat($kelas->siswa()->with('user')->orderByDesc('total_poin_apresiasi')->limit(8)->get())
-            ->unique('id')->sortByDesc('total_poin_pelanggaran')->values();
-        $chartData = $chartStudents->map(fn ($siswa) => [
-            'label' => $siswa->user->nama_lengkap ?? 'Tanpa Nama',
-            'violations' => (int) $siswa->total_poin_pelanggaran,
-            'appreciations' => (int) $siswa->total_poin_apresiasi,
-        ]);
+        $chartData = DB::table('catatan_poin')
+            ->join('kategori_poin', 'kategori_poin.id', '=', 'catatan_poin.kategori_poin_id')
+            ->join('siswa', 'siswa.id', '=', 'catatan_poin.siswa_id')
+            ->join('users', 'users.id', '=', 'siswa.user_id')
+            ->where('siswa.kelas_id', $kelas->id)
+            ->where('catatan_poin.status_validasi', 'disetujui')
+            ->when($request->filled('dari'), fn ($query) => $query->whereDate('catatan_poin.tanggal', '>=', $request->dari))
+            ->when($request->filled('sampai'), fn ($query) => $query->whereDate('catatan_poin.tanggal', '<=', $request->sampai))
+            ->select(
+                'siswa.id',
+                'users.nama_lengkap',
+                DB::raw("SUM(CASE WHEN kategori_poin.jenis = 'pelanggaran' THEN kategori_poin.bobot_poin ELSE 0 END) as violations"),
+                DB::raw("SUM(CASE WHEN kategori_poin.jenis = 'apresiasi' THEN kategori_poin.bobot_poin ELSE 0 END) as appreciations")
+            )
+            ->groupBy('siswa.id', 'users.nama_lengkap')
+            ->orderByDesc('violations')->limit(12)->get()
+            ->map(fn ($siswa) => [
+                'label' => $siswa->nama_lengkap,
+                'violations' => (int) $siswa->violations,
+                'appreciations' => (int) $siswa->appreciations,
+            ]);
 
         return view('dashboards.homeroom', compact('kelas', 'students', 'alerts', 'recentRecords', 'chartData'));
     }
@@ -225,6 +249,9 @@ class DashboardController extends Controller
         if ($request->filled('q')) {
             $query->whereHas('siswa.user', fn ($q) => $q->where('nama_lengkap', 'like', '%'.$request->q.'%'));
         }
+        if (in_array($request->status, ['disetujui', 'menunggu_validasi', 'ditolak'], true)) {
+            $query->where('status_validasi', $request->status);
+        }
 
         return view('guru.records', [
             'records' => $query->latest()->paginate(15)->withQueryString(),
@@ -259,10 +286,37 @@ class DashboardController extends Controller
     public function studentRecap(Request $request)
     {
         abort_if($request->user()->hasRole('Guru Pelapor'), 403);
+        $this->validateDateRange($request);
 
         return view('guru.students', [
-            'students' => Siswa::with(['user', 'kelas'])->orderByDesc('total_poin_pelanggaran')->paginate(20),
+            'students' => $this->studentRecapQuery($request)->paginate(20)->withQueryString(),
         ]);
+    }
+
+    public function exportStudentRecap(Request $request): StreamedResponse
+    {
+        abort_if($request->user()->hasRole('Guru Pelapor'), 403);
+        $this->validateDateRange($request);
+        $students = $this->studentRecapQuery($request)->get();
+
+        return response()->streamDownload(function () use ($students) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['Nama Siswa', 'NISN', 'Kelas', 'Poin Pelanggaran', 'Poin Apresiasi', 'Saldo', 'Status']);
+            foreach ($students as $student) {
+                $pelanggaran = (int) $student->periode_poin_pelanggaran;
+                $apresiasi = (int) $student->periode_poin_apresiasi;
+                fputcsv($out, [
+                    $student->user->nama_lengkap,
+                    $student->nisn,
+                    $student->kelas->nama_kelas ?? '-',
+                    $pelanggaran,
+                    $apresiasi,
+                    $apresiasi - $pelanggaran,
+                    $pelanggaran >= 25 ? 'Perlu ditindaklanjuti' : 'Normal',
+                ]);
+            }
+            fclose($out);
+        }, 'rekap-siswa-'.now()->format('Ymd-His').'.csv', ['Content-Type' => 'text/csv']);
     }
 
     public function storeRecord(Request $request)
@@ -368,10 +422,18 @@ class DashboardController extends Controller
     public function teacherLetters(Request $request)
     {
         abort_if($request->user()->hasRole('Guru Pelapor'), 403);
+        $this->validateDateRange($request);
+
+        $query = SuratPanggilan::with(['siswa.user', 'aturanThreshold', 'laporanKesiswaan'])
+            ->when($request->filled('q'), fn ($query) => $query->where(fn ($search) => $search
+                ->where('nomor_surat', 'like', '%'.$request->q.'%')
+                ->orWhereHas('siswa.user', fn ($user) => $user->where('nama_lengkap', 'like', '%'.$request->q.'%'))))
+            ->when(in_array($request->status, ['draft', 'diajukan', 'perlu_revisi', 'disetujui', 'dicetak', 'dikirim', 'selesai', 'dibatalkan'], true), fn ($query) => $query->where('status', $request->status))
+            ->when($request->filled('dari'), fn ($query) => $query->whereDate('tanggal_surat', '>=', $request->dari))
+            ->when($request->filled('sampai'), fn ($query) => $query->whereDate('tanggal_surat', '<=', $request->sampai));
 
         return view('guru.letters', [
-            'letters' => SuratPanggilan::with(['siswa.user', 'aturanThreshold', 'laporanKesiswaan'])
-                ->latest()->paginate(15),
+            'letters' => $query->latest()->paginate(15)->withQueryString(),
         ]);
     }
 
@@ -743,6 +805,37 @@ class DashboardController extends Controller
         $data['is_active'] = $request->boolean('is_active');
 
         return $data;
+    }
+
+    private function validateDateRange(Request $request): void
+    {
+        $request->validate([
+            'dari' => ['nullable', 'date'],
+            'sampai' => ['nullable', 'date', 'after_or_equal:dari'],
+        ]);
+    }
+
+    private function studentRecapQuery(Request $request)
+    {
+        $pointTotals = DB::table('catatan_poin')
+            ->join('kategori_poin', 'kategori_poin.id', '=', 'catatan_poin.kategori_poin_id')
+            ->where('catatan_poin.status_validasi', 'disetujui')
+            ->when($request->filled('dari'), fn ($query) => $query->whereDate('catatan_poin.tanggal', '>=', $request->dari))
+            ->when($request->filled('sampai'), fn ($query) => $query->whereDate('catatan_poin.tanggal', '<=', $request->sampai))
+            ->select(
+                'catatan_poin.siswa_id',
+                DB::raw("SUM(CASE WHEN kategori_poin.jenis = 'pelanggaran' THEN kategori_poin.bobot_poin ELSE 0 END) as pelanggaran"),
+                DB::raw("SUM(CASE WHEN kategori_poin.jenis = 'apresiasi' THEN kategori_poin.bobot_poin ELSE 0 END) as apresiasi")
+            )
+            ->groupBy('catatan_poin.siswa_id');
+
+        return Siswa::with(['user', 'kelas'])
+            ->leftJoinSub($pointTotals, 'point_totals', fn ($join) => $join->on('siswa.id', '=', 'point_totals.siswa_id'))
+            ->select('siswa.*')
+            ->selectRaw('COALESCE(point_totals.pelanggaran, 0) as periode_poin_pelanggaran')
+            ->selectRaw('COALESCE(point_totals.apresiasi, 0) as periode_poin_apresiasi')
+            ->orderByDesc('periode_poin_pelanggaran')
+            ->orderBy('siswa.id');
     }
 
     private function schoolStats(): array

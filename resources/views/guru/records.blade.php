@@ -133,11 +133,24 @@
                 <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">DAFTAR KEJADIAN</span>
                 <h3 class="text-base font-bold text-slate-900">Catatan poin siswa</h3>
             </div>
-            <form method="GET" action="{{ route('guru.records') }}" class="flex items-center gap-2">
+            <form method="GET" action="{{ route('guru.records') }}" class="flex w-full flex-col gap-2 min-[641px]:w-auto min-[641px]:flex-row min-[641px]:items-center">
                 <div class="relative">
                     <i data-lucide="search" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"></i>
                     <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari nama siswa..." class="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm font-medium text-slate-800 outline-none transition focus:border-slate-400 focus:bg-slate-50 min-[641px]:w-64">
                 </div>
+                <select name="status" class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-800 outline-none transition focus:border-slate-400 focus:bg-slate-50">
+                    <option value="">Semua status</option>
+                    <option value="disetujui" @selected(request('status') === 'disetujui')>Disetujui</option>
+                    <option value="menunggu_validasi" @selected(request('status') === 'menunggu_validasi')>Menunggu</option>
+                    <option value="ditolak" @selected(request('status') === 'ditolak')>Ditolak</option>
+                </select>
+                <button type="submit" class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#5c1919] px-3 py-2 text-xs font-semibold text-white shadow-xs transition hover:bg-[#4a1414]">
+                    <i data-lucide="filter" class="h-3.5 w-3.5"></i>
+                    Terapkan
+                </button>
+                @if(request()->hasAny(['q', 'status']))
+                    <a href="{{ route('guru.records') }}" class="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 transition hover:bg-slate-50">Reset</a>
+                @endif
             </form>
         </div>
 

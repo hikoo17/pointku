@@ -46,11 +46,11 @@
             </div>
         </section>
 
-        <section class="flex flex-1 items-center justify-center bg-[linear-gradient(150deg,#fff,#fff8e1)] p-6 min-[461px]:p-12 min-[761px]:grid min-[761px]:p-12">
+        <section class="flex flex-1 items-center justify-center bg-white p-6 min-[461px]:p-12 min-[761px]:grid min-[761px]:p-12">
             <div class="w-full max-w-[420px]">
-                <div class="mb-6 flex items-center gap-[.8rem] border-b border-[#fce4c4] pb-4 min-[761px]:hidden">
-                    <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="block h-[38px] w-auto">
-                    <div><strong class="block text-[1.1rem] font-bold tracking-[.03em] text-[#6d1a1a]">POINTKU</strong><small class="mt-1 block text-[.65rem] text-[#8c6d6d]">Student Care System</small>
+                <div class="mb-6 flex flex-col items-center justify-center gap-2 border-b border-slate-200 pb-4 min-[761px]:hidden">
+                    <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="block h-[64px] w-auto">
+                    <div class="text-center"><strong class="block text-[1.1rem] font-bold tracking-[.03em] text-[#6d1a1a]">POINTKU</strong><small class="mt-1 block text-[.65rem] text-[#8c6d6d]">Student Care System</small>
                     </div>
                 </div>
 
@@ -64,14 +64,14 @@
                     @csrf
                     <label class="my-4 grid gap-[.55rem] text-[.78rem] font-bold text-[#5d4037]">
                         Username
-                        <span class="flex items-center rounded-xl border border-[#fce4c4] bg-white transition focus-within:border-[#6d1a1a] focus-within:shadow-[0_0_0_4px_#6d1a1a14]">
+                        <span class="flex items-center rounded-xl border border-slate-300 bg-slate-100 transition focus-within:border-[#6d1a1a] focus-within:shadow-[0_0_0_4px_#6d1a1a14]">
                             <input class="min-w-0 flex-1 border-0 bg-transparent p-[.9rem_1rem] text-[#4a1c1c] outline-none" name="username" value="{{ old('username') }}" required autofocus placeholder="contoh: guru.bk">
                         </span>
                     </label>
 
                     <label class="my-4 grid gap-[.55rem] text-[.78rem] font-bold text-[#5d4037]">
                         Password
-                        <span class="flex items-center rounded-xl border border-[#fce4c4] bg-white transition focus-within:border-[#6d1a1a] focus-within:shadow-[0_0_0_4px_#6d1a1a14]">
+                        <span class="flex items-center rounded-xl border border-slate-300 bg-slate-100 transition focus-within:border-[#6d1a1a] focus-within:shadow-[0_0_0_4px_#6d1a1a14]">
                             <input class="min-w-0 flex-1 border-0 bg-transparent p-[.9rem_1rem] text-[#4a1c1c] outline-none" id="password" name="password" required type="password" placeholder="Masukkan password">
                             <button id="password-toggle" class="grid place-items-center border-0 bg-transparent px-4 py-3 text-[#8d6e63]" type="button" aria-label="Tampilkan password" aria-pressed="false">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="js-eye h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
