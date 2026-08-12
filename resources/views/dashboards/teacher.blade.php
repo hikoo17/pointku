@@ -21,7 +21,7 @@
                 ['label' => 'Siswa terdata', 'value' => $studentCount ?? 0, 'icon' => 'users', 'textColor' => 'text-[#6d1a1a]', 'badgeBg' => 'bg-[#6d1a1a]/5 border-[#6d1a1a]/10', 'borderTop' => 'border-t-[#6d1a1a]', 'href' => null],
                 ['label' => 'Menunggu validasi', 'value' => $pendingCount ?? 0, 'icon' => 'clock-3', 'textColor' => 'text-[#f57f17]', 'badgeBg' => 'bg-[#f57f17]/5 border-[#f57f17]/10', 'borderTop' => 'border-t-[#fbc02d]', 'href' => route('guru.records')],
                 ['label' => 'Laporan pending', 'value' => $reportCount ?? 0, 'icon' => 'file', 'textColor' => 'text-[#b71c1c]', 'badgeBg' => 'bg-[#b71c1c]/5 border-[#b71c1c]/10', 'borderTop' => 'border-t-[#b71c1c]', 'href' => route('guru.reports')],
-                ['label' => 'Surat otomatis', 'value' => $letterCount ?? 0, 'icon' => 'letter', 'textColor' => 'text-[#f9a825]', 'badgeBg' => 'bg-[#f9a825]/5 border-[#f9a825]/10', 'borderTop' => 'border-t-[#fbc02d]', 'href' => null],
+                ['label' => 'Surat otomatis', 'value' => $letterCount ?? 0, 'icon' => 'mail', 'textColor' => 'text-[#f9a825]', 'badgeBg' => 'bg-[#f9a825]/5 border-[#f9a825]/10', 'borderTop' => 'border-t-[#fbc02d]', 'href' => null],
             ];
         @endphp
 
