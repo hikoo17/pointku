@@ -11,7 +11,7 @@
     <div class="mb-6 grid grid-cols-2 gap-4 min-[1051px]:grid-cols-4">
         <article class="relative flex flex-col justify-between overflow-hidden rounded-xl border border-slate-200/80 border-t-[3px] border-t-rose-600 bg-white p-4.5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md min-[761px]:p-5">
             <div class="flex items-center justify-between gap-2">
-                <span class="text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Pelanggaran</span>
+                <span class="text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Poin Pelanggaran</span>
                 <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-rose-50 border-rose-100 text-rose-700">
                     <i data-lucide="circle-alert" class="h-4 w-4"></i>
                 </span>
@@ -24,7 +24,7 @@
 
         <article class="relative flex flex-col justify-between overflow-hidden rounded-xl border border-slate-200/80 border-t-[3px] border-t-amber-500 bg-white p-4.5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md min-[761px]:p-5">
             <div class="flex items-center justify-between gap-2">
-                <span class="text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Apresiasi</span>
+                <span class="text-[0.68rem] font-bold uppercase tracking-wider text-slate-500">Poin Apresiasi</span>
                 <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border bg-amber-50 border-amber-100 text-amber-700">
                     <i data-lucide="heart" class="h-4 w-4"></i>
                 </span>
@@ -44,7 +44,7 @@
             </div>
             <div class="mt-3">
                 <strong class="block text-3xl font-bold tracking-tight text-slate-900">{{ $student->saldo_poin }}</strong>
-                <small class="mt-0.5 flex items-center gap-1 text-[0.65rem] font-medium text-slate-400">Pelanggaran dan apresiasi</small>
+                <small class="mt-0.5 flex items-center gap-1 text-[0.65rem] font-medium text-slate-400">Poin pelanggaran dan apresiasi</small>
             </div>
         </article>
 

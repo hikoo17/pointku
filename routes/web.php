@@ -18,6 +18,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan', [DashboardController::class, 'reports'])->name('reports');
         Route::post('/laporan/{laporan}/approval', [DashboardController::class, 'approval'])->name('reports.approval');
         Route::get('/kelas/{kelas}', [DashboardController::class, 'classDetail'])->name('classes.show');
+        Route::get('/kelas/{kelas}/siswa/{siswa}', [DashboardController::class, 'classStudent'])->name('classes.student.show');
         Route::get('/surat-panggilan', [DashboardController::class, 'letters'])->name('letters');
         Route::get('/surat-panggilan/{surat}', [DashboardController::class, 'letter'])->name('letters.show');
         Route::post('/surat-panggilan/{surat}/transisi', [DashboardController::class, 'transitionLetter'])->name('letters.transition');

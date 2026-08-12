@@ -47,8 +47,8 @@
                         <th class="px-5 py-3">Kelas</th>
                         <th class="px-5 py-3">Wali Kelas</th>
                         <th class="px-5 py-3">Jumlah Siswa</th>
-                        <th class="px-5 py-3 text-center">Pelanggaran</th>
-                        <th class="px-5 py-3 text-center">Apresiasi</th>
+                        <th class="px-5 py-3 text-center">Jumlah Pelanggaran</th>
+                        <th class="px-5 py-3 text-center">Jumlah Apresiasi</th>
                         <th class="px-5 py-3 text-center">Perlu Penanganan</th>
                         <th class="px-5 py-3 text-right">Aksi</th>
                     </tr>

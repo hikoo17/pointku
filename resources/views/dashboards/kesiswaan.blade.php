@@ -17,8 +17,8 @@
     {{-- Stats Grid --}}
     <div class="mb-6 grid grid-cols-2 gap-4 min-[1051px]:grid-cols-4">
         @foreach([
-            ['Pelanggaran', 'violations', 'circle-alert', 'text-rose-700', 'bg-rose-50 border-rose-100', 'border-t-rose-600', null],
-            ['Apresiasi', 'appreciations', 'heart', 'text-amber-700', 'bg-amber-50 border-amber-100', 'border-t-amber-500', null],
+            ['Jumlah Pelanggaran', 'violations', 'circle-alert', 'text-rose-700', 'bg-rose-50 border-rose-100', 'border-t-rose-600', null],
+            ['Jumlah Apresiasi', 'appreciations', 'heart', 'text-amber-700', 'bg-amber-50 border-amber-100', 'border-t-amber-500', null],
             ['Laporan Pending', 'pending', 'clock-3', 'text-orange-700', 'bg-orange-50 border-orange-100', 'border-t-orange-500', route('kesiswaan.reports', ['status' => 'pending'])],
             ['Perlu Penanganan', 'attention', 'users', 'text-[#5c1919]', 'bg-[#5c1919]/5 border-[#5c1919]/10', 'border-t-[#5c1919]', null],
         ] as [$label, $key, $icon, $textColor, $badgeBg, $borderTop, $href])

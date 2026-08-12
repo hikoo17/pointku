@@ -55,7 +55,7 @@
                 </div>
 
                 <p class="mb-[.65rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">PORTAL SEKOLAH</p>
-                <h2 class="my-1 text-[1.85rem] font-bold leading-[1.15] tracking-[-.05em] min-[761px]:text-[2.6rem]">Selamat datang kembali</h2>
+                <h2 class="my-1 text-[1.85rem] font-bold leading-[1.15] tracking-[-.05em] min-[761px]:text-[2rem]">Selamat datang kembali</h2>
                 <p class="mb-6 leading-[1.6] text-[#8c6d6d] min-[761px]:mb-[2.2rem]">
                     Masuk menggunakan akun yang telah diberikan sekolah.
                 </p>
@@ -74,7 +74,16 @@
                         <span class="flex items-center rounded-xl border border-[#fce4c4] bg-white transition focus-within:border-[#6d1a1a] focus-within:shadow-[0_0_0_4px_#6d1a1a14]">
                             <input class="min-w-0 flex-1 border-0 bg-transparent p-[.9rem_1rem] text-[#4a1c1c] outline-none" id="password" name="password" required type="password" placeholder="Masukkan password">
                             <button id="password-toggle" class="grid place-items-center border-0 bg-transparent px-4 py-3 text-[#8d6e63]" type="button" aria-label="Tampilkan password" aria-pressed="false">
-                                Lihat
+                                <svg xmlns="http://www.w3.org/2000/svg" class="js-eye h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="js-eye-off hidden h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c6.5 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3.5 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                                    <line x1="2" x2="22" y1="2" y2="22"></line>
+                                </svg>
                             </button>
                         </span>
                     </label>
@@ -106,11 +115,12 @@
         const toggle = document.getElementById('password-toggle');
         
         toggle.addEventListener('click', () => {
-            const visible = password.type === 'text';
-            password.type = visible ? 'password' : 'text';
-            toggle.textContent = visible ? 'Lihat' : 'Sembunyikan';
-            toggle.setAttribute('aria-label', visible ? 'Tampilkan password' : 'Sembunyikan password');
-            toggle.setAttribute('aria-pressed', String(!visible));
+            const show = password.type === 'password';
+            password.type = show ? 'text' : 'password';
+            toggle.querySelector('.js-eye').classList.toggle('hidden', show);
+            toggle.querySelector('.js-eye-off').classList.toggle('hidden', !show);
+            toggle.setAttribute('aria-label', show ? 'Sembunyikan password' : 'Tampilkan password');
+            toggle.setAttribute('aria-pressed', String(show));
         });
 
         const loginForm = document.querySelector('.login-form');

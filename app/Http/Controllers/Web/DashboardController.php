@@ -96,7 +96,17 @@ class DashboardController extends Controller
         $alerts = Notifikasi::with('siswa.user')->whereHas('siswa', fn ($q) => $q->where('kelas_id', $kelas->id))->latest()->limit(5)->get();
         $recentRecords = CatatanPoin::with(['siswa.user', 'kategoriPoin'])->whereHas('siswa', fn ($q) => $q->where('kelas_id', $kelas->id))->where('status_validasi', 'disetujui')->latest('tanggal')->limit(6)->get();
 
-        return view('dashboards.homeroom', compact('kelas', 'students', 'alerts', 'recentRecords'));
+        $chartStudents = $kelas->siswa()->with('user')
+            ->orderByDesc('total_poin_pelanggaran')->limit(8)->get()
+            ->concat($kelas->siswa()->with('user')->orderByDesc('total_poin_apresiasi')->limit(8)->get())
+            ->unique('id')->sortByDesc('total_poin_pelanggaran')->values();
+        $chartData = $chartStudents->map(fn ($siswa) => [
+            'label' => $siswa->user->nama_lengkap ?? 'Tanpa Nama',
+            'violations' => (int) $siswa->total_poin_pelanggaran,
+            'appreciations' => (int) $siswa->total_poin_apresiasi,
+        ]);
+
+        return view('dashboards.homeroom', compact('kelas', 'students', 'alerts', 'recentRecords', 'chartData'));
     }
 
     public function homeroomStudents(Request $request)
@@ -311,6 +321,22 @@ class DashboardController extends Controller
         });
 
         return back()->with('success', 'Keputusan laporan berhasil disimpan.');
+    }
+
+    public function classStudent(Request $request, Kelas $kelas, Siswa $siswa)
+    {
+        abort_unless($siswa->kelas_id === $kelas->id, 404);
+        $siswa->load(['user', 'kelas']);
+        $records = $siswa->catatanPoin()->with(['kategoriPoin', 'pencatat'])
+            ->where('status_validasi', 'disetujui')
+            ->latest('tanggal')->paginate(12);
+        $alerts = $siswa->notifikasi()->with('aturanThreshold')->latest()->get();
+        $violationCount = $siswa->catatanPoin()->where('status_validasi', 'disetujui')
+            ->whereHas('kategoriPoin', fn ($query) => $query->where('jenis', 'pelanggaran'))->count();
+        $appreciationCount = $siswa->catatanPoin()->where('status_validasi', 'disetujui')
+            ->whereHas('kategoriPoin', fn ($query) => $query->where('jenis', 'apresiasi'))->count();
+
+        return view('kesiswaan.class-student', compact('kelas', 'siswa', 'records', 'alerts', 'violationCount', 'appreciationCount'));
     }
 
     public function classDetail(Kelas $kelas)

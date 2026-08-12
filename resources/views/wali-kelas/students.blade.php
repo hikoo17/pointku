@@ -31,8 +31,8 @@
                 <thead>
                     <tr class="border-b border-slate-100 bg-slate-50/80 font-bold uppercase tracking-wider text-slate-500">
                         <th class="px-5 py-3">Siswa</th>
-                        <th class="px-5 py-3 text-right">Pelanggaran</th>
-                        <th class="px-5 py-3 text-right">Apresiasi</th>
+                        <th class="px-5 py-3 text-right">Poin Pelanggaran</th>
+                        <th class="px-5 py-3 text-right">Poin Apresiasi</th>
                         <th class="px-5 py-3">Status</th>
                         <th class="px-5 py-3 text-right">Aksi</th>
                     </tr>

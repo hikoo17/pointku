@@ -2,16 +2,16 @@
 
 <x-layouts.app :title="$title">
     <div class="mb-5">
-        <a class="group inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900" href="{{ route('wali-kelas.students') }}">
+        <a class="group inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-700 shadow-2xs transition hover:border-slate-300 hover:bg-slate-100 hover:text-slate-900" href="{{ route('kesiswaan.classes.show', $kelas) }}">
             <i data-lucide="arrow-left" class="h-3.5 w-3.5 fill-none stroke-current transition-transform duration-200 group-hover:-translate-x-0.5"></i>
-            Kembali ke daftar siswa
+            Kembali ke kelas {{ $kelas->nama_kelas }}
         </a>
     </div>
 
     <x-dashboard
         title="{{ $siswa->user->nama_lengkap }}"
-        eyebrow="DETAIL SISWA"
-        copy="Ringkasan poin, riwayat catatan, dan peringatan untuk NISN {{ $siswa->nisn }} kelas {{ $siswa->kelas->nama_kelas }}."
+        eyebrow="DETAIL SISWA · KELAS {{ $kelas->nama_kelas }}"
+        copy="Ringkasan poin, riwayat catatan, dan peringatan untuk NISN {{ $siswa->nisn }}."
     />
 
     {{-- Stats --}}
@@ -42,6 +42,16 @@
             <div>
                 <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">RIWAYAT POIN</span>
                 <h3 class="text-base font-bold text-slate-900">Catatan tervalidasi</h3>
+            </div>
+            <div class="flex items-center gap-3 text-[0.7rem] font-semibold">
+                    <span class="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-2.5 py-1 text-rose-700 border border-rose-200/60">
+                    <i data-lucide="circle-alert" class="h-3.5 w-3.5"></i>
+                    {{ $violationCount }} Pelanggaran
+                </span>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700 border border-emerald-200/60">
+                    <i data-lucide="heart" class="h-3.5 w-3.5"></i>
+                    {{ $appreciationCount }} Apresiasi
+                </span>
             </div>
         </div>
         <div class="overflow-x-auto">

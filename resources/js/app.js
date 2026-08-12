@@ -127,6 +127,73 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    const homeroomStudentsChart = document.getElementById("homeroom-students-chart");
+
+    if (homeroomStudentsChart instanceof HTMLCanvasElement) {
+        const chartData = JSON.parse(homeroomStudentsChart.dataset.chart ?? "[]");
+
+        new Chart(homeroomStudentsChart, {
+            type: "bar",
+            data: {
+                labels: chartData.map((item) => item.label),
+                datasets: [
+                    {
+                        label: "Poin Pelanggaran",
+                        data: chartData.map((item) => item.violations),
+                        backgroundColor: "rgba(225, 29, 72, 0.78)",
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    },
+                    {
+                        label: "Poin Apresiasi",
+                        data: chartData.map((item) => item.appreciations),
+                        backgroundColor: "rgba(16, 185, 129, 0.78)",
+                        borderRadius: 6,
+                        borderSkipped: false,
+                    },
+                ],
+            },
+            options: {
+                indexAxis: "y",
+                maintainAspectRatio: false,
+                responsive: true,
+                interaction: {
+                    intersect: false,
+                    mode: "index",
+                },
+                plugins: {
+                    legend: {
+                        align: "end",
+                        labels: {
+                            boxWidth: 10,
+                            boxHeight: 10,
+                            color: "#475569",
+                            font: { size: 11, weight: 600 },
+                            usePointStyle: true,
+                        },
+                    },
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        grid: { color: "rgba(226, 232, 240, 0.75)" },
+                        ticks: { color: "#64748b", precision: 0, font: { size: 11 } },
+                        title: {
+                            display: true,
+                            text: "Total poin",
+                            color: "#64748b",
+                            font: { size: 11, weight: 600 },
+                        },
+                    },
+                    y: {
+                        grid: { display: false },
+                        ticks: { color: "#475569", font: { size: 11, weight: 600 } },
+                    },
+                },
+            },
+        });
+    }
+
     document.addEventListener("submit", async (event) => {
         const form = event.target;
         const submitter = event.submitter;

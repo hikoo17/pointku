@@ -37,6 +37,33 @@
         @endforeach
     </div>
 
+    {{-- Peringkat Siswa --}}
+    <section class="mt-6 overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
+        <div class="flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4">
+            <div>
+                <span class="text-[0.65rem] font-extrabold uppercase tracking-widest text-[#5c1919]">PERINGKAT KELAS</span>
+                <h3 class="text-base font-bold text-slate-900">Siswa paling nakal & apresiasi tertinggi</h3>
+            </div>
+        </div>
+        <div class="px-5 py-4">
+            @if($chartData->isNotEmpty())
+                <div class="relative h-80">
+                    <canvas id="homeroom-students-chart" data-chart='{!! $chartData->toJson() !!}'></canvas>
+                </div>
+            @else
+                <div class="grid min-h-36 place-items-center px-5 py-8 text-center">
+                    <div>
+                        <span class="mx-auto mb-3 grid h-10 w-10 place-items-center rounded-full bg-slate-100 text-slate-400">
+                            <i data-lucide="bar-chart-3" class="h-5 w-5"></i>
+                        </span>
+                        <strong class="block text-xs font-bold text-slate-700">Belum ada data poin</strong>
+                        <p class="mt-1 text-[0.68rem] font-medium text-slate-400">Peringkat akan tampil setelah ada catatan tervalidasi.</p>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </section>
+
     <div class="mt-6 grid grid-cols-1 gap-6 min-[761px]:grid-cols-2">
         {{-- Siswa Perlu Dipantau --}}
         <section class="flex flex-col overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-xs">
