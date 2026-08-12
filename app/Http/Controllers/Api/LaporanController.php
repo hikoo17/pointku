@@ -92,7 +92,7 @@ class LaporanController extends Controller
         }
         $laporan->delete();
 
-        return response()->json(['message' => 'Laporan deleted'], 200);
+        return response()->json(['message' => 'Laporan berhasil dihapus.'], 200);
     }
 
     public function approval(Request $request, $id)

@@ -87,7 +87,7 @@ class SuratController extends Controller
         abort_unless(in_array($surat->status, ['draft', 'dibatalkan'], true), 422, 'Surat aktif tidak dapat dihapus.');
         $surat->delete();
 
-        return response()->json(['message' => 'Surat panggilan deleted'], 200);
+        return response()->json(['message' => 'Surat panggilan berhasil dihapus.'], 200);
     }
 
     public function exportPdf($id)

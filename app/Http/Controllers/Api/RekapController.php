@@ -14,7 +14,7 @@ class RekapController extends Controller
         $siswa = $request->user()->siswa;
 
         if (! $siswa) {
-            return response()->json(['message' => 'No student profile found for this user'], 404);
+            return response()->json(['message' => 'Profil siswa untuk pengguna ini tidak ditemukan.'], 404);
         }
 
         return response()->json([
@@ -63,12 +63,12 @@ class RekapController extends Controller
         $user = $request->user();
 
         if ($user->role->nama_role !== 'Wali Kelas') {
-            return response()->json(['message' => 'Forbidden'], 403);
+            return response()->json(['message' => 'Akses ditolak.'], 403);
         }
 
         $kelas = $user->kelas;
         if (! $kelas) {
-            return response()->json(['message' => 'No class assigned to this teacher'], 404);
+            return response()->json(['message' => 'Belum ada kelas yang ditugaskan untuk guru ini.'], 404);
         }
 
         $siswa = $kelas->siswa()->get();

@@ -13,12 +13,12 @@ class CheckRole
     {
         if (! $request->user()) {
             return $request->expectsJson()
-                ? response()->json(['message' => 'Unauthenticated'], 401)
+                ? response()->json(['message' => 'Sesi Anda telah berakhir. Silakan masuk kembali.'], 401)
                 : redirect()->route('login');
         }
 
         if (! in_array($request->user()->role->nama_role, $roles)) {
-            abort(403, 'Forbidden - Insufficient role');
+            abort(403, 'Akses ditolak. Anda tidak memiliki izin untuk melakukan tindakan ini.');
         }
 
         if ($request->user()->siswa && $request->user()->siswa->status !== 'aktif') {

@@ -121,7 +121,7 @@ class CatatanPoinController extends Controller
 
         $catatan->delete();
 
-        return response()->json(['message' => 'Catatan poin deleted successfully'], 200);
+        return response()->json(['message' => 'Catatan poin berhasil dihapus.'], 200);
     }
 
     public function cariSiswa(Request $request)
