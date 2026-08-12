@@ -422,7 +422,12 @@ class DashboardController extends Controller
     public function letters(Request $request)
     {
         $letters = SuratPanggilan::with(['siswa.user', 'aturanThreshold'])
+            ->when($request->filled('q'), fn ($query) => $query->where(fn ($search) => $search
+                ->where('nomor_surat', 'like', '%'.$request->q.'%')
+                ->orWhereHas('siswa.user', fn ($user) => $user->where('nama_lengkap', 'like', '%'.$request->q.'%'))))
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))
+            ->when($request->filled('dari'), fn ($query) => $query->whereDate('tanggal_surat', '>=', $request->dari))
+            ->when($request->filled('sampai'), fn ($query) => $query->whereDate('tanggal_surat', '<=', $request->sampai))
             ->latest()->paginate(15)->withQueryString();
 
         $statuses = $this->suratStatuses();

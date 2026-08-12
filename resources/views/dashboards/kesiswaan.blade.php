@@ -81,7 +81,7 @@
 
             <div class="divide-y divide-slate-100">
                 @forelse($students as $student)
-                    <a class="group flex items-center gap-3.5 px-5 py-3.5 transition hover:bg-rose-50/50" href="{{ route('kesiswaan.dashboard') }}">
+                    <a class="group flex items-center gap-3.5 px-5 py-3.5 transition hover:bg-rose-50/50" href="{{ route('kesiswaan.classes.student.show', [$student->kelas_id, $student->id]) }}">
                         <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-rose-100 bg-rose-50 text-rose-600">
                             <i data-lucide="triangle-alert" class="h-4 w-4"></i>
                         </span>
