@@ -8,8 +8,11 @@
     <link rel="shortcut icon" href="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" type="image/png">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
-    <main class="grid min-h-screen grid-cols-1 bg-white min-[761px]:grid-cols-[minmax(420px,1.08fr)_minmax(420px,.92fr)]">
+<body class="bg-slate-100 min-[761px]:bg-white">
+    <!-- Ubah background & padding wrapper pada tampilan mobile -->
+    <main class="flex min-h-screen items-center justify-center p-4 min-[761px]:grid min-[761px]:grid-cols-[minmax(420px,1.08fr)_minmax(420px,.92fr)] min-[761px]:p-0 min-[761px]:bg-white">
+        
+        <!-- Sidebar kiri (hanya tampil di desktop) -->
         <section class="relative hidden min-h-screen flex-col overflow-hidden bg-[linear-gradient(145deg,#6d1a1a,#4a1c1c_72%)] p-8 text-white before:absolute before:inset-auto-[-13vw] before:-bottom-[22vw] before:h-[52vw] before:w-[52vw] before:rounded-full before:border before:border-white/[.07] before:shadow-[0_0_0_7vw_#ffffff06,0_0_0_14vw_#ffffff04] after:absolute after:right-[8%] after:top-[17%] after:h-[190px] after:w-[190px] after:rounded-full after:bg-[radial-gradient(circle,#fbc02d_0_2px,transparent_3px)] after:bg-[length:18px_18px] after:opacity-35 min-[761px]:flex min-[761px]:p-[clamp(2rem,4vw,4.5rem)]">
             <div class="relative z-[1] flex items-center justify-between">
                 <a class="flex items-center gap-[.8rem]" href="/">
@@ -46,17 +49,20 @@
             </div>
         </section>
 
-        <section class="flex flex-1 items-center justify-center bg-white p-6 min-[461px]:p-12 min-[761px]:grid min-[761px]:p-12">
-            <div class="w-full max-w-[420px]">
-                <div class="mb-6 flex flex-col items-center justify-center gap-2 border-b border-slate-200 pb-4 min-[761px]:hidden">
-                    <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="block h-[64px] w-auto">
-                    <div class="text-center"><strong class="block text-[1.1rem] font-bold tracking-[.03em] text-[#6d1a1a]">POINTKU</strong><small class="mt-1 block text-[.65rem] text-[#8c6d6d]">Student Care System</small>
+        <!-- Section Form Login (Diubah menjadi card pada layar mobile) -->
+        <section class="w-full max-w-[420px] rounded-2xl bg-white p-6 shadow-xl shadow-slate-200/60 border border-slate-100 min-[761px]:max-w-none min-[761px]:rounded-none min-[761px]:border-none min-[761px]:bg-white min-[761px]:p-12 min-[761px]:shadow-none flex flex-col justify-center">
+            <div class="w-full mx-auto max-w-[420px]">
+                <div class="mb-6 flex flex-col items-center justify-center gap-2 border-b border-slate-100 pb-4 min-[761px]:hidden">
+                    <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="block h-[56px] w-auto">
+                    <div class="text-center">
+                        <strong class="block text-[1.1rem] font-bold tracking-[.03em] text-[#6d1a1a]">POINTKU</strong>
+                        <small class="mt-0.5 block text-[.65rem] text-[#8c6d6d]">Student Care System</small>
                     </div>
                 </div>
 
                 <p class="mb-[.65rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">PORTAL SEKOLAH</p>
-                <h2 class="my-1 text-[1.85rem] font-bold leading-[1.15] tracking-[-.05em] min-[761px]:text-[2rem]">Selamat datang kembali</h2>
-                <p class="mb-6 leading-[1.6] text-[#8c6d6d] min-[761px]:mb-[2.2rem]">
+                <h2 class="my-1 text-[1.65rem] font-bold leading-[1.15] tracking-[-.05em] min-[761px]:text-[2rem]">Selamat datang kembali</h2>
+                <p class="mb-6 leading-[1.6] text-[#8c6d6d] text-[.9rem] min-[761px]:text-[1rem] min-[761px]:mb-[2.2rem]">
                     Masuk menggunakan akun yang telah diberikan sekolah.
                 </p>
 
@@ -64,14 +70,14 @@
                     @csrf
                     <label class="my-4 grid gap-[.55rem] text-[.78rem] font-bold text-[#5d4037]">
                         Username
-                        <span class="flex items-center rounded-xl border border-slate-300 bg-slate-100 transition focus-within:border-[#6d1a1a] focus-within:shadow-[0_0_0_4px_#6d1a1a14]">
+                        <span class="flex items-center rounded-xl border border-slate-300 bg-slate-50 min-[761px]:bg-slate-100 transition focus-within:border-[#6d1a1a] focus-within:shadow-[0_0_0_4px_#6d1a1a14]">
                             <input class="min-w-0 flex-1 border-0 bg-transparent p-[.9rem_1rem] text-[#4a1c1c] outline-none" name="username" value="{{ old('username') }}" required autofocus placeholder="contoh: guru.bk">
                         </span>
                     </label>
 
                     <label class="my-4 grid gap-[.55rem] text-[.78rem] font-bold text-[#5d4037]">
                         Password
-                        <span class="flex items-center rounded-xl border border-slate-300 bg-slate-100 transition focus-within:border-[#6d1a1a] focus-within:shadow-[0_0_0_4px_#6d1a1a14]">
+                        <span class="flex items-center rounded-xl border border-slate-300 bg-slate-50 min-[761px]:bg-slate-100 transition focus-within:border-[#6d1a1a] focus-within:shadow-[0_0_0_4px_#6d1a1a14]">
                             <input class="min-w-0 flex-1 border-0 bg-transparent p-[.9rem_1rem] text-[#4a1c1c] outline-none" id="password" name="password" required type="password" placeholder="Masukkan password">
                             <button id="password-toggle" class="grid place-items-center border-0 bg-transparent px-4 py-3 text-[#8d6e63]" type="button" aria-label="Tampilkan password" aria-pressed="false">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="js-eye h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -103,7 +109,7 @@
                     @enderror
                 </form>
 
-                <p class="mt-8 text-center text-[.7rem] text-[#a1887f]">
+                <p class="mt-6 text-center text-[.7rem] text-[#a1887f]">
                     Kesulitan masuk? Hubungi administrator sekolah.
                 </p>
             </div>
