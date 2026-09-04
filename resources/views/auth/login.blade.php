@@ -9,10 +9,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-slate-100 min-[761px]:bg-white">
-    <!-- Ubah background & padding wrapper pada tampilan mobile -->
     <main class="flex min-h-screen items-center justify-center p-4 min-[761px]:grid min-[761px]:grid-cols-[minmax(420px,1.08fr)_minmax(420px,.92fr)] min-[761px]:p-0 min-[761px]:bg-white">
         
-        <!-- Sidebar kiri (hanya tampil di desktop) -->
+        <!-- Sidebar kiri (Desktop) -->
         <section class="relative hidden min-h-screen flex-col overflow-hidden bg-[linear-gradient(145deg,#6d1a1a,#4a1c1c_72%)] p-8 text-white before:absolute before:inset-auto-[-13vw] before:-bottom-[22vw] before:h-[52vw] before:w-[52vw] before:rounded-full before:border before:border-white/[.07] before:shadow-[0_0_0_7vw_#ffffff06,0_0_0_14vw_#ffffff04] after:absolute after:right-[8%] after:top-[17%] after:h-[190px] after:w-[190px] after:rounded-full after:bg-[radial-gradient(circle,#fbc02d_0_2px,transparent_3px)] after:bg-[length:18px_18px] after:opacity-35 min-[761px]:flex min-[761px]:p-[clamp(2rem,4vw,4.5rem)]">
             <div class="relative z-[1] flex items-center justify-between">
                 <a class="flex items-center gap-[.8rem]" href="/">
@@ -49,7 +48,7 @@
             </div>
         </section>
 
-        <!-- Section Form Login (Diubah menjadi card pada layar mobile) -->
+        <!-- Section Form Login (Card di Mobile) -->
         <section class="w-full max-w-[420px] rounded-2xl bg-white p-6 shadow-xl shadow-slate-200/60 border border-slate-100 min-[761px]:max-w-none min-[761px]:rounded-none min-[761px]:border-none min-[761px]:bg-white min-[761px]:p-12 min-[761px]:shadow-none flex flex-col justify-center">
             <div class="w-full mx-auto max-w-[420px]">
                 <div class="mb-6 flex flex-col items-center justify-center gap-2 border-b border-slate-100 pb-4 min-[761px]:hidden">
@@ -94,10 +93,14 @@
                         </span>
                     </label>
 
-                    <button id="login-btn" class="mt-5 flex min-h-[48px] w-full items-center justify-center rounded-[10px] border-0 bg-[#6d1a1a] px-5 py-3 text-[.8rem] font-bold text-white shadow-[0_8px_20px_#6d1a1a38] transition hover:-translate-y-px hover:bg-[#5a1515] disabled:cursor-not-allowed disabled:opacity-80" type="submit">
-                        <span id="login-text" class="flex w-full items-center justify-between">
-                            <span>Masuk ke dashboard</span>
-                            <span>→</span>
+                    <!-- Tombol Login (Pembaruan Styling & Teks) -->
+                    <button id="login-btn" class="group relative mt-6 flex min-h-[48px] w-full items-center justify-center overflow-hidden rounded-xl border-0 bg-gradient-to-r from-[#6d1a1a] to-[#8b2323] px-5 py-3.5 text-[.875rem] font-semibold text-white shadow-lg shadow-red-950/20 transition-all duration-200 hover:from-[#5a1515] hover:to-[#721c1c] hover:shadow-xl hover:shadow-red-950/30 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-75" type="submit">
+                        <span id="login-text" class="flex items-center justify-center gap-2">
+                            <span>Masuk ke Akun</span>
+                            <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
                         </span>
                         <i id="login-spinner" data-lucide="loader-circle" class="hidden h-5 w-5 animate-spin"></i>
                     </button>
