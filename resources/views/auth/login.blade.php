@@ -9,7 +9,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="bg-slate-100 min-[761px]:bg-white font-sans antialiased">
-    <main class="flex min-h-screen items-center justify-center min-[761px]:grid min-[761px]:grid-cols-[minmax(420px,1.08fr)_minmax(420px,.92fr)] min-[761px]:p-0">
+    <main class="flex min-h-screen items-center justify-center p-4 min-[761px]:grid min-[761px]:grid-cols-[minmax(420px,1.08fr)_minmax(420px,.92fr)] min-[761px]:p-0">
         
         <!-- Sidebar Kiri (Desktop) -->
         <section class="relative hidden min-h-screen flex-col overflow-hidden bg-[linear-gradient(145deg,#6d1a1a,#4a1c1c_72%)] p-8 text-white before:absolute before:inset-auto-[-13vw] before:-bottom-[22vw] before:h-[52vw] before:w-[52vw] before:rounded-full before:border before:border-white/[.07] before:shadow-[0_0_0_7vw_#ffffff06,0_0_0_14vw_#ffffff04] after:absolute after:right-[8%] after:top-[17%] after:h-[190px] after:w-[190px] after:rounded-full after:bg-[radial-gradient(circle,#fbc02d_0_2px,transparent_3px)] after:bg-[length:18px_18px] after:opacity-35 min-[761px]:flex min-[761px]:p-[clamp(2rem,4vw,4.5rem)]">
@@ -48,46 +48,42 @@
             </div>
         </section>
 
-        <!-- Section Mobile Hero Banner & Form Container -->
-        <section class="relative w-full min-h-screen flex flex-col justify-between overflow-hidden bg-slate-50 p-0 min-[761px]:min-h-0 min-[761px]:justify-center min-[761px]:bg-white min-[761px]:p-12">
-            
-            <!-- Mobile Decorative Header (Tampil khusus ukuran layar HP) -->
-            <div class="relative w-full bg-gradient-to-br from-[#6d1a1a] via-[#521313] to-[#380c0c] pt-10 pb-16 px-6 text-white min-[761px]:hidden rounded-b-[2.5rem] shadow-md">
-                <div class="absolute -top-12 -right-12 h-40 w-40 rounded-full bg-white/5 blur-2xl"></div>
-                <div class="relative z-10 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-white/10 backdrop-blur-md rounded-xl border border-white/10">
-                            <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="h-8 w-auto">
-                        </div>
-                        <div>
-                            <strong class="block text-base font-bold tracking-wide">POINTKU</strong>
-                            <span class="text-[0.65rem] text-[#e6b98a] block tracking-wider uppercase">Student Care System</span>
-                        </div>
-                    </div>
-                    <span class="text-[0.6rem] font-semibold bg-white/10 px-2.5 py-1 rounded-full border border-white/15 tracking-wider uppercase text-red-200">
-                        Portal
-                    </span>
-                </div>
-                <div class="mt-6">
-                    <h1 class="text-xl font-bold leading-tight">Selamat Datang Kembali 👋</h1>
-                    <p class="text-xs text-red-100/70 mt-1">Masuk dengan akun sekolah untuk melanjutkan.</p>
-                </div>
-            </div>
-
-            <!-- Wrapper Form Login -->
-            <div class="w-full max-w-[400px] mx-auto px-5 -mt-8 relative z-20 mb-6 min-[761px]:mt-0 min-[761px]:p-0 min-[761px]:max-w-[420px]">
+        <!-- Section Form Login (Card Tunggal Utuh) -->
+        <section class="w-full max-w-[400px] min-[761px]:max-w-none min-[761px]:w-full flex flex-col justify-center min-[761px]:p-12">
+            <div class="w-full mx-auto max-w-[400px] min-[761px]:max-w-[420px] bg-white rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-100 overflow-hidden min-[761px]:shadow-none min-[761px]:border-none min-[761px]:rounded-none min-[761px]:bg-transparent">
                 
-                <div class="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/60 border border-slate-100 min-[761px]:shadow-none min-[761px]:border-none min-[761px]:p-0">
-                    
-                    <!-- Title Desktop Only -->
-                    <div class="hidden min-[761px]:block">
-                        <p class="mb-1 text-[.65rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">PORTAL SEKOLAH</p>
-                        <h2 class="my-0.5 text-[2rem] font-bold leading-[1.15] tracking-[-.04em]">Selamat datang kembali</h2>
-                        <p class="mb-[2.2rem] text-[1rem] leading-[1.5] text-[#8c6d6d]">
-                            Masuk menggunakan akun yang telah diberikan sekolah.
-                        </p>
+                <!-- Single Header Inside Card (Mobile Only) -->
+                <div class="bg-gradient-to-br from-[#6d1a1a] via-[#5b1616] to-[#431010] p-6 text-white relative overflow-hidden min-[761px]:hidden">
+                    <div class="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-white/5 blur-xl"></div>
+                    <div class="relative z-10 flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2.5">
+                            <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="h-8 w-auto">
+                            <div>
+                                <strong class="block text-sm font-bold tracking-wide leading-none">POINTKU</strong>
+                                <small class="text-[0.6rem] text-[#e6b98a] block tracking-wider uppercase mt-0.5">Student Care System</small>
+                            </div>
+                        </div>
+                        <span class="text-[0.6rem] font-medium bg-white/10 px-2.5 py-1 rounded-full border border-white/15 tracking-wider uppercase text-red-100">
+                            Portal
+                        </span>
                     </div>
+                    <div class="relative z-10 mt-2">
+                        <h2 class="text-lg font-bold">Selamat Datang Kembali 👋</h2>
+                        <p class="text-xs text-red-100/70 mt-0.5">Masuk dengan akun yang diberikan sekolah.</p>
+                    </div>
+                </div>
 
+                <!-- Desktop Header Only -->
+                <div class="hidden min-[761px]:block">
+                    <p class="mb-1 text-[.65rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">PORTAL SEKOLAH</p>
+                    <h2 class="my-0.5 text-[2rem] font-bold leading-[1.15] tracking-[-.04em]">Selamat datang kembali</h2>
+                    <p class="mb-[2.2rem] text-[1rem] leading-[1.5] text-[#8c6d6d]">
+                        Masuk menggunakan akun yang telah diberikan sekolah.
+                    </p>
+                </div>
+
+                <!-- Body Card (Form Input) -->
+                <div class="p-6 min-[761px]:p-0">
                     <form class="login-form" method="POST" action="{{ route('login.store') }}">
                         @csrf
                         
@@ -120,7 +116,7 @@
                         </div>
 
                         <!-- Tombol Login -->
-                        <button id="login-btn" class="group relative mt-6 flex min-h-[48px] w-full items-center justify-center overflow-hidden rounded-xl border-0 bg-gradient-to-r from-[#6d1a1a] to-[#8b2323] px-5 py-3 text-[0.875rem] font-semibold text-white shadow-lg shadow-red-950/20 transition-all duration-200 hover:from-[#5a1515] hover:to-[#721c1c] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-75" type="submit">
+                        <button id="login-btn" class="group relative mt-6 flex min-h-[48px] w-full items-center justify-center overflow-hidden rounded-xl border-0 bg-gradient-to-r from-[#6d1a1a] to-[#8b2323] px-5 py-3 text-[0.875rem] font-semibold text-white shadow-md shadow-red-950/20 transition-all duration-200 hover:from-[#5a1515] hover:to-[#721c1c] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-75" type="submit">
                             <span id="login-text" class="flex items-center justify-center gap-2">
                                 <span>Masuk Aplikasi</span>
                                 <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -132,7 +128,7 @@
                         </button>
 
                         @error('username')
-                            <p class="mt-2.5 text-[0.75rem] font-medium text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-100">
+                            <p class="mt-3 text-[0.75rem] font-medium text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-100">
                                 {{ $message }}
                             </p>
                         @enderror
@@ -142,11 +138,6 @@
                         Kendala masuk? Kontak <a href="#" class="text-[#6d1a1a] font-semibold hover:underline">Admin Sekolah</a>
                     </p>
                 </div>
-            </div>
-
-            <!-- Footer Ringkas Mobile -->
-            <div class="mt-auto py-4 text-center min-[761px]:hidden">
-                <small class="text-[0.65rem] text-slate-400">© 2026 SMAN 1 Tasikmalaya</small>
             </div>
         </section>
     </main>
