@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\WebAuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -12,6 +13,8 @@ Route::post('/logout', [WebAuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'redirect'])->name('dashboard');
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::middleware('role:Kesiswaan')->prefix('kesiswaan')->name('kesiswaan.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'kesiswaan'])->name('dashboard');

@@ -150,6 +150,7 @@
             <!-- Sidebar Footer (Fixed) -->
             <div class="shrink-0 border-t border-white/10 p-4">
                 <div class="flex items-center gap-3">
+                    <a href="{{ route('profile') }}" class="flex min-w-0 flex-1 items-center gap-3 rounded-lg p-1 transition-colors hover:bg-white/10" aria-label="Buka profile">
                     <span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#fbc02d] text-sm font-extrabold text-[#4a1c1c]">
                         {{ strtoupper(substr(auth()->user()->nama_lengkap, 0, 1)) }}
                     </span>
@@ -157,6 +158,7 @@
                         <strong class="block truncate text-xs font-bold text-white">{{ auth()->user()->nama_lengkap }}</strong>
                         <small class="block truncate text-[11px] text-[#e6b98a]">{{ auth()->user()->role->nama_role }}</small>
                     </span>
+                    </a>
                     <form method="POST" action="{{ route('logout') }}" class="shrink-0" data-confirm="Anda akan keluar dari akun POINTKU." data-confirm-title="Keluar dari akun?" data-confirm-button="Ya, keluar">
                         @csrf
                         <button class="grid h-8 w-8 place-items-center rounded-lg text-[#e6b98a] transition-colors hover:bg-white/10 hover:text-white" aria-label="Keluar">
@@ -185,9 +187,9 @@
 
                 <div class="flex items-center gap-4">
                     <span class="text-xs text-[#8d6e63] max-[760px]:hidden">{{ now()->translatedFormat('l, d F Y') }}</span>
-                    <span class="hidden h-8 w-8 place-items-center rounded-full bg-[#fbc02d] text-xs font-extrabold text-[#4a1c1c] max-[1050px]:grid">
+                    <a href="{{ route('profile') }}" class="hidden h-8 w-8 place-items-center rounded-full bg-[#fbc02d] text-xs font-extrabold text-[#4a1c1c] max-[1050px]:grid" aria-label="Buka profile">
                         {{ strtoupper(substr(auth()->user()->nama_lengkap, 0, 1)) }}
-                    </span>
+                    </a>
                 </div>
             </header>
 

@@ -91,7 +91,7 @@
                             <label class="block text-[0.75rem] font-semibold text-slate-700">
                                 <span class="mb-1.5 block">Username</span>
                                 <div class="relative flex items-center rounded-xl border border-slate-200 bg-slate-50/50 transition focus-within:border-[#6d1a1a] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#6d1a1a]/10">
-                                    <input class="w-full border-0 bg-transparent py-3 px-3.5 text-slate-800 outline-none text-[0.875rem] placeholder:text-slate-400" name="username" value="{{ old('username') }}" required autofocus placeholder="contoh: guru.bk">
+                                    <input class="w-full border-0 bg-transparent py-3 px-3.5 text-slate-800 outline-none text-[0.875rem] placeholder:text-slate-400" name="username" value="{{ old('username') }}" required autofocus placeholder="Masukkan username">
                                 </div>
                             </label>
 
