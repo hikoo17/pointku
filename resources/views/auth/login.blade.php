@@ -8,10 +8,10 @@
     <link rel="shortcut icon" href="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" type="image/png">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-slate-100 min-[761px]:bg-white">
-    <main class="flex min-h-screen items-center justify-center p-4 min-[761px]:grid min-[761px]:grid-cols-[minmax(420px,1.08fr)_minmax(420px,.92fr)] min-[761px]:p-0 min-[761px]:bg-white">
+<body class="bg-slate-100 min-[761px]:bg-white font-sans antialiased">
+    <main class="flex min-h-screen items-center justify-center min-[761px]:grid min-[761px]:grid-cols-[minmax(420px,1.08fr)_minmax(420px,.92fr)] min-[761px]:p-0">
         
-        <!-- Sidebar kiri (Desktop) -->
+        <!-- Sidebar Kiri (Desktop) -->
         <section class="relative hidden min-h-screen flex-col overflow-hidden bg-[linear-gradient(145deg,#6d1a1a,#4a1c1c_72%)] p-8 text-white before:absolute before:inset-auto-[-13vw] before:-bottom-[22vw] before:h-[52vw] before:w-[52vw] before:rounded-full before:border before:border-white/[.07] before:shadow-[0_0_0_7vw_#ffffff06,0_0_0_14vw_#ffffff04] after:absolute after:right-[8%] after:top-[17%] after:h-[190px] after:w-[190px] after:rounded-full after:bg-[radial-gradient(circle,#fbc02d_0_2px,transparent_3px)] after:bg-[length:18px_18px] after:opacity-35 min-[761px]:flex min-[761px]:p-[clamp(2rem,4vw,4.5rem)]">
             <div class="relative z-[1] flex items-center justify-between">
                 <a class="flex items-center gap-[.8rem]" href="/">
@@ -48,73 +48,105 @@
             </div>
         </section>
 
-        <!-- Section Form Login (Card Ringkas/Kompak di Mobile) -->
-        <section class="w-full max-w-[380px] rounded-2xl bg-white p-5 shadow-lg shadow-slate-200/50 border border-slate-100 min-[761px]:max-w-none min-[761px]:rounded-none min-[761px]:border-none min-[761px]:bg-white min-[761px]:p-12 min-[761px]:shadow-none flex flex-col justify-center">
-            <div class="w-full mx-auto max-w-[380px] min-[761px]:max-w-[420px]">
-                <div class="mb-4 flex flex-col items-center justify-center gap-1.5 border-b border-slate-100 pb-3 min-[761px]:hidden">
-                    <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="block h-[48px] w-auto">
-                    <div class="text-center">
-                        <strong class="block text-[1rem] font-bold tracking-[.03em] text-[#6d1a1a]">POINTKU</strong>
-                        <small class="block text-[.6rem] text-[#8c6d6d]">Student Care System</small>
+        <!-- Section Mobile Hero Banner & Form Container -->
+        <section class="relative w-full min-h-screen flex flex-col justify-between overflow-hidden bg-slate-50 p-0 min-[761px]:min-h-0 min-[761px]:justify-center min-[761px]:bg-white min-[761px]:p-12">
+            
+            <!-- Mobile Decorative Header (Tampil khusus ukuran layar HP) -->
+            <div class="relative w-full bg-gradient-to-br from-[#6d1a1a] via-[#521313] to-[#380c0c] pt-10 pb-16 px-6 text-white min-[761px]:hidden rounded-b-[2.5rem] shadow-md">
+                <div class="absolute -top-12 -right-12 h-40 w-40 rounded-full bg-white/5 blur-2xl"></div>
+                <div class="relative z-10 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-white/10 backdrop-blur-md rounded-xl border border-white/10">
+                            <img src="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" alt="Logo SMAN 1 Tasikmalaya" class="h-8 w-auto">
+                        </div>
+                        <div>
+                            <strong class="block text-base font-bold tracking-wide">POINTKU</strong>
+                            <span class="text-[0.65rem] text-[#e6b98a] block tracking-wider uppercase">Student Care System</span>
+                        </div>
                     </div>
+                    <span class="text-[0.6rem] font-semibold bg-white/10 px-2.5 py-1 rounded-full border border-white/15 tracking-wider uppercase text-red-200">
+                        Portal
+                    </span>
                 </div>
+                <div class="mt-6">
+                    <h1 class="text-xl font-bold leading-tight">Selamat Datang Kembali 👋</h1>
+                    <p class="text-xs text-red-100/70 mt-1">Masuk dengan akun sekolah untuk melanjutkan.</p>
+                </div>
+            </div>
 
-                <p class="mb-1 text-[.65rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">PORTAL SEKOLAH</p>
-                <h2 class="my-0.5 text-[1.5rem] font-bold leading-[1.15] tracking-[-.04em] min-[761px]:text-[2rem]">Selamat datang kembali</h2>
-                <p class="mb-4 text-[.85rem] leading-[1.5] text-[#8c6d6d] min-[761px]:text-[1rem] min-[761px]:mb-[2.2rem]">
-                    Masuk menggunakan akun yang telah diberikan sekolah.
-                </p>
-
-                <form class="login-form" method="POST" action="{{ route('login.store') }}">
-                    @csrf
-                    <label class="my-3 grid gap-[.4rem] text-[.75rem] font-bold text-[#5d4037]">
-                        Username
-                        <span class="flex items-center rounded-xl border border-slate-300 bg-slate-50 min-[761px]:bg-slate-100 transition focus-within:border-[#6d1a1a] focus-within:shadow-[0_0_0_3px_#6d1a1a14]">
-                            <input class="min-w-0 flex-1 border-0 bg-transparent p-[.75rem_.9rem] text-[#4a1c1c] outline-none text-[.85rem]" name="username" value="{{ old('username') }}" required autofocus placeholder="contoh: guru.bk">
-                        </span>
-                    </label>
-
-                    <label class="my-3 grid gap-[.4rem] text-[.75rem] font-bold text-[#5d4037]">
-                        Password
-                        <span class="flex items-center rounded-xl border border-slate-300 bg-slate-50 min-[761px]:bg-slate-100 transition focus-within:border-[#6d1a1a] focus-within:shadow-[0_0_0_3px_#6d1a1a14]">
-                            <input class="min-w-0 flex-1 border-0 bg-transparent p-[.75rem_.9rem] text-[#4a1c1c] outline-none text-[.85rem]" id="password" name="password" required type="password" placeholder="Masukkan password">
-                            <button id="password-toggle" class="grid place-items-center border-0 bg-transparent px-3 py-2 text-[#8d6e63]" type="button" aria-label="Tampilkan password" aria-pressed="false">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="js-eye h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path>
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="js-eye-off hidden h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
-                                    <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c6.5 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
-                                    <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3.5 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
-                                    <line x1="2" x2="22" y1="2" y2="22"></line>
-                                </svg>
-                            </button>
-                        </span>
-                    </label>
-
-                    <!-- Tombol Login (Teks "Masuk" Singkat & UI Modern) -->
-                    <button id="login-btn" class="group relative mt-4 flex min-h-[44px] w-full items-center justify-center overflow-hidden rounded-xl border-0 bg-gradient-to-r from-[#6d1a1a] to-[#8b2323] px-5 py-2.5 text-[.85rem] font-semibold text-white shadow-md shadow-red-950/20 transition-all duration-200 hover:from-[#5a1515] hover:to-[#721c1c] hover:shadow-lg hover:shadow-red-950/30 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-75" type="submit">
-                        <span id="login-text" class="flex items-center justify-center gap-2">
-                            <span>Masuk</span>
-                            <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                <polyline points="12 5 19 12 12 19"></polyline>
-                            </svg>
-                        </span>
-                        <i id="login-spinner" data-lucide="loader-circle" class="hidden h-5 w-5 animate-spin"></i>
-                    </button>
-
-                    @error('username')
-                        <p class="mt-2 text-[.75rem] text-[#c62828]">
-                            {{ $message }}
+            <!-- Wrapper Form Login -->
+            <div class="w-full max-w-[400px] mx-auto px-5 -mt-8 relative z-20 mb-6 min-[761px]:mt-0 min-[761px]:p-0 min-[761px]:max-w-[420px]">
+                
+                <div class="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/60 border border-slate-100 min-[761px]:shadow-none min-[761px]:border-none min-[761px]:p-0">
+                    
+                    <!-- Title Desktop Only -->
+                    <div class="hidden min-[761px]:block">
+                        <p class="mb-1 text-[.65rem] font-extrabold tracking-[.18em] text-[#6d1a1a]">PORTAL SEKOLAH</p>
+                        <h2 class="my-0.5 text-[2rem] font-bold leading-[1.15] tracking-[-.04em]">Selamat datang kembali</h2>
+                        <p class="mb-[2.2rem] text-[1rem] leading-[1.5] text-[#8c6d6d]">
+                            Masuk menggunakan akun yang telah diberikan sekolah.
                         </p>
-                    @enderror
-                </form>
+                    </div>
 
-                <p class="mt-4 text-center text-[.68rem] text-[#a1887f]">
-                    Kesulitan masuk? Hubungi administrator sekolah.
-                </p>
+                    <form class="login-form" method="POST" action="{{ route('login.store') }}">
+                        @csrf
+                        
+                        <div class="space-y-4">
+                            <label class="block text-[0.75rem] font-semibold text-slate-700">
+                                <span class="mb-1.5 block">Username</span>
+                                <div class="relative flex items-center rounded-xl border border-slate-200 bg-slate-50/50 transition focus-within:border-[#6d1a1a] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#6d1a1a]/10">
+                                    <input class="w-full border-0 bg-transparent py-3 px-3.5 text-slate-800 outline-none text-[0.875rem] placeholder:text-slate-400" name="username" value="{{ old('username') }}" required autofocus placeholder="contoh: guru.bk">
+                                </div>
+                            </label>
+
+                            <label class="block text-[0.75rem] font-semibold text-slate-700">
+                                <span class="mb-1.5 block">Password</span>
+                                <div class="relative flex items-center rounded-xl border border-slate-200 bg-slate-50/50 transition focus-within:border-[#6d1a1a] focus-within:bg-white focus-within:ring-2 focus-within:ring-[#6d1a1a]/10">
+                                    <input class="w-full border-0 bg-transparent py-3 px-3.5 text-slate-800 outline-none text-[0.875rem] placeholder:text-slate-400" id="password" name="password" required type="password" placeholder="Masukkan password">
+                                    <button id="password-toggle" class="px-3.5 py-3 text-slate-400 hover:text-slate-600 transition" type="button" aria-label="Tampilkan password" aria-pressed="false">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="js-eye h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="js-eye-off hidden h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+                                            <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c6.5 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+                                            <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3.5 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+                                            <line x1="2" x2="22" y1="2" y2="22"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Tombol Login -->
+                        <button id="login-btn" class="group relative mt-6 flex min-h-[48px] w-full items-center justify-center overflow-hidden rounded-xl border-0 bg-gradient-to-r from-[#6d1a1a] to-[#8b2323] px-5 py-3 text-[0.875rem] font-semibold text-white shadow-lg shadow-red-950/20 transition-all duration-200 hover:from-[#5a1515] hover:to-[#721c1c] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-75" type="submit">
+                            <span id="login-text" class="flex items-center justify-center gap-2">
+                                <span>Masuk Aplikasi</span>
+                                <svg class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </span>
+                            <i id="login-spinner" data-lucide="loader-circle" class="hidden h-5 w-5 animate-spin"></i>
+                        </button>
+
+                        @error('username')
+                            <p class="mt-2.5 text-[0.75rem] font-medium text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-100">
+                                {{ $message }}
+                            </p>
+                        @enderror
+                    </form>
+
+                    <p class="mt-5 text-center text-[0.72rem] text-slate-400">
+                        Kendala masuk? Kontak <a href="#" class="text-[#6d1a1a] font-semibold hover:underline">Admin Sekolah</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Footer Ringkas Mobile -->
+            <div class="mt-auto py-4 text-center min-[761px]:hidden">
+                <small class="text-[0.65rem] text-slate-400">© 2026 SMAN 1 Tasikmalaya</small>
             </div>
         </section>
     </main>
