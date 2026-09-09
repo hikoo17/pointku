@@ -27,7 +27,7 @@
             <div class="relative z-[1] mb-12 mt-auto max-w-[680px]">
                 <p class="mb-[.65rem] text-[.68rem] font-extrabold tracking-[.18em] text-[#9e5a5a]">TERTIB. PEDULI. BERTUMBUH.</p>
                 <h1 class="mb-[1.6rem] text-[clamp(3.2rem,5.8vw,6.4rem)] font-[650] leading-[.92] tracking-[-.065em] max-[1050px]:text-[3.2rem]">
-                    Setiap catatan adalah awal dari
+                    catatan adalah awal dari
                     <em class="font-serif font-normal not-italic text-[#fbc02d]">perubahan.</em>
                 </h1>
                 <p class="max-w-[530px] text-[1.02rem] leading-[1.75] text-[#efd7be]">
