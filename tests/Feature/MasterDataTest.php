@@ -29,9 +29,11 @@ class MasterDataTest extends TestCase
 
     public function test_non_kesiswaan_cannot_open_master_data(): void
     {
-        $this->actingAs($this->createUser('Guru BK'))
+        $this->from(route('guru.dashboard'))
+            ->actingAs($this->createUser('Guru BK'))
             ->get(route('kesiswaan.master.users'))
-            ->assertForbidden();
+            ->assertRedirect(route('guru.dashboard'))
+            ->assertSessionHasErrors('_error');
     }
 
     public function test_kesiswaan_can_create_student_account_and_profile_together(): void
