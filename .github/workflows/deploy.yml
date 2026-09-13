@@ -1,13 +1,16 @@
-name: Belajar Workflow Pertama
+name: "Checkout Repository"
 
 on: 
-  push: 
-    branches: 
+  push:
+    branches:
       - main
 
-jobs: 
-  nyobaan-we:
+jobs:
+  checkout-repo:
     runs-on: ubuntu-latest
     steps:
-      - name: Hellow Wargi Tasik
-        run: echo "Hello Wargi Tasik"
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: View Repository Files
+        run: ls -la
