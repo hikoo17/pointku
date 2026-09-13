@@ -1,4 +1,4 @@
-name: "Deploy to VPS Server"
+name: "Deploy to VPS Serverr"
 
 on:
   push:
