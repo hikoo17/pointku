@@ -1,16 +1,25 @@
-name: "Checkout Repository"
+name: "Deploy to VPS"
 
-on: 
+on:
   push:
     branches:
-      - main
+      - main 
 
 jobs:
-  checkout-repo:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: View Repository Files
-        run: ls -la
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up SSH
+        uses: appleboy/sshaction@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /www/wwwroot/pointku.kezadev.my.id/POINTKU
+            git pull origin main
+            npm run build
