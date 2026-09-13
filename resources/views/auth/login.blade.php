@@ -3,10 +3,47 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Masuk | POINTKU</title>
+    <title>POINTKU SMAN 1 Tasikmalaya | Sistem Kesiswaan</title>
+    <meta name="description" content="POINTKU adalah portal sistem kesiswaan SMAN 1 Tasikmalaya untuk pencatatan poin, pelaporan, pendampingan, dan apresiasi siswa.">
+    <meta name="keywords" content="POINTKU, sistem kesiswaan, SMAN 1 Tasikmalaya, pencatatan poin siswa, portal sekolah">
+    <meta name="author" content="SMAN 1 Tasikmalaya">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    <link rel="canonical" href="{{ route('login') }}">
+    <meta name="theme-color" content="#6d1a1a">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="POINTKU SMAN 1 Tasikmalaya | Sistem Kesiswaan">
+    <meta property="og:description" content="Portal sistem kesiswaan SMAN 1 Tasikmalaya untuk membangun budaya positif siswa.">
+    <meta property="og:url" content="{{ route('login') }}">
+    <meta property="og:site_name" content="POINTKU SMAN 1 Tasikmalaya">
+    <meta property="og:image" content="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}">
+    <meta property="og:image:alt" content="Logo SMAN 1 Tasikmalaya">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="POINTKU SMAN 1 Tasikmalaya | Sistem Kesiswaan">
+    <meta name="twitter:description" content="Portal sistem kesiswaan SMAN 1 Tasikmalaya untuk pencatatan poin dan pendampingan siswa.">
+    <meta name="twitter:image" content="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}">
     <link rel="icon" href="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" type="image/png">
     <link rel="shortcut icon" href="{{ asset('Logo_SMAN_1_Tasikmalaya.png') }}" type="image/png">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script type="application/ld+json">
+        {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'WebApplication',
+            'name' => 'POINTKU SMAN 1 Tasikmalaya',
+            'url' => route('login'),
+            'description' => 'Portal sistem kesiswaan SMAN 1 Tasikmalaya untuk pencatatan poin, pelaporan, pendampingan, dan apresiasi siswa.',
+            'applicationCategory' => 'EducationalApplication',
+            'operatingSystem' => 'Web',
+            'inLanguage' => 'id-ID',
+            'image' => asset('Logo_SMAN_1_Tasikmalaya.png'),
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => 'SMAN 1 Tasikmalaya',
+                'logo' => asset('Logo_SMAN_1_Tasikmalaya.png'),
+            ],
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
 </head>
 <body class="bg-slate-100 min-[761px]:bg-white font-sans antialiased">
     <main class="flex min-h-screen items-center justify-center p-4 min-[761px]:grid min-[761px]:grid-cols-[minmax(420px,1.08fr)_minmax(420px,.92fr)] min-[761px]:p-0">

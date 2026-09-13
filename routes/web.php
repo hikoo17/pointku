@@ -4,8 +4,38 @@ use App\Http\Controllers\Web\DashboardController;
 use App\Http\Controllers\Web\ProfileController;
 use App\Http\Controllers\Web\WebAuthController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Response;
 
 Route::get('/', [WebAuthController::class, 'showLogin']);
+
+Route::get('/sitemap.xml', function (): Response {
+    $loginUrl = htmlspecialchars(route('login'), ENT_XML1, 'UTF-8');
+
+    return response(
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        . '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        . '<url><loc>'.$loginUrl.'</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>'
+        . '</urlset>',
+        200,
+        ['Content-Type' => 'application/xml; charset=UTF-8']
+    );
+})->name('sitemap');
+
+Route::get('/robots.txt', function (): Response {
+    return response(
+        "User-agent: *\n"
+        . "Disallow: /dashboard\n"
+        . "Disallow: /profile\n"
+        . "Disallow: /kesiswaan/\n"
+        . "Disallow: /guru/\n"
+        . "Disallow: /wali-kelas/\n"
+        . "Disallow: /siswa/\n"
+        . "Disallow: /api/\n\n"
+        . 'Sitemap: '.route('sitemap')."\n",
+        200,
+        ['Content-Type' => 'text/plain; charset=UTF-8']
+    );
+})->name('robots');
 
 Route::get('/login', [WebAuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [WebAuthController::class, 'login'])->name('login.store');
