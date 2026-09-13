@@ -15,10 +15,10 @@ jobs:
       - name: Set up SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USERNAME }}
+          host: 202.155.13.142
+          username: keyza
           key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
+          port: 22
           script: |
             cd /www/wwwroot/pointku.kezadev.my.id/POINTKU
             git pull origin main
